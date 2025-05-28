@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { message-square, phone, settings, user } from 'lucide-react';
+import { MessageSquare, Phone, Settings, User } from 'lucide-react';
 
 const AIAssistant = () => {
   const [messages, setMessages] = useState([
@@ -100,7 +100,7 @@ const AIAssistant = () => {
       <div className="bg-white shadow-sm border-b p-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <message-square className="h-5 w-5 text-white" />
+            <MessageSquare className="h-5 w-5 text-white" />
           </div>
           <div>
             <h2 className="font-semibold text-gray-900">AI数据治理助手</h2>

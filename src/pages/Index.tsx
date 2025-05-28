@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { 
-  database, 
-  chart-bar, 
-  user, 
-  settings, 
-  bell, 
-  search,
-  phone,
-  message-square,
-  check,
-  calendar
+  Database, 
+  ChartBar, 
+  User, 
+  Settings, 
+  Bell, 
+  Search,
+  Phone,
+  MessageSquare,
+  Check,
+  Calendar
 } from 'lucide-react';
 import AIAssistant from '@/components/AIAssistant';
 import DataAnalytics from '@/components/DataAnalytics';
@@ -80,7 +80,7 @@ const Index = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <database className="h-5 w-5 text-blue-500" />
+            <Database className="h-5 w-5 text-blue-500" />
             数据质量总览
           </CardTitle>
         </CardHeader>
@@ -120,7 +120,7 @@ const Index = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <chart-bar className="h-5 w-5 text-green-500" />
+            <ChartBar className="h-5 w-5 text-green-500" />
             AI治理成效
           </CardTitle>
         </CardHeader>
@@ -158,7 +158,7 @@ const Index = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <calendar className="h-5 w-5 text-orange-500" />
+            <Calendar className="h-5 w-5 text-orange-500" />
             今日任务
           </CardTitle>
         </CardHeader>
@@ -209,10 +209,10 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm">
-              <bell className="h-5 w-5" />
+              <Bell className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="sm">
-              <search className="h-5 w-5" />
+              <Search className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -235,7 +235,7 @@ const Index = () => {
             className="flex flex-col items-center gap-1 h-auto py-2"
             onClick={() => setActiveTab('dashboard')}
           >
-            <database className="h-5 w-5" />
+            <Database className="h-5 w-5" />
             <span className="text-xs">概览</span>
           </Button>
           <Button
@@ -244,7 +244,7 @@ const Index = () => {
             className="flex flex-col items-center gap-1 h-auto py-2"
             onClick={() => setActiveTab('ai-assistant')}
           >
-            <message-square className="h-5 w-5" />
+            <MessageSquare className="h-5 w-5" />
             <span className="text-xs">AI助手</span>
           </Button>
           <Button
@@ -253,7 +253,7 @@ const Index = () => {
             className="flex flex-col items-center gap-1 h-auto py-2"
             onClick={() => setActiveTab('analytics')}
           >
-            <chart-bar className="h-5 w-5" />
+            <ChartBar className="h-5 w-5" />
             <span className="text-xs">分析</span>
           </Button>
           <Button
@@ -262,7 +262,7 @@ const Index = () => {
             className="flex flex-col items-center gap-1 h-auto py-2"
             onClick={() => setActiveTab('tasks')}
           >
-            <check className="h-5 w-5" />
+            <Check className="h-5 w-5" />
             <span className="text-xs">任务</span>
           </Button>
         </div>

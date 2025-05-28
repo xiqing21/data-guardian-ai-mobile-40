@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { chart-bar, database, calendar, user } from 'lucide-react';
+import { ChartBar, Database, Calendar, User } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -138,7 +138,7 @@ const DataAnalytics = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <chart-bar className="h-5 w-5 text-blue-500" />
+                <ChartBar className="h-5 w-5 text-blue-500" />
                 数据质量六维度分析
               </CardTitle>
             </CardHeader>
@@ -291,7 +291,7 @@ const DataAnalytics = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <database className="h-5 w-5 text-purple-500" />
+                <Database className="h-5 w-5 text-purple-500" />
                 AI智能体能力评估
               </CardTitle>
             </CardHeader>
