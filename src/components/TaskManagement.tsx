@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { check, calendar, user, phone, settings } from 'lucide-react';
+import { Check, Calendar, User, Phone, Settings } from 'lucide-react';
 
 const TaskManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -116,7 +115,7 @@ const TaskManagement = () => {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <check className="h-5 w-5 text-green-500" />
+            <Check className="h-5 w-5 text-green-500" />
             任务总体进度
           </CardTitle>
         </CardHeader>
@@ -225,11 +224,11 @@ const TaskManagement = () => {
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
-                      <user className="h-4 w-4" />
+                      <User className="h-4 w-4" />
                       <span>{task.assignee}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4" />
                       <span>{task.deadline}</span>
                     </div>
                   </div>
