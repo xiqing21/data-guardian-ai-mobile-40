@@ -17,9 +17,10 @@ import {
   AlertCircle,
   Clock
 } from 'lucide-react';
+import { Task } from '../types/Task';
 
 interface TaskDetailProps {
-  task: any;
+  task: Task;
   onBack: () => void;
   onConfirm: (taskId: number, result: any) => void;
 }
