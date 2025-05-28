@@ -7,11 +7,26 @@ import { Check, Calendar, User, Phone, Settings } from 'lucide-react';
 import TaskDetail from './TaskDetail';
 import AIProcessingDetail from './AIProcessingDetail';
 
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  priority: string;
+  status: string;
+  progress: number;
+  assignee: string;
+  deadline: string;
+  autoProcessable: boolean;
+  aiResult?: any;
+  confirmationData?: any;
+}
+
 const TaskManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [aiProcessingTask, setAiProcessingTask] = useState(null);
-  const [tasks, setTasks] = useState([
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([
     {
       id: 1,
       title: '手机号异常检测',
@@ -83,7 +98,7 @@ const TaskManagement = () => {
     { key: 'call', label: '外呼', count: tasks.filter(t => t.category === 'call').length }
   ];
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     const statusMap = {
       'pending': { label: '待处理', variant: 'secondary' },
       'in-progress': { label: '进行中', variant: 'default' },
@@ -92,7 +107,7 @@ const TaskManagement = () => {
     return statusMap[status] || statusMap.pending;
   };
 
-  const getPriorityBadge = (priority) => {
+  const getPriorityBadge = (priority: string) => {
     const priorityMap = {
       'high': { label: '高', className: 'bg-red-500 text-white' },
       'medium': { label: '中', className: 'bg-yellow-500 text-white' },
@@ -129,16 +144,16 @@ const TaskManagement = () => {
     console.log('任务确认结果:', result);
   };
 
-  const handleAIProcess = (task) => {
+  const handleAIProcess = (task: Task) => {
     console.log('启动AI处理:', task);
     setAiProcessingTask(task);
   };
 
-  const handleAIComplete = (result) => {
+  const handleAIComplete = (result: any) => {
     console.log('AI处理完成:', result);
     setTasks(prevTasks => 
       prevTasks.map(task => 
-        task.id === aiProcessingTask.id 
+        task.id === aiProcessingTask?.id 
           ? { 
               ...task, 
               status: 'completed',

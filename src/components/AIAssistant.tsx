@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +5,18 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Phone, Settings, User, Brain, Zap, TrendingUp } from 'lucide-react';
 
+interface Message {
+  id: number;
+  type: string;
+  content: string;
+  timestamp: Date;
+  confidence?: number;
+  processingTime?: string;
+  suggestions?: string[];
+}
+
 const AIAssistant = () => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       type: 'ai',
@@ -59,10 +68,10 @@ const AIAssistant = () => {
     { label: '治理效果评估', action: '评估当前数据治理措施的效果和ROI', icon: '📈' }
   ];
 
-  const handleSendMessage = async (content) => {
+  const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
 
-    const userMessage = {
+    const userMessage: Message = {
       id: messages.length + 1,
       type: 'user',
       content,
@@ -77,7 +86,7 @@ const AIAssistant = () => {
     const processingTime = Math.random() * 2 + 0.5;
     setTimeout(() => {
       const aiResponse = generateIntelligentAIResponse(content);
-      const aiMessage = {
+      const aiMessage: Message = {
         id: messages.length + 2,
         type: 'ai',
         content: aiResponse.content,
@@ -91,7 +100,7 @@ const AIAssistant = () => {
     }, processingTime * 1000);
   };
 
-  const generateIntelligentAIResponse = (userInput) => {
+  const generateIntelligentAIResponse = (userInput: string) => {
     const input = userInput.toLowerCase();
     
     if (input.includes('数据质量') || input.includes('质量分析') || input.includes('深度')) {

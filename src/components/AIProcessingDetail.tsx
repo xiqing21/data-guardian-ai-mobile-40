@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -249,7 +248,7 @@ const AIProcessingDetail = ({ taskId, taskType, onComplete, onCancel }: AIProces
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   {Object.entries(result.data).map(([key, value]) => (
                     <div key={key} className="text-center">
-                      <div className="font-semibold text-lg">{value}</div>
+                      <div className="font-semibold text-lg">{String(value)}</div>
                       <div className="text-gray-600 text-xs">{key.replace(/_/g, ' ')}</div>
                     </div>
                   ))}
