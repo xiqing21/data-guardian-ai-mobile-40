@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Check, Calendar, User, Phone, Settings } from 'lucide-react';
+import TaskDetail from './TaskDetail';
 
 const TaskManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [tasks] = useState([
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [tasks, setTasks] = useState([
     {
       id: 1,
       title: '手机号异常检测',
@@ -108,6 +110,33 @@ const TaskManagement = () => {
   const completedTasks = tasks.filter(task => task.status === 'completed').length;
   const inProgressTasks = tasks.filter(task => task.status === 'in-progress').length;
   const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+
+  const handleTaskConfirm = (taskId: number, result: any) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === taskId 
+          ? { 
+              ...task, 
+              status: result.status === 'resolved' ? 'completed' : task.status,
+              progress: result.status === 'resolved' ? 100 : task.progress,
+              confirmationData: result
+            }
+          : task
+      )
+    );
+    console.log('任务确认结果:', result);
+  };
+
+  // If a task is selected, show the detail view
+  if (selectedTask) {
+    return (
+      <TaskDetail 
+        task={selectedTask}
+        onBack={() => setSelectedTask(null)}
+        onConfirm={handleTaskConfirm}
+      />
+    );
+  }
 
   return (
     <div className="p-4 pb-20 bg-gray-50 min-h-screen">
@@ -236,8 +265,12 @@ const TaskManagement = () => {
                   <div className="flex gap-2">
                     {task.status !== 'completed' && (
                       <>
-                        <Button variant="outline" size="sm">
-                          查看详情
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setSelectedTask(task)}
+                        >
+                          网格员处理
                         </Button>
                         {task.autoProcessable && (
                           <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
@@ -245,6 +278,15 @@ const TaskManagement = () => {
                           </Button>
                         )}
                       </>
+                    )}
+                    {task.status === 'completed' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedTask(task)}
+                      >
+                        查看详情
+                      </Button>
                     )}
                   </div>
                 </div>
