@@ -5,10 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Check, Calendar, User, Phone, Settings } from 'lucide-react';
 import TaskDetail from './TaskDetail';
+import AIProcessingDetail from './AIProcessingDetail';
 
 const TaskManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTask, setSelectedTask] = useState(null);
+  const [aiProcessingTask, setAiProcessingTask] = useState(null);
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -127,6 +129,41 @@ const TaskManagement = () => {
     console.log('任务确认结果:', result);
   };
 
+  const handleAIProcess = (task) => {
+    console.log('启动AI处理:', task);
+    setAiProcessingTask(task);
+  };
+
+  const handleAIComplete = (result) => {
+    console.log('AI处理完成:', result);
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === aiProcessingTask.id 
+          ? { 
+              ...task, 
+              status: 'completed',
+              progress: 100,
+              assignee: 'AI智能体',
+              aiResult: result
+            }
+          : task
+      )
+    );
+    setAiProcessingTask(null);
+  };
+
+  // If AI processing is active, show the AI processing detail
+  if (aiProcessingTask) {
+    return (
+      <AIProcessingDetail 
+        taskId={aiProcessingTask.id}
+        taskType={aiProcessingTask.category}
+        onComplete={handleAIComplete}
+        onCancel={() => setAiProcessingTask(null)}
+      />
+    );
+  }
+
   // If a task is selected, show the detail view
   if (selectedTask) {
     return (
@@ -227,6 +264,11 @@ const TaskManagement = () => {
                           🤖 AI可处理
                         </Badge>
                       )}
+                      {task.aiResult && (
+                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-600">
+                          ✨ AI已处理
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-gray-600 mb-2">{task.description}</p>
                   </div>
@@ -248,6 +290,31 @@ const TaskManagement = () => {
                   </div>
                   <Progress value={task.progress} className="h-2" />
                 </div>
+
+                {/* AI处理结果预览 */}
+                {task.aiResult && (
+                  <div className="mb-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className="bg-purple-100 text-purple-700 text-xs">
+                        AI处理结果
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="text-center">
+                        <div className="font-semibold">{task.aiResult.auto_resolved || task.aiResult.auto_completed || task.aiResult.auto_verified || 0}</div>
+                        <div className="text-gray-600">自动处理</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-semibold">{task.aiResult.accuracy || task.aiResult.completion_rate || 0}%</div>
+                        <div className="text-gray-600">准确率</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-semibold">{task.aiResult.processing_time || '未知'}</div>
+                        <div className="text-gray-600">处理时间</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* 任务详情 */}
                 <div className="flex items-center justify-between text-sm text-gray-600">
@@ -273,8 +340,12 @@ const TaskManagement = () => {
                           网格员处理
                         </Button>
                         {task.autoProcessable && (
-                          <Button size="sm" className="bg-purple-500 hover:bg-purple-600">
-                            AI处理
+                          <Button 
+                            size="sm" 
+                            className="bg-purple-500 hover:bg-purple-600"
+                            onClick={() => handleAIProcess(task)}
+                          >
+                            AI智能处理
                           </Button>
                         )}
                       </>
