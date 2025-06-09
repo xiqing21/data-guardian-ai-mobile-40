@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,9 @@ import {
   Phone,
   MessageSquare,
   Check,
-  Calendar
+  Calendar,
+  FileText,
+  TrendingUp
 } from 'lucide-react';
 import {
   RadarChart,
@@ -30,6 +31,8 @@ import AIAssistant from '@/components/AIAssistant';
 import DataAnalytics from '@/components/DataAnalytics';
 import TaskManagement from '@/components/TaskManagement';
 import VirtualAvatar from '@/components/VirtualAvatar';
+import DataGovernanceReport from '@/components/DataGovernanceReport';
+import ReportEffectiveness from '@/components/ReportEffectiveness';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -131,6 +134,26 @@ const Index = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* 新增：数据治理功能快捷入口 */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all cursor-pointer"
+              onClick={() => setActiveTab('report')}>
+          <CardContent className="p-4 text-center">
+            <FileText className="h-8 w-8 mx-auto mb-2" />
+            <div className="font-semibold">工作报告</div>
+            <div className="text-xs text-green-100 mt-1">生成治理报告</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-r from-purple-500 to-violet-600 text-white hover:from-purple-600 hover:to-violet-700 transition-all cursor-pointer"
+              onClick={() => setActiveTab('effectiveness')}>
+          <CardContent className="p-4 text-center">
+            <TrendingUp className="h-8 w-8 mx-auto mb-2" />
+            <div className="font-semibold">治理成效</div>
+            <div className="text-xs text-purple-100 mt-1">成效分析评估</div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* 数据质量雷达图总览 */}
       <Card>
@@ -334,6 +357,8 @@ const Index = () => {
         {activeTab === 'ai-assistant' && <AIAssistant />}
         {activeTab === 'analytics' && <DataAnalytics />}
         {activeTab === 'tasks' && <TaskManagement />}
+        {activeTab === 'report' && <DataGovernanceReport />}
+        {activeTab === 'effectiveness' && <ReportEffectiveness />}
       </div>
 
       {/* 底部导航栏 - 优化交互反馈 */}
@@ -374,6 +399,15 @@ const Index = () => {
           >
             <Check className="h-5 w-5" />
             <span className="text-xs">任务</span>
+          </Button>
+          <Button
+            variant={activeTab === 'report' ? 'default' : 'ghost'}
+            size="sm"
+            className="flex flex-col items-center gap-1 h-auto py-2 transition-all"
+            onClick={() => setActiveTab('report')}
+          >
+            <FileText className="h-5 w-5" />
+            <span className="text-xs">报告</span>
           </Button>
         </div>
       </div>
