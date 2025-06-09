@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import TaskDetail from './TaskDetail';
@@ -7,12 +6,15 @@ import TaskOverview from './TaskOverview';
 import AISmartAssignment from './AISmartAssignment';
 import TaskCategoryFilter from './TaskCategoryFilter';
 import TaskCard from './TaskCard';
+import TaskConfirmation from './TaskConfirmation';
 import { Task, Category } from '../types/Task';
 
 const TaskManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
+  const [confirmationTask, setConfirmationTask] = useState<{ task: Task; result: any } | null>(null);
+  
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: 1,
@@ -126,38 +128,47 @@ const TaskManagement = () => {
   };
 
   const handleAIComplete = (result: any) => {
-    console.log('AI处理完成:', result);
+    console.log('AI处理完成，等待人工确认:', result);
+    if (aiProcessingTask) {
+      setConfirmationTask({ task: aiProcessingTask, result });
+      setAiProcessingTask(null);
+    }
+  };
+
+  const handleConfirmationComplete = (approved: boolean, comments?: string) => {
+    if (!confirmationTask) return;
+
+    console.log('人工确认结果:', { approved, comments });
+    
     setTasks(prevTasks => 
       prevTasks.map(task => 
-        task.id === aiProcessingTask?.id 
+        task.id === confirmationTask.task.id 
           ? { 
               ...task, 
-              status: 'completed',
-              progress: 100,
-              assignee: 'AI智能体',
-              aiResult: result
+              status: approved ? 'completed' : 'pending',
+              progress: approved ? 100 : 0,
+              assignee: approved ? 'AI智能体' : task.assignee,
+              aiResult: approved ? confirmationTask.result : undefined,
+              confirmationData: { approved, comments, timestamp: new Date().toISOString() }
             }
           : task
       )
     );
-    setAiProcessingTask(null);
+    
+    setConfirmationTask(null);
   };
 
-  // AI智能重新分配任务
   const handleAIReassignTasks = () => {
     console.log('开始AI智能重新分配任务');
     
     setTasks(prevTasks => 
       prevTasks.map(task => {
         if (task.status === 'pending') {
-          // AI智能分配逻辑
           let newAssignee = task.assignee;
           
           if (task.autoProcessable) {
-            // 自动处理的任务分配给AI
             newAssignee = task.category === 'call' ? 'AI外呼系统' : 'AI智能体';
           } else {
-            // 需要人工处理的任务分配给合适的网格员
             const gridWorkers = ['网格员001', '网格员002', '网格员003', '网格员004', '网格员005'];
             newAssignee = gridWorkers[Math.floor(Math.random() * gridWorkers.length)];
           }
@@ -176,7 +187,17 @@ const TaskManagement = () => {
     console.log('AI智能分配完成，已重新分配', pendingTasks, '个任务');
   };
 
-  // If AI processing is active, show the AI processing detail
+  if (confirmationTask) {
+    return (
+      <TaskConfirmation
+        task={confirmationTask.task}
+        aiResult={confirmationTask.result}
+        onConfirm={handleConfirmationComplete}
+        onBack={() => setConfirmationTask(null)}
+      />
+    );
+  }
+
   if (aiProcessingTask) {
     return (
       <AIProcessingDetail 
@@ -188,7 +209,6 @@ const TaskManagement = () => {
     );
   }
 
-  // If a task is selected, show the detail view
   if (selectedTask) {
     return (
       <TaskDetail 
@@ -219,8 +239,7 @@ const TaskManagement = () => {
         onCategoryChange={setSelectedCategory}
       />
 
-      {/* 任务列表 */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {filteredTasks.map((task) => (
           <TaskCard
             key={task.id}
@@ -231,10 +250,9 @@ const TaskManagement = () => {
         ))}
       </div>
 
-      {/* 快捷操作 */}
       <div className="fixed bottom-20 right-4">
-        <Button className="rounded-full w-14 h-14 shadow-lg bg-blue-500 hover:bg-blue-600">
-          <span className="text-2xl">+</span>
+        <Button className="rounded-full w-12 h-12 shadow-lg bg-blue-500 hover:bg-blue-600 border-0">
+          <span className="text-xl">+</span>
         </Button>
       </div>
     </div>
