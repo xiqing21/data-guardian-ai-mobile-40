@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus } from 'lucide-react';
 import TaskDetail from './TaskDetail';
 import AIProcessingDetail from './AIProcessingDetail';
 import TaskOverview from './TaskOverview';
@@ -14,6 +16,7 @@ const TaskManagement = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
   const [confirmationTask, setConfirmationTask] = useState<{ task: Task; result: any } | null>(null);
+  const [showNewTaskForm, setShowNewTaskForm] = useState(false);
   
   const [tasks, setTasks] = useState<Task[]>([
     {
@@ -187,6 +190,25 @@ const TaskManagement = () => {
     console.log('AI智能分配完成，已重新分配', pendingTasks, '个任务');
   };
 
+  const handleCreateNewTask = () => {
+    const newTask: Task = {
+      id: Math.max(...tasks.map(t => t.id)) + 1,
+      title: '新建任务',
+      description: '请编辑任务描述',
+      category: 'phone',
+      priority: 'medium',
+      status: 'pending',
+      progress: 0,
+      assignee: '网格员001',
+      deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      autoProcessable: false
+    };
+    
+    setTasks(prev => [...prev, newTask]);
+    setSelectedTask(newTask);
+    setShowNewTaskForm(false);
+  };
+
   if (confirmationTask) {
     return (
       <TaskConfirmation
@@ -233,6 +255,23 @@ const TaskManagement = () => {
         taskStats={taskStats}
       />
 
+      {/* 新建任务卡片 */}
+      <Card className="mb-4 border-0 shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base">
+            <span>任务管理</span>
+            <Button 
+              onClick={handleCreateNewTask}
+              size="sm"
+              className="h-8 px-3 text-xs bg-blue-500 hover:bg-blue-600"
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              新建任务
+            </Button>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+
       <TaskCategoryFilter
         categories={categories}
         selectedCategory={selectedCategory}
@@ -248,12 +287,6 @@ const TaskManagement = () => {
             onAIProcess={handleAIProcess}
           />
         ))}
-      </div>
-
-      <div className="fixed bottom-20 right-4">
-        <Button className="rounded-full w-12 h-12 shadow-lg bg-blue-500 hover:bg-blue-600 border-0">
-          <span className="text-xl">+</span>
-        </Button>
       </div>
     </div>
   );

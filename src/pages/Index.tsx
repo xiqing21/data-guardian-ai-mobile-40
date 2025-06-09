@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,11 @@ import {
   Check,
   Calendar,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 import {
   RadarChart,
@@ -28,11 +33,9 @@ import {
   Legend
 } from 'recharts';
 import AIAssistant from '@/components/AIAssistant';
-import DataAnalytics from '@/components/DataAnalytics';
+import AnalyticsReports from '@/components/AnalyticsReports';
 import TaskManagement from '@/components/TaskManagement';
 import VirtualAvatar from '@/components/VirtualAvatar';
-import DataGovernanceReport from '@/components/DataGovernanceReport';
-import ReportEffectiveness from '@/components/ReportEffectiveness';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -52,6 +55,14 @@ const Index = () => {
     abnormalDetectionRate: 92,
     callSuccessRate: 85,
     smsResponseRate: 80
+  });
+
+  // 员工任务相关状态
+  const [employeeTasks, setEmployeeTasks] = useState({
+    pendingTasks: 12,
+    urgentTasks: 3,
+    completedToday: 8,
+    efficiency: 95.2
   });
 
   const radarData = [
@@ -112,76 +123,141 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
-      {/* 数据治理功能快捷入口 - 简化设计 */}
+      {/* 员工工作台 - 突出任务处理功能 */}
+      <Card className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold">我的工作台</h2>
+              <p className="text-blue-100 text-sm">今日任务处理概览</p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{employeeTasks.efficiency}%</div>
+              <div className="text-xs text-blue-100">工作效率</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
+              <div className="text-xs text-blue-100">待处理</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-200">{employeeTasks.urgentTasks}</div>
+              <div className="text-xs text-blue-100">紧急任务</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-200">{employeeTasks.completedToday}</div>
+              <div className="text-xs text-blue-100">今日完成</div>
+            </div>
+          </div>
+          
+          <Button 
+            onClick={() => setActiveTab('tasks')}
+            className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white border-white/30"
+          >
+            <ArrowRight className="h-4 w-4 mr-2" />
+            立即处理任务
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* 任务快速操作区 */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all cursor-pointer border-0 shadow-sm"
-              onClick={() => setActiveTab('report')}>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveTab('tasks')}>
           <CardContent className="p-4 text-center">
-            <FileText className="h-6 w-6 mx-auto mb-2" />
-            <div className="font-medium text-sm">工作报告</div>
-            <div className="text-xs text-green-100 mt-1">生成治理报告</div>
+            <div className="flex items-center justify-center mb-2">
+              <Clock className="h-6 w-6 text-orange-500" />
+            </div>
+            <div className="font-medium text-sm">待处理任务</div>
+            <div className="text-2xl font-bold text-orange-600 mt-1">{employeeTasks.pendingTasks}</div>
+            <div className="text-xs text-gray-500 mt-1">需要您的处理</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-r from-purple-500 to-violet-600 text-white hover:from-purple-600 hover:to-violet-700 transition-all cursor-pointer border-0 shadow-sm"
-              onClick={() => setActiveTab('effectiveness')}>
+        
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveTab('tasks')}>
           <CardContent className="p-4 text-center">
-            <TrendingUp className="h-6 w-6 mx-auto mb-2" />
-            <div className="font-medium text-sm">治理成效</div>
-            <div className="text-xs text-purple-100 mt-1">成效分析评估</div>
+            <div className="flex items-center justify-center mb-2">
+              <AlertCircle className="h-6 w-6 text-red-500" />
+            </div>
+            <div className="font-medium text-sm">紧急任务</div>
+            <div className="text-2xl font-bold text-red-600 mt-1">{employeeTasks.urgentTasks}</div>
+            <div className="text-xs text-gray-500 mt-1">优先处理</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* 数据质量雷达图总览 - 简化样式 */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
+      {/* 功能快捷入口 - 优化布局 */}
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all cursor-pointer"
+              onClick={() => setActiveTab('analytics')}>
+          <CardContent className="p-4 text-center">
+            <ChartBar className="h-6 w-6 mx-auto mb-2" />
+            <div className="font-medium text-sm">数据分析</div>
+            <div className="text-xs text-green-100 mt-1">分析与报告</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-r from-purple-500 to-violet-600 text-white hover:from-purple-600 hover:to-violet-700 transition-all cursor-pointer"
+              onClick={() => setActiveTab('ai-assistant')}>
+          <CardContent className="p-4 text-center">
+            <MessageSquare className="h-6 w-6 mx-auto mb-2" />
+            <div className="font-medium text-sm">AI助手</div>
+            <div className="text-xs text-purple-100 mt-1">智能咨询</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 今日已完成任务展示 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            今日完成任务
+            <Badge variant="secondary" className="text-xs">
+              {employeeTasks.completedToday}个
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <div>
+                  <div className="text-sm font-medium">地址信息补全</div>
+                  <div className="text-xs text-gray-500">完成时间: 13:45</div>
+                </div>
+              </div>
+              <Badge className="bg-green-500 text-xs">已完成</Badge>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <div>
+                  <div className="text-sm font-medium">证照有效期检查</div>
+                  <div className="text-xs text-gray-500">完成时间: 11:20</div>
+                </div>
+              </div>
+              <Badge className="bg-green-500 text-xs">已完成</Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 数据质量概览 - 简化显示 */}
+      <Card>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <Database className="h-4 w-4 text-blue-500" />
-            数据质量总览
-            <Badge variant="secondary" className="ml-2 text-xs">
+            数据质量概览
+            <Badge variant="secondary" className="text-xs">
               {overallScore}%
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="dimension" className="text-xs" />
-                <PolarRadiusAxis 
-                  angle={30} 
-                  domain={[0, 100]} 
-                  tick={false}
-                />
-                <Radar
-                  name="当前值"
-                  dataKey="current"
-                  stroke="#3b82f6"
-                  fill="#3b82f6"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
-                />
-                <Radar
-                  name="目标值"
-                  dataKey="target"
-                  stroke="#22c55e"
-                  fill="#22c55e"
-                  fillOpacity={0.1}
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                />
-                <Tooltip 
-                  formatter={(value, name) => [`${value}%`, name]}
-                  labelStyle={{ color: '#374151' }}
-                />
-                <Legend />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {radarData.map((item) => {
+          <div className="grid grid-cols-2 gap-2">
+            {radarData.slice(0, 4).map((item) => {
               const getStatusColor = (current, target) => {
                 if (current >= target) return 'text-green-600';
                 if (current >= target - 5) return 'text-yellow-600';
@@ -195,9 +271,6 @@ const Index = () => {
                     <span className={`font-semibold ${getStatusColor(item.current, item.target)}`}>
                       {item.current.toFixed(1)}%
                     </span>
-                    <span className="text-gray-500">
-                      ({item.target}%)
-                    </span>
                   </div>
                 </div>
               );
@@ -205,94 +278,12 @@ const Index = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* AI治理成效 - 简化布局 */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ChartBar className="h-4 w-4 text-green-500" />
-            AI治理成效
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-xl font-bold text-green-600">
-                {treatmentStats.autoTreatmentRate}%
-              </div>
-              <div className="text-xs text-gray-600 mt-1">自动化整改率</div>
-            </div>
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-xl font-bold text-blue-600">
-                {treatmentStats.accuracy}%
-              </div>
-              <div className="text-xs text-gray-600 mt-1">准确性</div>
-            </div>
-            <div className="text-center p-3 bg-yellow-50 rounded-lg">
-              <div className="text-xl font-bold text-yellow-600">
-                {treatmentStats.abnormalDetectionRate}%
-              </div>
-              <div className="text-xs text-gray-600 mt-1">异常研判准确率</div>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-xl font-bold text-purple-600">
-                {treatmentStats.callSuccessRate}%
-              </div>
-              <div className="text-xs text-gray-600 mt-1">外呼成功率</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 实时任务状态 - 简化设计 */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center justify-between text-base">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-orange-500" />
-              今日任务
-            </div>
-            <Badge variant="outline" className="text-xs">3个活跃</Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">手机号</Badge>
-                <div>
-                  <div className="text-sm font-medium">核查异常手机号</div>
-                  <div className="text-xs text-gray-500">预计完成: 14:30</div>
-                </div>
-              </div>
-              <Badge className="bg-orange-500 text-xs">待处理</Badge>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">地址</Badge>
-                <div>
-                  <div className="text-sm font-medium">地址信息补全</div>
-                  <div className="text-xs text-gray-500">完成: 13:45</div>
-                </div>
-              </div>
-              <Badge className="bg-green-500 text-xs">已完成</Badge>
-            </div>
-          </div>
-          <Button 
-            variant="outline" 
-            className="w-full mt-3 text-sm"
-            onClick={() => setActiveTab('tasks')}
-          >
-            查看全部任务
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 顶部导航栏 - 简化样式 */}
+      {/* 顶部导航栏 */}
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="flex items-center justify-between p-4">
           <div>
@@ -304,7 +295,7 @@ const Index = () => {
               <Bell className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" className="p-2">
-              <Search className="h-4 w-4" />
+              <User className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -314,10 +305,8 @@ const Index = () => {
       <div className="flex-1">
         {activeTab === 'dashboard' && renderDashboard()}
         {activeTab === 'ai-assistant' && <AIAssistant />}
-        {activeTab === 'analytics' && <DataAnalytics />}
+        {activeTab === 'analytics' && <AnalyticsReports />}
         {activeTab === 'tasks' && <TaskManagement />}
-        {activeTab === 'report' && <DataGovernanceReport />}
-        {activeTab === 'effectiveness' && <ReportEffectiveness />}
       </div>
 
       {/* 悬浮数智人助手 */}
@@ -333,7 +322,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* 底部导航栏 - 简化设计 */}
+      {/* 底部导航栏 - 合并分析和报告 */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
         <div className="flex items-center justify-around py-2">
           <Button
@@ -343,7 +332,7 @@ const Index = () => {
             onClick={() => setActiveTab('dashboard')}
           >
             <Database className="h-4 w-4" />
-            <span>概览</span>
+            <span>工作台</span>
           </Button>
           <Button
             variant={activeTab === 'analytics' ? 'default' : 'ghost'}
@@ -352,7 +341,7 @@ const Index = () => {
             onClick={() => setActiveTab('analytics')}
           >
             <ChartBar className="h-4 w-4" />
-            <span>分析</span>
+            <span>分析报告</span>
           </Button>
           <Button
             variant={activeTab === 'tasks' ? 'default' : 'ghost'}
@@ -361,16 +350,16 @@ const Index = () => {
             onClick={() => setActiveTab('tasks')}
           >
             <Check className="h-4 w-4" />
-            <span>任务</span>
+            <span>任务处理</span>
           </Button>
           <Button
-            variant={activeTab === 'report' ? 'default' : 'ghost'}
+            variant={activeTab === 'ai-assistant' ? 'default' : 'ghost'}
             size="sm"
             className="flex flex-col items-center gap-1 h-auto py-2 text-xs"
-            onClick={() => setActiveTab('report')}
+            onClick={() => setActiveTab('ai-assistant')}
           >
-            <FileText className="h-4 w-4" />
-            <span>报告</span>
+            <MessageSquare className="h-4 w-4" />
+            <span>AI助手</span>
           </Button>
         </div>
       </div>
