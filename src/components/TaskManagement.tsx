@@ -96,6 +96,13 @@ const TaskManagement = () => {
   const completedTasks = tasks.filter(task => task.status === 'completed').length;
   const inProgressTasks = tasks.filter(task => task.status === 'in-progress').length;
   const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+  const autoProcessableTasks = tasks.filter(task => task.autoProcessable && task.status === 'pending').length;
+
+  const taskStats = {
+    totalTasks: tasks.length,
+    pendingTasks,
+    autoProcessableTasks
+  };
 
   const handleTaskConfirm = (taskId: number, result: any) => {
     setTasks(prevTasks => 
@@ -136,6 +143,39 @@ const TaskManagement = () => {
     setAiProcessingTask(null);
   };
 
+  // AI智能重新分配任务
+  const handleAIReassignTasks = () => {
+    console.log('开始AI智能重新分配任务');
+    
+    setTasks(prevTasks => 
+      prevTasks.map(task => {
+        if (task.status === 'pending') {
+          // AI智能分配逻辑
+          let newAssignee = task.assignee;
+          
+          if (task.autoProcessable) {
+            // 自动处理的任务分配给AI
+            newAssignee = task.category === 'call' ? 'AI外呼系统' : 'AI智能体';
+          } else {
+            // 需要人工处理的任务分配给合适的网格员
+            const gridWorkers = ['网格员001', '网格员002', '网格员003', '网格员004', '网格员005'];
+            newAssignee = gridWorkers[Math.floor(Math.random() * gridWorkers.length)];
+          }
+          
+          return {
+            ...task,
+            assignee: newAssignee,
+            status: task.autoProcessable ? 'in-progress' : 'pending',
+            progress: task.autoProcessable ? Math.floor(Math.random() * 30) + 10 : 0
+          };
+        }
+        return task;
+      })
+    );
+    
+    console.log('AI智能分配完成，已重新分配', pendingTasks, '个任务');
+  };
+
   // If AI processing is active, show the AI processing detail
   if (aiProcessingTask) {
     return (
@@ -168,7 +208,10 @@ const TaskManagement = () => {
         pendingTasks={pendingTasks}
       />
 
-      <AISmartAssignment />
+      <AISmartAssignment 
+        onReassignTasks={handleAIReassignTasks}
+        taskStats={taskStats}
+      />
 
       <TaskCategoryFilter
         categories={categories}
