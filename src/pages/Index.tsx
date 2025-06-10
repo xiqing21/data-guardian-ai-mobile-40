@@ -20,7 +20,8 @@ import {
   Clock,
   AlertCircle,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Plus
 } from 'lucide-react';
 import {
   RadarChart,
@@ -137,7 +138,7 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
               <div className="text-xs text-blue-100">待处理</div>
@@ -152,60 +153,24 @@ const Index = () => {
             </div>
           </div>
           
-          <Button 
-            onClick={() => setActiveTab('tasks')}
-            className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white border-white/30"
-          >
-            <ArrowRight className="h-4 w-4 mr-2" />
-            立即处理任务
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              onClick={() => setActiveTab('tasks')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <ArrowRight className="h-4 w-4 mr-2" />
+              处理任务
+            </Button>
+            <Button 
+              onClick={() => setActiveTab('tasks')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              新建任务
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
-      {/* 任务快速操作区 */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveTab('tasks')}>
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Clock className="h-6 w-6 text-orange-500" />
-            </div>
-            <div className="font-medium text-sm">待处理任务</div>
-            <div className="text-2xl font-bold text-orange-600 mt-1">{employeeTasks.pendingTasks}</div>
-            <div className="text-xs text-gray-500 mt-1">需要您的处理</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveTab('tasks')}>
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <AlertCircle className="h-6 w-6 text-red-500" />
-            </div>
-            <div className="font-medium text-sm">紧急任务</div>
-            <div className="text-2xl font-bold text-red-600 mt-1">{employeeTasks.urgentTasks}</div>
-            <div className="text-xs text-gray-500 mt-1">优先处理</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 功能快捷入口 - 优化布局 */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all cursor-pointer"
-              onClick={() => setActiveTab('analytics')}>
-          <CardContent className="p-4 text-center">
-            <ChartBar className="h-6 w-6 mx-auto mb-2" />
-            <div className="font-medium text-sm">数据分析</div>
-            <div className="text-xs text-green-100 mt-1">分析与报告</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-to-r from-purple-500 to-violet-600 text-white hover:from-purple-600 hover:to-violet-700 transition-all cursor-pointer"
-              onClick={() => setActiveTab('ai-assistant')}>
-          <CardContent className="p-4 text-center">
-            <MessageSquare className="h-6 w-6 mx-auto mb-2" />
-            <div className="font-medium text-sm">AI助手</div>
-            <div className="text-xs text-purple-100 mt-1">智能咨询</div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* 今日已完成任务展示 */}
       <Card>
@@ -322,7 +287,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* 底部导航栏 - 合并分析和报告 */}
+      {/* 底部导航栏 */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
         <div className="flex items-center justify-around py-2">
           <Button
