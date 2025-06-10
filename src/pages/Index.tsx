@@ -21,7 +21,11 @@ import {
   AlertCircle,
   CheckCircle2,
   ArrowRight,
-  Plus
+  Plus,
+  Bot,
+  Zap,
+  Brain,
+  Target
 } from 'lucide-react';
 import {
   RadarChart,
@@ -64,6 +68,14 @@ const Index = () => {
     urgentTasks: 3,
     completedToday: 8,
     efficiency: 95.2
+  });
+
+  // AI智能体状态
+  const [aiAgentStats, setAiAgentStats] = useState({
+    activeAgents: 5,
+    processingTasks: 23,
+    completionRate: 96.8,
+    learningProgress: 87
   });
 
   const radarData = [
@@ -112,6 +124,13 @@ const Index = () => {
         completeness: Math.min(95, prev.completeness + Math.random() * 0.5),
         accuracy: Math.min(98, prev.accuracy + Math.random() * 0.3)
       }));
+      
+      // 更新AI智能体状态
+      setAiAgentStats(prev => ({
+        ...prev,
+        processingTasks: Math.max(15, prev.processingTasks + Math.floor(Math.random() * 10 - 5)),
+        learningProgress: Math.min(100, prev.learningProgress + Math.random() * 0.2)
+      }));
     }, 5000);
 
     return () => clearInterval(interval);
@@ -124,7 +143,60 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
-      {/* 员工工作台 - 突出任务处理功能 */}
+      {/* AI智能体状态卡片 */}
+      <Card className="bg-gradient-to-r from-purple-500 to-pink-600 text-white">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <Brain className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">AI智能体群</h2>
+                <p className="text-purple-100 text-sm">人工智能协作处理中心</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{aiAgentStats.completionRate}%</div>
+              <div className="text-xs text-purple-100">智能完成率</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-yellow-200">{aiAgentStats.activeAgents}</div>
+              <div className="text-xs text-purple-100">活跃智能体</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-200">{aiAgentStats.processingTasks}</div>
+              <div className="text-xs text-purple-100">处理中任务</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-200">{aiAgentStats.learningProgress}%</div>
+              <div className="text-xs text-purple-100">学习进度</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              onClick={() => setActiveTab('ai-assistant')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Bot className="h-4 w-4 mr-2" />
+              AI协作台
+            </Button>
+            <Button 
+              onClick={() => setActiveTab('analytics')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Target className="h-4 w-4 mr-2" />
+              智能分析
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 员工工作台 */}
       <Card className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -193,7 +265,7 @@ const Index = () => {
                   <div className="text-xs text-gray-500">完成时间: 13:45</div>
                 </div>
               </div>
-              <Badge className="bg-green-500 text-xs">已完成</Badge>
+              <Badge className="bg-green-500 text-xs">AI自动完成</Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
               <div className="flex items-center gap-2">
@@ -203,7 +275,7 @@ const Index = () => {
                   <div className="text-xs text-gray-500">完成时间: 11:20</div>
                 </div>
               </div>
-              <Badge className="bg-green-500 text-xs">已完成</Badge>
+              <Badge className="bg-blue-500 text-xs">人工确认</Badge>
             </div>
           </div>
         </CardContent>
@@ -282,7 +354,7 @@ const Index = () => {
         >
           <VirtualAvatar />
           <div className="absolute -top-8 -left-6 bg-white px-2 py-1 rounded-lg shadow-md text-xs whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
-            AI助手
+            AI数智人
           </div>
         </div>
       </div>

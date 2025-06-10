@@ -15,7 +15,9 @@ import {
   AlertTriangle,
   Clock,
   Database,
-  PieChart
+  PieChart,
+  Activity,
+  Zap
 } from 'lucide-react';
 import {
   BarChart,
@@ -35,7 +37,12 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Radar
+  Radar,
+  AreaChart,
+  Area,
+  ScatterChart,
+  Scatter,
+  ComposedChart
 } from 'recharts';
 
 const AnalyticsReports = () => {
@@ -45,23 +52,39 @@ const AnalyticsReports = () => {
   // 分析数据
   const analyticsData = {
     qualityTrends: [
-      { date: '01-01', completeness: 88, accuracy: 92, consistency: 85 },
-      { date: '01-08', completeness: 90, accuracy: 93, consistency: 87 },
-      { date: '01-15', completeness: 92, accuracy: 94, consistency: 89 },
-      { date: '01-22', completeness: 94, accuracy: 95, consistency: 91 },
-      { date: '01-29', completeness: 95, accuracy: 96, consistency: 92 }
+      { date: '01-01', completeness: 88, accuracy: 92, consistency: 85, volume: 120000 },
+      { date: '01-08', completeness: 90, accuracy: 93, consistency: 87, volume: 135000 },
+      { date: '01-15', completeness: 92, accuracy: 94, consistency: 89, volume: 142000 },
+      { date: '01-22', completeness: 94, accuracy: 95, consistency: 91, volume: 158000 },
+      { date: '01-29', completeness: 95, accuracy: 96, consistency: 92, volume: 165000 }
     ],
     categoryAnalysis: [
-      { category: '手机号', processed: 12470, success: 11223, rate: 90.0 },
-      { category: '地址', processed: 8950, success: 8507, rate: 95.1 },
-      { category: '合同', processed: 3420, success: 2993, rate: 87.5 },
-      { category: '证照', processed: 1680, success: 1428, rate: 85.0 },
+      { category: '手机号', processed: 12470, success: 11223, rate: 90.0, efficiency: 95 },
+      { category: '地址', processed: 8950, success: 8507, rate: 95.1, efficiency: 98 },
+      { category: '合同', processed: 3420, success: 2993, rate: 87.5, efficiency: 89 },
+      { category: '证照', processed: 1680, success: 1428, rate: 85.0, efficiency: 92 },
     ],
     dataDistribution: [
       { name: '正常数据', value: 78, color: '#22c55e' },
       { name: '待处理', value: 12, color: '#f59e0b' },
       { name: '异常数据', value: 8, color: '#ef4444' },
       { name: '已修复', value: 2, color: '#8b5cf6' }
+    ],
+    performanceMetrics: [
+      { time: '00:00', cpu: 45, memory: 60, network: 30 },
+      { time: '04:00', cpu: 35, memory: 55, network: 25 },
+      { time: '08:00', cpu: 75, memory: 80, network: 60 },
+      { time: '12:00', cpu: 85, memory: 85, network: 70 },
+      { time: '16:00', cpu: 90, memory: 90, network: 80 },
+      { time: '20:00', cpu: 60, memory: 70, network: 45 },
+    ],
+    correlationData: [
+      { accuracy: 95, efficiency: 98, volume: 150 },
+      { accuracy: 92, efficiency: 94, volume: 140 },
+      { accuracy: 89, efficiency: 90, volume: 130 },
+      { accuracy: 96, efficiency: 99, volume: 160 },
+      { accuracy: 88, efficiency: 87, volume: 125 },
+      { accuracy: 94, efficiency: 96, volume: 145 },
     ]
   };
 
@@ -91,9 +114,14 @@ const AnalyticsReports = () => {
     }, 3000);
   };
 
+  const handleExportReport = () => {
+    // 模拟导出功能
+    console.log('导出报告...');
+  };
+
   return (
     <div className="p-4 pb-20 bg-gray-50 min-h-screen">
-      {/* 头部信息 */}
+      {/* 头部信息与导出功能 */}
       <Card className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
@@ -103,9 +131,41 @@ const AnalyticsReports = () => {
                 统一的数据治理分析与报告生成平台
               </p>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold">{reportData.summary.qualityScore}%</div>
-              <div className="text-sm text-blue-100">综合治理得分</div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="text-right">
+                <div className="text-3xl font-bold">{reportData.summary.qualityScore}%</div>
+                <div className="text-sm text-blue-100">综合治理得分</div>
+              </div>
+              {/* 导出功能提升到顶部 */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleGenerateReport}
+                  disabled={isGenerating}
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                >
+                  {isGenerating ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      生成中...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      生成报告
+                    </div>
+                  )}
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={handleExportReport}
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  导出PDF
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -115,8 +175,8 @@ const AnalyticsReports = () => {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="analytics">实时分析</TabsTrigger>
           <TabsTrigger value="trends">趋势监控</TabsTrigger>
-          <TabsTrigger value="reports">工作报告</TabsTrigger>
-          <TabsTrigger value="effectiveness">治理成效</TabsTrigger>
+          <TabsTrigger value="performance">性能监控</TabsTrigger>
+          <TabsTrigger value="correlation">关联分析</TabsTrigger>
         </TabsList>
 
         <TabsContent value="analytics" className="space-y-4">
@@ -171,103 +231,173 @@ const AnalyticsReports = () => {
             </CardContent>
           </Card>
 
-          {/* 分类处理成效 */}
+          {/* 分类处理成效 - 组合图表 */}
           <Card>
             <CardHeader>
               <CardTitle>分类处理统计</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={analyticsData.categoryAnalysis}>
+              <ResponsiveContainer width="100%" height={250}>
+                <ComposedChart data={analyticsData.categoryAnalysis}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="category" />
-                  <YAxis />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
                   <Tooltip />
-                  <Bar dataKey="success" fill="#22c55e" name="成功处理" />
-                  <Bar dataKey="processed" fill="#94a3b8" name="总数" />
-                </BarChart>
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="success" fill="#22c55e" name="成功处理" />
+                  <Bar yAxisId="left" dataKey="processed" fill="#94a3b8" name="总数" />
+                  <Line yAxisId="right" type="monotone" dataKey="efficiency" stroke="#8b5cf6" name="效率%" strokeWidth={2} />
+                </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="trends" className="space-y-4">
+          {/* 数据质量趋势 - 面积图 */}
           <Card>
             <CardHeader>
               <CardTitle>数据质量趋势</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={analyticsData.qualityTrends}>
+                <AreaChart data={analyticsData.qualityTrends}>
+                  <defs>
+                    <linearGradient id="colorCompleteness" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorAccuracy" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis domain={[80, 100]} />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="completeness" stroke="#3b82f6" name="完整性" strokeWidth={2} />
-                  <Line type="monotone" dataKey="accuracy" stroke="#22c55e" name="准确性" strokeWidth={2} />
+                  <Area type="monotone" dataKey="completeness" stackId="1" stroke="#3b82f6" fillOpacity={1} fill="url(#colorCompleteness)" name="完整性" />
+                  <Area type="monotone" dataKey="accuracy" stackId="2" stroke="#22c55e" fillOpacity={1} fill="url(#colorAccuracy)" name="准确性" />
                   <Line type="monotone" dataKey="consistency" stroke="#8b5cf6" name="一致性" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 数据量变化趋势 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                数据量变化趋势
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={analyticsData.qualityTrends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="volume" stroke="#f59e0b" strokeWidth={3} name="数据量" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="reports" className="space-y-4">
-          {/* 报告生成控制 */}
+        <TabsContent value="performance" className="space-y-4">
+          {/* 系统性能监控 */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
-                报告生成
+                <Activity className="h-5 w-5 text-blue-500" />
+                系统性能监控
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <label className="text-sm font-medium">报告周期</label>
-                    <select 
-                      value={reportPeriod}
-                      onChange={(e) => setReportPeriod(e.target.value)}
-                      className="ml-2 border rounded px-3 py-1 text-sm"
-                    >
-                      <option value="weekly">周报</option>
-                      <option value="monthly">月报</option>
-                      <option value="quarterly">季报</option>
-                      <option value="yearly">年报</option>
-                    </select>
-                  </div>
-                  <Badge variant="outline" className="text-green-600">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    2024年6月
-                  </Badge>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={analyticsData.performanceMetrics}>
+                  <defs>
+                    <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorMemory" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorNetwork" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area type="monotone" dataKey="cpu" stroke="#ef4444" fillOpacity={1} fill="url(#colorCpu)" name="CPU使用率%" />
+                  <Area type="monotone" dataKey="memory" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMemory)" name="内存使用率%" />
+                  <Area type="monotone" dataKey="network" stroke="#22c55e" fillOpacity={1} fill="url(#colorNetwork)" name="网络使用率%" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 实时状态指标 */}
+          <div className="grid grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Zap className="h-6 w-6 text-yellow-500" />
                 </div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleGenerateReport}
-                    disabled={isGenerating}
-                  >
-                    {isGenerating ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                        生成中...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
-                        生成报告
-                      </div>
-                    )}
-                  </Button>
-                  <Button size="sm" className="bg-green-500 hover:bg-green-600">
-                    <Download className="h-4 w-4 mr-1" />
-                    导出PDF
-                  </Button>
+                <div className="text-2xl font-bold text-yellow-600">1.2ms</div>
+                <div className="text-sm text-gray-600">平均响应时间</div>
+                <Progress value={85} className="mt-2" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Database className="h-6 w-6 text-blue-500" />
                 </div>
-              </div>
+                <div className="text-2xl font-bold text-blue-600">99.9%</div>
+                <div className="text-sm text-gray-600">系统可用性</div>
+                <Progress value={99.9} className="mt-2" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <CheckCircle className="h-6 w-6 text-green-500" />
+                </div>
+                <div className="text-2xl font-bold text-green-600">2,450</div>
+                <div className="text-sm text-gray-600">今日处理量</div>
+                <Progress value={78} className="mt-2" />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="correlation" className="space-y-4">
+          {/* 关联分析散点图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>准确率与效率关联分析</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <ScatterChart data={analyticsData.correlationData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="accuracy" name="准确率" unit="%" />
+                  <YAxis dataKey="efficiency" name="效率" unit="%" />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                  <Scatter name="数据点" dataKey="volume" fill="#8b5cf6" />
+                </ScatterChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
@@ -300,28 +430,6 @@ const AnalyticsReports = () => {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="effectiveness" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>治理效果趋势分析</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={reportData.trends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis domain={[80, 100]} />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="quality" stroke="#3b82f6" name="数据质量" strokeWidth={2} />
-                  <Line type="monotone" dataKey="governance" stroke="#22c55e" name="治理覆盖" strokeWidth={2} />
-                  <Line type="monotone" dataKey="efficiency" stroke="#8b5cf6" name="处理效率" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
