@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,11 +42,7 @@ import {
   Area,
   ScatterChart,
   Scatter,
-  ComposedChart,
-  FunnelChart,
-  Funnel,
-  LabelList,
-  Treemap
+  ComposedChart
 } from 'recharts';
 
 const AnalyticsReports = () => {
@@ -99,29 +96,22 @@ const AnalyticsReports = () => {
       { accuracy: 88, efficiency: 87, volume: 125 },
       { accuracy: 94, efficiency: 96, volume: 145 },
     ],
-    funnelData: [
-      { name: '数据接收', value: 100000, fill: '#3b82f6' },
-      { name: '初步筛选', value: 85000, fill: '#22c55e' },
-      { name: '质量检测', value: 72000, fill: '#f59e0b' },
-      { name: '自动处理', value: 68000, fill: '#8b5cf6' },
-      { name: '人工审核', value: 65000, fill: '#ef4444' },
-      { name: '最终完成', value: 63000, fill: '#06b6d4' }
+    // 6维度质量分析数据
+    qualityDimensions: [
+      { dimension: '完整性', current: 96.5, target: 98, benchmark: 92 },
+      { dimension: '准确性', current: 94.2, target: 96, benchmark: 88 },
+      { dimension: '一致性', current: 91.8, target: 95, benchmark: 85 },
+      { dimension: '时效性', current: 93.6, target: 97, benchmark: 89 },
+      { dimension: '有效性', current: 89.4, target: 93, benchmark: 82 },
+      { dimension: '唯一性', current: 97.8, target: 99, benchmark: 94 }
     ],
-    treeMapData: [
-      { name: '手机号处理', size: 45000, children: [
-        { name: '格式化', size: 25000 },
-        { name: '验证', size: 15000 },
-        { name: '去重', size: 5000 }
-      ]},
-      { name: '地址处理', size: 35000, children: [
-        { name: '标准化', size: 20000 },
-        { name: '补全', size: 10000 },
-        { name: '纠错', size: 5000 }
-      ]},
-      { name: '合同处理', size: 20000, children: [
-        { name: '识别', size: 12000 },
-        { name: '校验', size: 8000 }
-      ]}
+    qualityTrendsByDimension: [
+      { date: '2024-01', completeness: 88, accuracy: 89, consistency: 85, timeliness: 87, validity: 83, uniqueness: 94 },
+      { date: '2024-02', completeness: 90, accuracy: 91, consistency: 87, timeliness: 89, validity: 85, uniqueness: 95 },
+      { date: '2024-03', completeness: 92, accuracy: 92, consistency: 89, timeliness: 91, validity: 87, uniqueness: 96 },
+      { date: '2024-04', completeness: 94, accuracy: 93, consistency: 90, timeliness: 92, validity: 88, uniqueness: 97 },
+      { date: '2024-05', completeness: 95, accuracy: 94, consistency: 91, timeliness: 93, validity: 89, uniqueness: 97.5 },
+      { date: '2024-06', completeness: 96.5, accuracy: 94.2, consistency: 91.8, timeliness: 93.6, validity: 89.4, uniqueness: 97.8 }
     ]
   };
 
@@ -208,11 +198,12 @@ const AnalyticsReports = () => {
       </Card>
 
       <Tabs defaultValue="trends" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="trends">数据趋势</TabsTrigger>
           <TabsTrigger value="analytics">实时分析</TabsTrigger>
+          <TabsTrigger value="quality">质量分析</TabsTrigger>
           <TabsTrigger value="performance">性能监控</TabsTrigger>
-          <TabsTrigger value="correlation">关联分析</TabsTrigger>
+          <TabsTrigger value="report">完整报告</TabsTrigger>
         </TabsList>
 
         <TabsContent value="trends" className="space-y-4">
@@ -238,27 +229,6 @@ const AnalyticsReports = () => {
                   <Bar yAxisId="left" dataKey="failed" stackId="a" fill="#ef4444" name="失败" />
                   <Line yAxisId="right" type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={3} name="总量" />
                 </ComposedChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* 处理流程漏斗图 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>数据处理流程分析</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <FunnelChart>
-                  <Tooltip />
-                  <Funnel
-                    dataKey="value"
-                    data={analyticsData.funnelData}
-                    isAnimationActive
-                  >
-                    <LabelList position="center" fill="#fff" stroke="none" />
-                  </Funnel>
-                </FunnelChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
@@ -294,25 +264,6 @@ const AnalyticsReports = () => {
                   <Area type="monotone" dataKey="processed" stackId="2" stroke="#82ca9d" fillOpacity={1} fill="url(#colorProcessed)" name="处理成功" />
                   <Area type="monotone" dataKey="errors" stackId="3" stroke="#ff7c7c" fillOpacity={1} fill="url(#colorErrors)" name="错误数据" />
                 </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* 处理类别树状图 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>处理类别分布</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <Treemap
-                  data={analyticsData.treeMapData}
-                  dataKey="size"
-                  stroke="#fff"
-                  fill="#8884d8"
-                >
-                  <Tooltip />
-                </Treemap>
               </ResponsiveContainer>
             </CardContent>
           </Card>
@@ -447,6 +398,77 @@ const AnalyticsReports = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="quality" className="space-y-4">
+          {/* 6维度质量分析雷达图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-500" />
+                6维度数据质量分析
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={350}>
+                <RadarChart data={analyticsData.qualityDimensions}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="dimension" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                  <Radar name="当前水平" dataKey="current" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
+                  <Radar name="目标水平" dataKey="target" stroke="#22c55e" fill="#22c55e" fillOpacity={0.3} />
+                  <Radar name="行业基准" dataKey="benchmark" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.2} />
+                  <Legend />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 6维度质量趋势线图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>质量维度趋势分析</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={350}>
+                <LineChart data={analyticsData.qualityTrendsByDimension}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[80, 100]} />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="completeness" stroke="#3b82f6" name="完整性" strokeWidth={2} />
+                  <Line type="monotone" dataKey="accuracy" stroke="#22c55e" name="准确性" strokeWidth={2} />
+                  <Line type="monotone" dataKey="consistency" stroke="#8b5cf6" name="一致性" strokeWidth={2} />
+                  <Line type="monotone" dataKey="timeliness" stroke="#f59e0b" name="时效性" strokeWidth={2} />
+                  <Line type="monotone" dataKey="validity" stroke="#ef4444" name="有效性" strokeWidth={2} />
+                  <Line type="monotone" dataKey="uniqueness" stroke="#06b6d4" name="唯一性" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 质量维度对比柱状图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>质量维度对比分析</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={analyticsData.qualityDimensions}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="dimension" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="current" fill="#3b82f6" name="当前水平" />
+                  <Bar dataKey="target" fill="#22c55e" name="目标水平" />
+                  <Bar dataKey="benchmark" fill="#f59e0b" name="行业基准" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="performance" className="space-y-4">
           {/* 系统性能监控 */}
           <Card>
@@ -508,52 +530,127 @@ const AnalyticsReports = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="correlation" className="space-y-4">
-          {/* 关联分析散点图 */}
+        <TabsContent value="report" className="space-y-4">
+          {/* 完整数据治理报告 */}
           <Card>
             <CardHeader>
-              <CardTitle>准确率与效率关联分析</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-500" />
+                数据治理分析报告
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <ScatterChart data={analyticsData.correlationData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="accuracy" name="准确率" unit="%" />
-                  <YAxis dataKey="efficiency" name="效率" unit="%" />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                  <Scatter name="数据点" dataKey="volume" fill="#8b5cf6" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            <CardContent className="space-y-6">
+              {/* 执行摘要 */}
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h3 className="text-lg font-bold mb-2">执行摘要</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  本报告基于2024年6月数据治理工作的全面分析，涵盖数据质量、处理效率、系统性能等多个维度。
+                  通过AI智能分析，当前数据治理综合得分达到92.1%，较上月提升2.3个百分点，整体治理水平持续向好。
+                </p>
+              </div>
 
-          {/* 本月治理亮点 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>本月治理亮点</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <div>
-                    <div className="font-medium">AI自动修复率突破90%</div>
-                    <div className="text-sm text-gray-600">较上月提升5.2个百分点</div>
+              {/* 关键发现 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">关键发现</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-green-800">数据质量显著提升</div>
+                      <div className="text-sm text-green-700">6个质量维度均有改善，完整性达到96.5%，准确性达到94.2%</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-blue-800">处理效率持续优化</div>
+                      <div className="text-sm text-blue-700">AI自动化处理率达到90.2%，平均处理时间缩短至1.2秒</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-purple-800">系统性能稳定</div>
+                      <div className="text-sm text-purple-700">系统可用性达到99.9%，日处理量突破240万条</div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="font-medium">数据完整性达到历史新高</div>
-                    <div className="text-sm text-gray-600">完整性指标提升至96.5%</div>
+              </div>
+
+              {/* 数据治理成效 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">数据治理成效</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">132万</div>
+                    <div className="text-sm text-gray-600">本月处理数据量</div>
+                    <div className="text-xs text-blue-600 mt-1">↗ 环比增长 15.2%</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">4,267</div>
+                    <div className="text-sm text-gray-600">问题修复数量</div>
+                    <div className="text-xs text-green-600 mt-1">↗ 自动修复率 90%</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">95.8%</div>
+                    <div className="text-sm text-gray-600">综合处理效率</div>
+                    <div className="text-xs text-purple-600 mt-1">↗ 达到目标水平</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                  <Clock className="h-5 w-5 text-purple-600" />
-                  <div>
-                    <div className="font-medium">平均处理时间缩短至1.2秒</div>
-                    <div className="text-sm text-gray-600">处理效率提升23%</div>
+              </div>
+
+              {/* 问题与建议 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">问题识别与改进建议</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-yellow-800">有效性维度待提升</div>
+                      <div className="text-sm text-yellow-700">当前89.4%，建议加强业务规则验证和实时监控</div>
+                    </div>
                   </div>
+                  <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-orange-800">峰值时段性能优化</div>
+                      <div className="text-sm text-orange-700">建议在12-16点高峰期增加资源配置，提升处理能力</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 下月工作计划 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">下月工作计划</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>完善数据有效性检验规则，目标提升至93%</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>优化AI模型算法，提升自动修复准确率至95%</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span>建立实时监控预警机制，降低系统响应时间</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span>扩大治理覆盖范围，新增3个业务系统接入</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 报告生成信息 */}
+              <div className="border-t pt-4 text-xs text-gray-500">
+                <div className="flex justify-between">
+                  <span>报告生成时间：2024年6月30日 14:30</span>
+                  <span>数据截止时间：2024年6月29日 23:59</span>
+                </div>
+                <div className="mt-1">
+                  <span>报告版本：v2.4.1 | 数据来源：数据治理平台 | 分析引擎：AI智能分析</span>
                 </div>
               </div>
             </CardContent>
