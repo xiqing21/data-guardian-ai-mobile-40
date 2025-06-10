@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -197,14 +196,141 @@ const AnalyticsReports = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="trends" className="space-y-4">
+      <Tabs defaultValue="report" className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="report">完整报告</TabsTrigger>
           <TabsTrigger value="trends">数据趋势</TabsTrigger>
           <TabsTrigger value="analytics">实时分析</TabsTrigger>
           <TabsTrigger value="quality">质量分析</TabsTrigger>
           <TabsTrigger value="performance">性能监控</TabsTrigger>
-          <TabsTrigger value="report">完整报告</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="report" className="space-y-4">
+          {/* 完整数据治理报告 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-500" />
+                数据治理分析报告
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* 执行摘要 */}
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h3 className="text-lg font-bold mb-2">执行摘要</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  本报告基于2024年6月数据治理工作的全面分析，涵盖数据质量、处理效率、系统性能等多个维度。
+                  通过AI智能分析，当前数据治理综合得分达到92.1%，较上月提升2.3个百分点，整体治理水平持续向好。
+                </p>
+              </div>
+
+              {/* 关键发现 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">关键发现</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-green-800">数据质量显著提升</div>
+                      <div className="text-sm text-green-700">6个质量维度均有改善，完整性达到96.5%，准确性达到94.2%</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-blue-800">处理效率持续优化</div>
+                      <div className="text-sm text-blue-700">AI自动化处理率达到90.2%，平均处理时间缩短至1.2秒</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-purple-800">系统性能稳定</div>
+                      <div className="text-sm text-purple-700">系统可用性达到99.9%，日处理量突破240万条</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 数据治理成效 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">数据治理成效</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">132万</div>
+                    <div className="text-sm text-gray-600">本月处理数据量</div>
+                    <div className="text-xs text-blue-600 mt-1">↗ 环比增长 15.2%</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">4,267</div>
+                    <div className="text-sm text-gray-600">问题修复数量</div>
+                    <div className="text-xs text-green-600 mt-1">↗ 自动修复率 90%</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">95.8%</div>
+                    <div className="text-sm text-gray-600">综合处理效率</div>
+                    <div className="text-xs text-purple-600 mt-1">↗ 达到目标水平</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 问题与建议 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">问题识别与改进建议</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-yellow-800">有效性维度待提升</div>
+                      <div className="text-sm text-yellow-700">当前89.4%，建议加强业务规则验证和实时监控</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <div className="font-medium text-orange-800">峰值时段性能优化</div>
+                      <div className="text-sm text-orange-700">建议在12-16点高峰期增加资源配置，提升处理能力</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 下月工作计划 */}
+              <div>
+                <h3 className="text-lg font-bold mb-3">下月工作计划</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>完善数据有效性检验规则，目标提升至93%</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>优化AI模型算法，提升自动修复准确率至95%</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span>建立实时监控预警机制，降低系统响应时间</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span>扩大治理覆盖范围，新增3个业务系统接入</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 报告生成信息 */}
+              <div className="border-t pt-4 text-xs text-gray-500">
+                <div className="flex justify-between">
+                  <span>报告生成时间：2024年6月30日 14:30</span>
+                  <span>数据截止时间：2024年6月29日 23:59</span>
+                </div>
+                <div className="mt-1">
+                  <span>报告版本：v2.4.1 | 数据来源：数据治理平台 | 分析引擎：AI智能分析</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="trends" className="space-y-4">
           {/* 数据量变化趋势 - 多维度堆叠柱状图 */}
@@ -528,133 +654,6 @@ const AnalyticsReports = () => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        <TabsContent value="report" className="space-y-4">
-          {/* 完整数据治理报告 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
-                数据治理分析报告
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* 执行摘要 */}
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h3 className="text-lg font-bold mb-2">执行摘要</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  本报告基于2024年6月数据治理工作的全面分析，涵盖数据质量、处理效率、系统性能等多个维度。
-                  通过AI智能分析，当前数据治理综合得分达到92.1%，较上月提升2.3个百分点，整体治理水平持续向好。
-                </p>
-              </div>
-
-              {/* 关键发现 */}
-              <div>
-                <h3 className="text-lg font-bold mb-3">关键发现</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-green-800">数据质量显著提升</div>
-                      <div className="text-sm text-green-700">6个质量维度均有改善，完整性达到96.5%，准确性达到94.2%</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-blue-800">处理效率持续优化</div>
-                      <div className="text-sm text-blue-700">AI自动化处理率达到90.2%，平均处理时间缩短至1.2秒</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-                    <BarChart3 className="h-5 w-5 text-purple-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-purple-800">系统性能稳定</div>
-                      <div className="text-sm text-purple-700">系统可用性达到99.9%，日处理量突破240万条</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 数据治理成效 */}
-              <div>
-                <h3 className="text-lg font-bold mb-3">数据治理成效</h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">132万</div>
-                    <div className="text-sm text-gray-600">本月处理数据量</div>
-                    <div className="text-xs text-blue-600 mt-1">↗ 环比增长 15.2%</div>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">4,267</div>
-                    <div className="text-sm text-gray-600">问题修复数量</div>
-                    <div className="text-xs text-green-600 mt-1">↗ 自动修复率 90%</div>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">95.8%</div>
-                    <div className="text-sm text-gray-600">综合处理效率</div>
-                    <div className="text-xs text-purple-600 mt-1">↗ 达到目标水平</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 问题与建议 */}
-              <div>
-                <h3 className="text-lg font-bold mb-3">问题识别与改进建议</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
-                    <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-yellow-800">有效性维度待提升</div>
-                      <div className="text-sm text-yellow-700">当前89.4%，建议加强业务规则验证和实时监控</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-orange-800">峰值时段性能优化</div>
-                      <div className="text-sm text-orange-700">建议在12-16点高峰期增加资源配置，提升处理能力</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 下月工作计划 */}
-              <div>
-                <h3 className="text-lg font-bold mb-3">下月工作计划</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>完善数据有效性检验规则，目标提升至93%</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>优化AI模型算法，提升自动修复准确率至95%</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span>建立实时监控预警机制，降低系统响应时间</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    <span>扩大治理覆盖范围，新增3个业务系统接入</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 报告生成信息 */}
-              <div className="border-t pt-4 text-xs text-gray-500">
-                <div className="flex justify-between">
-                  <span>报告生成时间：2024年6月30日 14:30</span>
-                  <span>数据截止时间：2024年6月29日 23:59</span>
-                </div>
-                <div className="mt-1">
-                  <span>报告版本：v2.4.1 | 数据来源：数据治理平台 | 分析引擎：AI智能分析</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

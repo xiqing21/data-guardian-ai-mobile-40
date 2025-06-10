@@ -25,7 +25,8 @@ import {
   Bot,
   Zap,
   Brain,
-  Target
+  Target,
+  Activity
 } from 'lucide-react';
 import {
   RadarChart,
@@ -143,58 +144,68 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
-      {/* 我的工作台 - 整合AI智能体信息 */}
-      <Card className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold">我的智能工作台</h2>
-              <p className="text-blue-100 text-sm">AI协作 · 高效处理 · 智能分析</p>
+      {/* 优化后的智能工作台 */}
+      <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
+        <CardContent className="p-5 relative z-10">
+          {/* 背景装饰元素 */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div>
+          
+          {/* 头部区域 */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Brain className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">AI智能工作台</h2>
+                <p className="text-indigo-100 text-sm">高效协作 · 智能分析 · 实时监控</p>
+              </div>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold">{employeeTasks.efficiency}%</div>
-              <div className="text-xs text-blue-100">工作效率</div>
+              <div className="text-xs text-indigo-100">工作效率</div>
             </div>
           </div>
           
-          {/* 任务统计网格 */}
-          <div className="grid grid-cols-4 gap-3 mb-4">
-            <div className="text-center bg-white/20 rounded-lg p-3">
-              <div className="text-xl font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
-              <div className="text-xs text-blue-100">待处理</div>
+          {/* 核心数据网格 */}
+          <div className="grid grid-cols-4 gap-3 mb-5">
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div className="text-lg font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
+              <div className="text-xs text-indigo-100">待处理</div>
             </div>
-            <div className="text-center bg-white/20 rounded-lg p-3">
-              <div className="text-xl font-bold text-red-200">{employeeTasks.urgentTasks}</div>
-              <div className="text-xs text-blue-100">紧急任务</div>
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div className="text-lg font-bold text-red-200">{employeeTasks.urgentTasks}</div>
+              <div className="text-xs text-indigo-100">紧急</div>
             </div>
-            <div className="text-center bg-white/20 rounded-lg p-3">
-              <div className="text-xl font-bold text-green-200">{employeeTasks.completedToday}</div>
-              <div className="text-xs text-blue-100">今日完成</div>
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div className="text-lg font-bold text-green-200">{employeeTasks.completedToday}</div>
+              <div className="text-xs text-indigo-100">已完成</div>
             </div>
-            <div className="text-center bg-white/20 rounded-lg p-3">
-              <div className="text-xl font-bold text-purple-200">{aiAgentStats.activeAgents}</div>
-              <div className="text-xs text-blue-100">AI协作</div>
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div className="text-lg font-bold text-cyan-200">{aiAgentStats.activeAgents}</div>
+              <div className="text-xs text-indigo-100">AI协作</div>
             </div>
           </div>
 
-          {/* AI智能体协作状态 */}
-          <div className="bg-white/10 rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-3 mb-2">
-              <Brain className="h-5 w-5 text-purple-200" />
-              <span className="text-sm font-medium">AI智能体协作状态</span>
-              <Badge className="bg-green-500 text-xs">运行中</Badge>
+          {/* AI智能体状态 */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Activity className="h-4 w-4 text-purple-200" />
+              <span className="text-sm font-medium">AI智能体实时状态</span>
+              <Badge className="bg-green-500 text-xs px-2 py-1">运行中</Badge>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="grid grid-cols-3 gap-3 text-xs">
               <div className="text-center">
-                <div className="text-lg font-bold text-yellow-200">{aiAgentStats.processingTasks}</div>
+                <div className="text-base font-bold text-yellow-200">{aiAgentStats.processingTasks}</div>
                 <div className="text-purple-100">处理中</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-cyan-200">{aiAgentStats.completionRate}%</div>
+                <div className="text-base font-bold text-cyan-200">{aiAgentStats.completionRate}%</div>
                 <div className="text-purple-100">完成率</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-green-200">{aiAgentStats.learningProgress}%</div>
+                <div className="text-base font-bold text-green-200">{aiAgentStats.learningProgress}%</div>
                 <div className="text-purple-100">学习进度</div>
               </div>
             </div>
@@ -204,31 +215,31 @@ const Index = () => {
           <div className="grid grid-cols-3 gap-2">
             <Button 
               onClick={() => setActiveTab('tasks')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
+              className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
             >
-              <ArrowRight className="h-3 w-3 mr-1" />
+              <Target className="h-3 w-3 mr-1" />
               处理任务
             </Button>
             <Button 
-              onClick={() => setActiveTab('tasks')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
+              onClick={() => setActiveTab('ai-assistant')}
+              className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
             >
-              <Plus className="h-3 w-3 mr-1" />
-              新建任务
+              <Bot className="h-3 w-3 mr-1" />
+              AI助手
             </Button>
             <Button 
               onClick={() => setActiveTab('analytics')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
+              className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
             >
               <ChartBar className="h-3 w-3 mr-1" />
-              查看报告
+              分析报告
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* 今日已完成任务展示 */}
-      <Card>
+      {/* 今日完成任务 - 简化展示 */}
+      <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -245,17 +256,17 @@ const Index = () => {
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
                 <div>
                   <div className="text-sm font-medium">地址信息补全</div>
-                  <div className="text-xs text-gray-500">完成时间: 13:45</div>
+                  <div className="text-xs text-gray-500">13:45完成</div>
                 </div>
               </div>
-              <Badge className="bg-green-500 text-xs">AI自动完成</Badge>
+              <Badge className="bg-green-500 text-xs">AI自动</Badge>
             </div>
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 text-blue-500" />
                 <div>
                   <div className="text-sm font-medium">证照有效期检查</div>
-                  <div className="text-xs text-gray-500">完成时间: 11:20</div>
+                  <div className="text-xs text-gray-500">11:20完成</div>
                 </div>
               </div>
               <Badge className="bg-blue-500 text-xs">人工确认</Badge>
@@ -265,7 +276,7 @@ const Index = () => {
       </Card>
 
       {/* 数据质量概览 - 简化显示 */}
-      <Card>
+      <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <Database className="h-4 w-4 text-blue-500" />

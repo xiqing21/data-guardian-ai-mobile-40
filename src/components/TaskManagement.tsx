@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { Plus, ArrowLeft, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import TaskDetail from './TaskDetail';
 import AIProcessingDetail from './AIProcessingDetail';
-import TaskOverview from './TaskOverview';
+import IntegratedTaskOverview from './IntegratedTaskOverview';
 import TaskCategoryFilter from './TaskCategoryFilter';
 import TaskCard from './TaskCard';
 import TaskConfirmation from './TaskConfirmation';
@@ -419,8 +420,8 @@ const TaskManagement = () => {
 
   return (
     <div className="p-4 pb-20 bg-gray-50 min-h-screen">
-      {/* 使用整合后的TaskOverview组件 */}
-      <TaskOverview
+      {/* 使用整合后的IntegratedTaskOverview组件 */}
+      <IntegratedTaskOverview
         overallProgress={overallProgress}
         completedTasks={completedTasks}
         inProgressTasks={inProgressTasks}
