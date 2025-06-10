@@ -42,7 +42,11 @@ import {
   Area,
   ScatterChart,
   Scatter,
-  ComposedChart
+  ComposedChart,
+  FunnelChart,
+  Funnel,
+  LabelList,
+  TreeMap
 } from 'recharts';
 
 const AnalyticsReports = () => {
@@ -52,11 +56,21 @@ const AnalyticsReports = () => {
   // 分析数据
   const analyticsData = {
     qualityTrends: [
-      { date: '01-01', completeness: 88, accuracy: 92, consistency: 85, volume: 120000 },
-      { date: '01-08', completeness: 90, accuracy: 93, consistency: 87, volume: 135000 },
-      { date: '01-15', completeness: 92, accuracy: 94, consistency: 89, volume: 142000 },
-      { date: '01-22', completeness: 94, accuracy: 95, consistency: 91, volume: 158000 },
-      { date: '01-29', completeness: 95, accuracy: 96, consistency: 92, volume: 165000 }
+      { date: '01-01', completeness: 88, accuracy: 92, consistency: 85, volume: 120000, processed: 115000, errors: 5000 },
+      { date: '01-08', completeness: 90, accuracy: 93, consistency: 87, volume: 135000, processed: 130000, errors: 5000 },
+      { date: '01-15', completeness: 92, accuracy: 94, consistency: 89, volume: 142000, processed: 138000, errors: 4000 },
+      { date: '01-22', completeness: 94, accuracy: 95, consistency: 91, volume: 158000, processed: 155000, errors: 3000 },
+      { date: '01-29', completeness: 95, accuracy: 96, consistency: 92, volume: 165000, processed: 163000, errors: 2000 },
+      { date: '02-05', completeness: 96, accuracy: 97, consistency: 93, volume: 172000, processed: 170000, errors: 2000 },
+      { date: '02-12', completeness: 97, accuracy: 98, consistency: 94, volume: 185000, processed: 183000, errors: 2000 }
+    ],
+    volumeTrends: [
+      { month: '1月', total: 850000, processed: 820000, pending: 30000, failed: 5000 },
+      { month: '2月', total: 920000, processed: 895000, pending: 25000, failed: 4000 },
+      { month: '3月', total: 1050000, processed: 1020000, pending: 30000, failed: 3500 },
+      { month: '4月', total: 1180000, processed: 1155000, pending: 25000, failed: 3000 },
+      { month: '5月', total: 1250000, processed: 1230000, pending: 20000, failed: 2500 },
+      { month: '6月', total: 1320000, processed: 1300000, pending: 20000, failed: 2000 }
     ],
     categoryAnalysis: [
       { category: '手机号', processed: 12470, success: 11223, rate: 90.0, efficiency: 95 },
@@ -71,12 +85,12 @@ const AnalyticsReports = () => {
       { name: '已修复', value: 2, color: '#8b5cf6' }
     ],
     performanceMetrics: [
-      { time: '00:00', cpu: 45, memory: 60, network: 30 },
-      { time: '04:00', cpu: 35, memory: 55, network: 25 },
-      { time: '08:00', cpu: 75, memory: 80, network: 60 },
-      { time: '12:00', cpu: 85, memory: 85, network: 70 },
-      { time: '16:00', cpu: 90, memory: 90, network: 80 },
-      { time: '20:00', cpu: 60, memory: 70, network: 45 },
+      { time: '00:00', cpu: 45, memory: 60, network: 30, throughput: 1200 },
+      { time: '04:00', cpu: 35, memory: 55, network: 25, throughput: 800 },
+      { time: '08:00', cpu: 75, memory: 80, network: 60, throughput: 2500 },
+      { time: '12:00', cpu: 85, memory: 85, network: 70, throughput: 3200 },
+      { time: '16:00', cpu: 90, memory: 90, network: 80, throughput: 3800 },
+      { time: '20:00', cpu: 60, memory: 70, network: 45, throughput: 1800 },
     ],
     correlationData: [
       { accuracy: 95, efficiency: 98, volume: 150 },
@@ -85,6 +99,30 @@ const AnalyticsReports = () => {
       { accuracy: 96, efficiency: 99, volume: 160 },
       { accuracy: 88, efficiency: 87, volume: 125 },
       { accuracy: 94, efficiency: 96, volume: 145 },
+    ],
+    funnelData: [
+      { name: '数据接收', value: 100000, fill: '#3b82f6' },
+      { name: '初步筛选', value: 85000, fill: '#22c55e' },
+      { name: '质量检测', value: 72000, fill: '#f59e0b' },
+      { name: '自动处理', value: 68000, fill: '#8b5cf6' },
+      { name: '人工审核', value: 65000, fill: '#ef4444' },
+      { name: '最终完成', value: 63000, fill: '#06b6d4' }
+    ],
+    treeMapData: [
+      { name: '手机号处理', size: 45000, children: [
+        { name: '格式化', size: 25000 },
+        { name: '验证', size: 15000 },
+        { name: '去重', size: 5000 }
+      ]},
+      { name: '地址处理', size: 35000, children: [
+        { name: '标准化', size: 20000 },
+        { name: '补全', size: 10000 },
+        { name: '纠错', size: 5000 }
+      ]},
+      { name: '合同处理', size: 20000, children: [
+        { name: '识别', size: 12000 },
+        { name: '校验', size: 8000 }
+      ]}
     ]
   };
 
@@ -115,7 +153,6 @@ const AnalyticsReports = () => {
   };
 
   const handleExportReport = () => {
-    // 模拟导出功能
     console.log('导出报告...');
   };
 
@@ -136,7 +173,7 @@ const AnalyticsReports = () => {
                 <div className="text-3xl font-bold">{reportData.summary.qualityScore}%</div>
                 <div className="text-sm text-blue-100">综合治理得分</div>
               </div>
-              {/* 导出功能提升到顶部 */}
+              {/* 导出功能 */}
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
@@ -171,13 +208,117 @@ const AnalyticsReports = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="analytics" className="space-y-4">
+      <Tabs defaultValue="trends" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="trends">数据趋势</TabsTrigger>
           <TabsTrigger value="analytics">实时分析</TabsTrigger>
-          <TabsTrigger value="trends">趋势监控</TabsTrigger>
           <TabsTrigger value="performance">性能监控</TabsTrigger>
           <TabsTrigger value="correlation">关联分析</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="trends" className="space-y-4">
+          {/* 数据量变化趋势 - 多维度堆叠柱状图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                数据量变化趋势分析
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <ComposedChart data={analyticsData.volumeTrends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="processed" stackId="a" fill="#22c55e" name="已处理" />
+                  <Bar yAxisId="left" dataKey="pending" stackId="a" fill="#f59e0b" name="待处理" />
+                  <Bar yAxisId="left" dataKey="failed" stackId="a" fill="#ef4444" name="失败" />
+                  <Line yAxisId="right" type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={3} name="总量" />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 处理流程漏斗图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>数据处理流程分析</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <FunnelChart>
+                  <Tooltip />
+                  <Funnel
+                    dataKey="value"
+                    data={analyticsData.funnelData}
+                    isAnimationActive
+                  >
+                    <LabelList position="center" fill="#fff" stroke="none" />
+                  </Funnel>
+                </FunnelChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 数据质量趋势 - 改进的面积图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>数据质量变化趋势</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={analyticsData.qualityTrends}>
+                  <defs>
+                    <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorProcessed" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorErrors" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ff7c7c" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ff7c7c" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area type="monotone" dataKey="volume" stackId="1" stroke="#8884d8" fillOpacity={1} fill="url(#colorVolume)" name="数据总量" />
+                  <Area type="monotone" dataKey="processed" stackId="2" stroke="#82ca9d" fillOpacity={1} fill="url(#colorProcessed)" name="处理成功" />
+                  <Area type="monotone" dataKey="errors" stackId="3" stroke="#ff7c7c" fillOpacity={1} fill="url(#colorErrors)" name="错误数据" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 处理类别树状图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>处理类别分布</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <TreeMap
+                  data={analyticsData.treeMapData}
+                  dataKey="size"
+                  ratio={4/3}
+                  stroke="#fff"
+                  fill="#8884d8"
+                >
+                  <Tooltip />
+                </TreeMap>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
           {/* 关键指标概览 */}
@@ -254,60 +395,6 @@ const AnalyticsReports = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="trends" className="space-y-4">
-          {/* 数据质量趋势 - 面积图 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>数据质量趋势</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={analyticsData.qualityTrends}>
-                  <defs>
-                    <linearGradient id="colorCompleteness" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorAccuracy" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[80, 100]} />
-                  <Tooltip />
-                  <Legend />
-                  <Area type="monotone" dataKey="completeness" stackId="1" stroke="#3b82f6" fillOpacity={1} fill="url(#colorCompleteness)" name="完整性" />
-                  <Area type="monotone" dataKey="accuracy" stackId="2" stroke="#22c55e" fillOpacity={1} fill="url(#colorAccuracy)" name="准确性" />
-                  <Line type="monotone" dataKey="consistency" stroke="#8b5cf6" name="一致性" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* 数据量变化趋势 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-green-500" />
-                数据量变化趋势
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={analyticsData.qualityTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="volume" stroke="#f59e0b" strokeWidth={3} name="数据量" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="performance" className="space-y-4">
           {/* 系统性能监控 */}
           <Card>
@@ -319,30 +406,17 @@ const AnalyticsReports = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={analyticsData.performanceMetrics}>
-                  <defs>
-                    <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorMemory" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorNetwork" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
+                <ComposedChart data={analyticsData.performanceMetrics}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="time" />
-                  <YAxis />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
                   <Tooltip />
                   <Legend />
-                  <Area type="monotone" dataKey="cpu" stroke="#ef4444" fillOpacity={1} fill="url(#colorCpu)" name="CPU使用率%" />
-                  <Area type="monotone" dataKey="memory" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMemory)" name="内存使用率%" />
-                  <Area type="monotone" dataKey="network" stroke="#22c55e" fillOpacity={1} fill="url(#colorNetwork)" name="网络使用率%" />
-                </AreaChart>
+                  <Area yAxisId="left" type="monotone" dataKey="cpu" fill="#ef4444" fillOpacity={0.6} name="CPU使用率%" />
+                  <Area yAxisId="left" type="monotone" dataKey="memory" fill="#3b82f6" fillOpacity={0.6} name="内存使用率%" />
+                  <Line yAxisId="right" type="monotone" dataKey="throughput" stroke="#22c55e" strokeWidth={3} name="吞吐量" />
+                </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>

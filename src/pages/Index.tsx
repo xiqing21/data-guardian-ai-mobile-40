@@ -143,66 +143,13 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
-      {/* AI智能体状态卡片 */}
-      <Card className="bg-gradient-to-r from-purple-500 to-pink-600 text-white">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <Brain className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">AI智能体群</h2>
-                <p className="text-purple-100 text-sm">人工智能协作处理中心</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold">{aiAgentStats.completionRate}%</div>
-              <div className="text-xs text-purple-100">智能完成率</div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-200">{aiAgentStats.activeAgents}</div>
-              <div className="text-xs text-purple-100">活跃智能体</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-200">{aiAgentStats.processingTasks}</div>
-              <div className="text-xs text-purple-100">处理中任务</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-200">{aiAgentStats.learningProgress}%</div>
-              <div className="text-xs text-purple-100">学习进度</div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            <Button 
-              onClick={() => setActiveTab('ai-assistant')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            >
-              <Bot className="h-4 w-4 mr-2" />
-              AI协作台
-            </Button>
-            <Button 
-              onClick={() => setActiveTab('analytics')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            >
-              <Target className="h-4 w-4 mr-2" />
-              智能分析
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 员工工作台 */}
+      {/* 我的工作台 - 整合AI智能体信息 */}
       <Card className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold">我的工作台</h2>
-              <p className="text-blue-100 text-sm">今日任务处理概览</p>
+              <h2 className="text-xl font-bold">我的智能工作台</h2>
+              <p className="text-blue-100 text-sm">AI协作 · 高效处理 · 智能分析</p>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold">{employeeTasks.efficiency}%</div>
@@ -210,35 +157,71 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
+          {/* 任务统计网格 */}
+          <div className="grid grid-cols-4 gap-3 mb-4">
+            <div className="text-center bg-white/20 rounded-lg p-3">
+              <div className="text-xl font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
               <div className="text-xs text-blue-100">待处理</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-200">{employeeTasks.urgentTasks}</div>
+            <div className="text-center bg-white/20 rounded-lg p-3">
+              <div className="text-xl font-bold text-red-200">{employeeTasks.urgentTasks}</div>
               <div className="text-xs text-blue-100">紧急任务</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-200">{employeeTasks.completedToday}</div>
+            <div className="text-center bg-white/20 rounded-lg p-3">
+              <div className="text-xl font-bold text-green-200">{employeeTasks.completedToday}</div>
               <div className="text-xs text-blue-100">今日完成</div>
+            </div>
+            <div className="text-center bg-white/20 rounded-lg p-3">
+              <div className="text-xl font-bold text-purple-200">{aiAgentStats.activeAgents}</div>
+              <div className="text-xs text-blue-100">AI协作</div>
+            </div>
+          </div>
+
+          {/* AI智能体协作状态 */}
+          <div className="bg-white/10 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Brain className="h-5 w-5 text-purple-200" />
+              <span className="text-sm font-medium">AI智能体协作状态</span>
+              <Badge className="bg-green-500 text-xs">运行中</Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <div className="text-lg font-bold text-yellow-200">{aiAgentStats.processingTasks}</div>
+                <div className="text-purple-100">处理中</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-cyan-200">{aiAgentStats.completionRate}%</div>
+                <div className="text-purple-100">完成率</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-green-200">{aiAgentStats.learningProgress}%</div>
+                <div className="text-purple-100">学习进度</div>
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
+          {/* 操作按钮 */}
+          <div className="grid grid-cols-3 gap-2">
             <Button 
               onClick={() => setActiveTab('tasks')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
             >
-              <ArrowRight className="h-4 w-4 mr-2" />
+              <ArrowRight className="h-3 w-3 mr-1" />
               处理任务
             </Button>
             <Button 
               onClick={() => setActiveTab('tasks')}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3 w-3 mr-1" />
               新建任务
+            </Button>
+            <Button 
+              onClick={() => setActiveTab('analytics')}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs"
+            >
+              <ChartBar className="h-3 w-3 mr-1" />
+              查看报告
             </Button>
           </div>
         </CardContent>

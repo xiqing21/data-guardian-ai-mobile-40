@@ -10,7 +10,6 @@ import { useForm } from 'react-hook-form';
 import TaskDetail from './TaskDetail';
 import AIProcessingDetail from './AIProcessingDetail';
 import TaskOverview from './TaskOverview';
-import AISmartAssignment from './AISmartAssignment';
 import TaskCategoryFilter from './TaskCategoryFilter';
 import TaskCard from './TaskCard';
 import TaskConfirmation from './TaskConfirmation';
@@ -420,14 +419,12 @@ const TaskManagement = () => {
 
   return (
     <div className="p-4 pb-20 bg-gray-50 min-h-screen">
+      {/* 使用整合后的TaskOverview组件 */}
       <TaskOverview
         overallProgress={overallProgress}
         completedTasks={completedTasks}
         inProgressTasks={inProgressTasks}
         pendingTasks={pendingTasks}
-      />
-
-      <AISmartAssignment 
         onReassignTasks={handleAIReassignTasks}
         taskStats={taskStats}
       />
