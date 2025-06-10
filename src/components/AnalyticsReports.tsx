@@ -308,12 +308,65 @@ const AnalyticsReports = () => {
                 <Treemap
                   data={analyticsData.treeMapData}
                   dataKey="size"
-                  ratio={4/3}
                   stroke="#fff"
                   fill="#8884d8"
                 >
                   <Tooltip />
                 </Treemap>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 新增图表：数据处理效率雷达图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>数据处理效率雷达图</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={[
+                  { subject: '处理速度', A: 88, B: 95, fullMark: 100 },
+                  { subject: '准确率', A: 92, B: 98, fullMark: 100 },
+                  { subject: '完整性', A: 89, B: 94, fullMark: 100 },
+                  { subject: '一致性', A: 85, B: 90, fullMark: 100 },
+                  { subject: '及时性', A: 90, B: 96, fullMark: 100 },
+                  { subject: '可用性', A: 87, B: 93, fullMark: 100 }
+                ]}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                  <Radar name="当前表现" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                  <Radar name="目标水平" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                  <Legend />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* 新增图表：处理时间分布直方图 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>处理时间分布分析</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[
+                  { timeRange: '0-1s', count: 4500, percentage: 45 },
+                  { timeRange: '1-2s', count: 3200, percentage: 32 },
+                  { timeRange: '2-5s', count: 1500, percentage: 15 },
+                  { timeRange: '5-10s', count: 600, percentage: 6 },
+                  { timeRange: '>10s', count: 200, percentage: 2 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="timeRange" />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="count" fill="#3b82f6" name="处理数量" />
+                  <Line yAxisId="right" type="monotone" dataKey="percentage" stroke="#ef4444" strokeWidth={2} name="占比%" />
+                </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
