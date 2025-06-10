@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,7 +45,7 @@ import {
   FunnelChart,
   Funnel,
   LabelList,
-  TreeMap
+  Treemap
 } from 'recharts';
 
 const AnalyticsReports = () => {
@@ -306,7 +305,7 @@ const AnalyticsReports = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <TreeMap
+                <Treemap
                   data={analyticsData.treeMapData}
                   dataKey="size"
                   ratio={4/3}
@@ -314,7 +313,7 @@ const AnalyticsReports = () => {
                   fill="#8884d8"
                 >
                   <Tooltip />
-                </TreeMap>
+                </Treemap>
               </ResponsiveContainer>
             </CardContent>
           </Card>
