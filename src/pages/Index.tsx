@@ -44,6 +44,7 @@ import AIAssistant from '@/components/AIAssistant';
 import AnalyticsReports from '@/components/AnalyticsReports';
 import TaskManagement from '@/components/TaskManagement';
 import VirtualAvatar from '@/components/VirtualAvatar';
+import AIAssistantWithProps from '@/components/AIAssistantWithProps';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -263,38 +264,26 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* 今日任务概览 - 使用AI智能工作台中的任务状态数据 */}
+      {/* 今日任务概览 - 删除统计状态，添加更多按钮 */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Calendar className="h-4 w-4 text-blue-500" />
-            今日任务概览
-            <Badge variant="secondary" className="text-xs">
-              {employeeTasks.totalToday}个
-            </Badge>
+          <CardTitle className="flex items-center justify-between text-base">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-blue-500" />
+              今日任务概览
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setActiveTab('tasks')}
+              className="text-xs h-7 px-3 flex items-center gap-1"
+            >
+              更多
+              <ArrowRight className="h-3 w-3" />
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          {/* 使用AI智能工作台中的任务状态数据 */}
-          <div className="grid grid-cols-4 gap-2 mb-4">
-            <div className="text-center p-2 bg-green-50 rounded-lg">
-              <div className="text-lg font-bold text-green-600">{employeeTasks.completedToday}</div>
-              <div className="text-xs text-gray-500">已完成</div>
-            </div>
-            <div className="text-center p-2 bg-blue-50 rounded-lg">
-              <div className="text-lg font-bold text-blue-600">{employeeTasks.inProgressTasks}</div>
-              <div className="text-xs text-gray-500">进行中</div>
-            </div>
-            <div className="text-center p-2 bg-orange-50 rounded-lg">
-              <div className="text-lg font-bold text-orange-600">{employeeTasks.pendingTasks}</div>
-              <div className="text-xs text-gray-500">待处理</div>
-            </div>
-            <div className="text-center p-2 bg-red-50 rounded-lg">
-              <div className="text-lg font-bold text-red-600">{employeeTasks.urgentTasks}</div>
-              <div className="text-xs text-gray-500">紧急</div>
-            </div>
-          </div>
-          
           <div className="space-y-2">
             <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
               <div className="flex items-center gap-2">
@@ -320,12 +309,12 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* 网格区域数据质量六边形雷达评价图 */}
+      {/* 滨河公司数据质量六边形雷达评价图 */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <Database className="h-4 w-4 text-blue-500" />
-            网格区域数据质量评价
+            滨河公司数据质量评价
             <Badge variant="secondary" className="text-xs">
               {overallScore}分
             </Badge>
@@ -413,9 +402,9 @@ const Index = () => {
       {/* 主要内容区域 */}
       <div className="flex-1">
         {activeTab === 'dashboard' && renderDashboard()}
-        {activeTab === 'ai-assistant' && <AIAssistant />}
+        {activeTab === 'ai-assistant' && <AIAssistantWithProps employeeTasks={employeeTasks} />}
         {activeTab === 'analytics' && <AnalyticsReports />}
-        {activeTab === 'tasks' && <TaskManagement />}
+        {activeTab === 'tasks' && <TaskManagement employeeTasks={employeeTasks} />}
       </div>
 
       {/* 悬浮数智人助手 */}

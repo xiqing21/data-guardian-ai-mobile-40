@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,12 +15,33 @@ import TaskCard from './TaskCard';
 import TaskConfirmation from './TaskConfirmation';
 import { Task, Category } from '../types/Task';
 
-const TaskManagement = () => {
+interface TaskManagementProps {
+  employeeTasks?: {
+    pendingTasks: number;
+    urgentTasks: number;
+    inProgressTasks: number;
+    completedToday: number;
+    totalToday: number;
+  };
+}
+
+const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
   const [confirmationTask, setConfirmationTask] = useState<{ task: Task; result: any } | null>(null);
   const [showNewTaskForm, setShowNewTaskForm] = useState(false);
+  
+  // 使用传入的employeeTasks数据，如果没有则使用默认值
+  const defaultTasks = {
+    pendingTasks: 12,
+    urgentTasks: 3,
+    inProgressTasks: 7,
+    completedToday: 8,
+    totalToday: 28
+  };
+  
+  const currentTasks = employeeTasks || defaultTasks;
   
   const [tasks, setTasks] = useState<Task[]>([
     {
@@ -115,9 +135,10 @@ const TaskManagement = () => {
     tasks.reduce((sum, task) => sum + task.progress, 0) / tasks.length
   );
 
-  const completedTasks = tasks.filter(task => task.status === 'completed').length;
-  const inProgressTasks = tasks.filter(task => task.status === 'in-progress').length;
-  const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+  // 使用传入的状态数据
+  const completedTasks = currentTasks.completedToday;
+  const inProgressTasks = currentTasks.inProgressTasks;
+  const pendingTasks = currentTasks.pendingTasks;
   const autoProcessableTasks = tasks.filter(task => task.autoProcessable && task.status === 'pending').length;
 
   const taskStats = {

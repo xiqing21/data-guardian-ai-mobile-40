@@ -120,7 +120,7 @@ const IntegratedTaskOverview: React.FC<IntegratedTaskOverviewProps> = ({
               </Button>
             </div>
 
-            {/* 核心指标网格 */}
+            {/* 核心指标网格 - 确保与首页数据一致 */}
             <div className="grid grid-cols-4 gap-3 mb-4">
               <div className="text-center bg-white/15 rounded-lg p-3">
                 <div className="text-xl font-bold text-green-200">{completedTasks}</div>
