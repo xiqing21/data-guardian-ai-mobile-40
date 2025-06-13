@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -264,7 +263,7 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* 今日任务概览 - 改为包含所有状态 */}
+      {/* 今日任务概览 - 使用AI智能工作台中的任务状态数据 */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -276,6 +275,7 @@ const Index = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
+          {/* 使用AI智能工作台中的任务状态数据 */}
           <div className="grid grid-cols-4 gap-2 mb-4">
             <div className="text-center p-2 bg-green-50 rounded-lg">
               <div className="text-lg font-bold text-green-600">{employeeTasks.completedToday}</div>
