@@ -26,7 +26,10 @@ import {
   Zap,
   Brain,
   Target,
-  Activity
+  Activity,
+  MapPin,
+  Building2,
+  ChevronDown
 } from 'lucide-react';
 import {
   RadarChart,
@@ -45,6 +48,7 @@ import VirtualAvatar from '@/components/VirtualAvatar';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedUnit, setSelectedUnit] = useState('浙江省电力公司');
   
   const [dataQuality, setDataQuality] = useState({
     completeness: 92,
@@ -72,12 +76,23 @@ const Index = () => {
     totalToday: 28
   });
 
-  // AI智能体状态
-  const [aiAgentStats, setAiAgentStats] = useState({
+  // AI智能体状态 - 整合后的状态
+  const [integratedAIStatus, setIntegratedAIStatus] = useState({
     activeAgents: 5,
     processingTasks: 23,
-    completionRate: 96.8
+    completionRate: 96.8,
+    pendingAutoTasks: 8,
+    aiProcessingTasks: 15
   });
+
+  // 供电所单位列表
+  const powerUnits = [
+    '浙江省电力公司',
+    '杭州市电力公司',
+    '西湖区供电公司',
+    '文一路供电所',
+    '转塘供电所'
+  ];
 
   const radarData = [
     {
@@ -126,10 +141,11 @@ const Index = () => {
         accuracy: Math.min(98, prev.accuracy + Math.random() * 0.3)
       }));
       
-      // 更新AI智能体状态
-      setAiAgentStats(prev => ({
+      // 更新整合后的AI状态
+      setIntegratedAIStatus(prev => ({
         ...prev,
-        processingTasks: Math.max(15, prev.processingTasks + Math.floor(Math.random() * 10 - 5))
+        processingTasks: Math.max(15, prev.processingTasks + Math.floor(Math.random() * 10 - 5)),
+        aiProcessingTasks: Math.max(10, prev.aiProcessingTasks + Math.floor(Math.random() * 6 - 3))
       }));
     }, 5000);
 
@@ -143,31 +159,42 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
-      {/* 优化后的智能工作台 - 移除学习进度和工作效率 */}
+      {/* 整合后的AI智能工作台 - 支持单位切换 */}
       <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
         <CardContent className="p-5 relative z-10">
           {/* 背景装饰元素 */}
           <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
           <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div>
           
-          {/* 头部区域 */}
+          {/* 头部区域 - 单位切换 */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Brain className="h-6 w-6" />
+                <Building2 className="h-6 w-6" />
               </div>
               <div>
                 <h2 className="text-xl font-bold">AI智能工作台</h2>
-                <p className="text-indigo-100 text-sm">高效协作 · 智能分析 · 实时监控</p>
+                <div className="flex items-center gap-2 text-indigo-100 text-sm">
+                  <MapPin className="h-3 w-3" />
+                  <select 
+                    value={selectedUnit} 
+                    onChange={(e) => setSelectedUnit(e.target.value)}
+                    className="bg-white/20 backdrop-blur-sm border-0 rounded px-2 py-1 text-white text-sm outline-none"
+                  >
+                    {powerUnits.map(unit => (
+                      <option key={unit} value={unit} className="text-gray-900">{unit}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold">{aiAgentStats.completionRate}%</div>
+              <div className="text-2xl font-bold">{integratedAIStatus.completionRate}%</div>
               <div className="text-xs text-indigo-100">完成率</div>
             </div>
           </div>
           
-          {/* 合并后的任务状态统一展示 */}
+          {/* 整合后的任务状态统一展示 */}
           <div className="grid grid-cols-4 gap-3 mb-5">
             <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
               <div className="text-lg font-bold text-orange-200">{employeeTasks.pendingTasks}</div>
@@ -182,31 +209,35 @@ const Index = () => {
               <div className="text-xs text-indigo-100">紧急</div>
             </div>
             <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
-              <div className="text-lg font-bold text-cyan-200">{aiAgentStats.activeAgents}</div>
+              <div className="text-lg font-bold text-cyan-200">{integratedAIStatus.activeAgents}</div>
               <div className="text-xs text-indigo-100">AI协作</div>
             </div>
           </div>
 
-          {/* AI智能体状态 */}
+          {/* 整合后的AI智能体实时状态 */}
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
             <div className="flex items-center gap-3 mb-3">
               <Activity className="h-4 w-4 text-purple-200" />
-              <span className="text-sm font-medium">AI智能体实时状态</span>
+              <span className="text-sm font-medium">AI智能体实时处理状态</span>
               <Badge className="bg-green-500 text-xs px-2 py-1">运行中</Badge>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-3 gap-3 text-xs">
               <div className="text-center">
-                <div className="text-base font-bold text-yellow-200">{aiAgentStats.processingTasks}</div>
-                <div className="text-purple-100">处理中任务</div>
+                <div className="text-base font-bold text-yellow-200">{integratedAIStatus.aiProcessingTasks}</div>
+                <div className="text-purple-100">AI处理中</div>
               </div>
               <div className="text-center">
-                <div className="text-base font-bold text-cyan-200">{aiAgentStats.completionRate}%</div>
+                <div className="text-base font-bold text-orange-200">{integratedAIStatus.pendingAutoTasks}</div>
+                <div className="text-purple-100">待自动化</div>
+              </div>
+              <div className="text-center">
+                <div className="text-base font-bold text-cyan-200">{integratedAIStatus.completionRate}%</div>
                 <div className="text-purple-100">完成率</div>
               </div>
             </div>
           </div>
           
-          {/* 操作按钮 - 将AI助手改为新建任务 */}
+          {/* 操作按钮 */}
           <div className="grid grid-cols-3 gap-2">
             <Button 
               onClick={() => setActiveTab('tasks')}
@@ -289,7 +320,7 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* 新增：网格区域数据质量六边形雷达评价图 */}
+      {/* 网格区域数据质量六边形雷达评价图 */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
