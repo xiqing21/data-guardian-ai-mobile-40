@@ -152,7 +152,6 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
           </ResponsiveContainer>
         </div>
         
-        {/* 6维度详细数据明细 */}
         <div className="space-y-3">
           <div className="text-sm font-medium text-gray-700 mb-3">各维度详细数据</div>
           <div className="grid grid-cols-1 gap-2">
@@ -176,7 +175,6 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
           </div>
         </div>
         
-        {/* 质量指标分类概览 */}
         <div className="grid grid-cols-3 gap-2 mt-4">
           <div className="text-center p-2 bg-green-50 rounded">
             <div className="text-sm font-medium text-green-700">优秀 (95%+)</div>
@@ -192,7 +190,6 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
           </div>
         </div>
         
-        {/* 质量趋势分析 */}
         <div className="mt-4 p-4 bg-blue-50 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-4 w-4 text-blue-500" />
