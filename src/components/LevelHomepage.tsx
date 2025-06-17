@@ -62,13 +62,11 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
 
   const handleUnitsClick = () => {
     console.log('查看管理单位详情');
-    // 跳转到管理单位详情页面
     window.location.href = '/units-detail';
   };
 
   const handleTotalTasksClick = () => {
     console.log('查看总任务详情');
-    // 跳转到任务总览页面
     window.location.href = '/tasks-overview';
   };
 
@@ -76,19 +74,15 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
     console.log(`使用AI功能: ${feature}`);
     switch (feature) {
       case 'analysis':
-        // 跳转到智能分析页面
         window.location.href = '/ai-analysis';
         break;
       case 'task-assignment':
-        // 跳转到任务分配页面
         window.location.href = '/ai-task-assignment';
         break;
       case 'quality-monitor':
-        // 跳转到质量监控页面
         window.location.href = '/ai-quality-monitor';
         break;
       case 'decision-support':
-        // 跳转到决策支持页面
         window.location.href = '/ai-decision-support';
         break;
     }
@@ -148,7 +142,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
         </CardContent>
       </Card>
 
-      {/* AI智能体功能展示 - 紧凑版 */}
+      {/* 融合的AI智能体与任务完成进度 */}
       <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
@@ -161,10 +155,16 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                 <p className="text-xs text-indigo-100">智能化数据治理平台</p>
               </div>
             </div>
-            <Badge className="bg-white/20 text-xs px-2 py-1">省级管理</Badge>
+            <div className="text-right">
+              <div className="text-xl font-bold">
+                <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
+              </div>
+              <div className="text-xs text-indigo-100">完成率</div>
+            </div>
           </div>
           
-          <div className="grid grid-cols-4 gap-2">
+          {/* AI功能模块 */}
+          <div className="grid grid-cols-4 gap-2 mb-3">
             <div 
               className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('analysis')}
@@ -194,47 +194,39 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
               <div className="text-xs text-indigo-100">决策支持</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            全省任务完成进度
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">整体完成进度</span>
-              <span className="text-sm font-medium">
+          {/* 进度条 */}
+          <div className="mb-3">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs text-indigo-100">全省任务完成进度</span>
+              <span className="text-xs font-medium">
                 <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
               </span>
             </div>
-            <Progress value={statistics.taskCompletion} className="h-2" />
-            
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div 
-                className="text-center p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
-                onClick={() => onTaskDetailClick?.('completed')}
-              >
-                <div className="text-lg font-bold text-green-600 flex items-center justify-center gap-1">
-                  <AnimatedNumber value={statistics.completedTasks} />
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-                <div className="text-xs text-gray-600">已完成任务</div>
+            <Progress value={statistics.taskCompletion} className="h-2 bg-white/20" />
+          </div>
+
+          {/* 任务统计 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div 
+              className="text-center p-2 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+              onClick={() => onTaskDetailClick?.('completed')}
+            >
+              <div className="text-base font-bold text-green-600 flex items-center justify-center gap-1">
+                <AnimatedNumber value={statistics.completedTasks} />
+                <ArrowRight className="h-3 w-3" />
               </div>
-              <div 
-                className="text-center p-3 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
-                onClick={() => onTaskDetailClick?.('pending')}
-              >
-                <div className="text-lg font-bold text-orange-600 flex items-center justify-center gap-1">
-                  <AnimatedNumber value={statistics.totalTasks - statistics.completedTasks} />
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-                <div className="text-xs text-gray-600">待完成任务</div>
+              <div className="text-xs text-gray-600">已完成任务</div>
+            </div>
+            <div 
+              className="text-center p-2 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
+              onClick={() => onTaskDetailClick?.('pending')}
+            >
+              <div className="text-base font-bold text-orange-600 flex items-center justify-center gap-1">
+                <AnimatedNumber value={statistics.totalTasks - statistics.completedTasks} />
+                <ArrowRight className="h-3 w-3" />
               </div>
+              <div className="text-xs text-gray-600">待完成任务</div>
             </div>
           </div>
         </CardContent>
@@ -568,7 +560,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </CardContent>
         </Card>
 
-        {/* AI智能体功能展示 - 紧凑版 */}
+        {/* 融合的AI智能体与任务完成进度 */}
         <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
@@ -581,12 +573,16 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                   <p className="text-xs text-indigo-100">智能化数据治理平台</p>
                 </div>
               </div>
-              <Badge className="bg-white/20 text-xs px-2 py-1">
-                {currentRole.level === 'city' ? '地市管理' : '区县管理'}
-              </Badge>
+              <div className="text-right">
+                <div className="text-xl font-bold">
+                  <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
+                </div>
+                <div className="text-xs text-indigo-100">完成率</div>
+              </div>
             </div>
             
-            <div className="grid grid-cols-4 gap-2">
+            {/* AI功能模块 */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
               <div 
                 className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('analysis')}
@@ -616,47 +612,39 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                 <div className="text-xs text-indigo-100">报告生成</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              任务完成进度
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">整体完成进度</span>
-                <span className="text-sm font-medium">
+            {/* 进度条 */}
+            <div className="mb-3">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs text-indigo-100">任务完成进度</span>
+                <span className="text-xs font-medium">
                   <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
                 </span>
               </div>
-              <Progress value={statistics.taskCompletion} className="h-2" />
-              
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div 
-                  className="text-center p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
-                  onClick={() => onTaskDetailClick?.('completed')}
-                >
-                  <div className="text-lg font-bold text-green-600 flex items-center justify-center gap-1">
-                    <AnimatedNumber value={statistics.completedTasks} />
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                  <div className="text-xs text-gray-600">已完成</div>
+              <Progress value={statistics.taskCompletion} className="h-2 bg-white/20" />
+            </div>
+
+            {/* 任务统计 */}
+            <div className="grid grid-cols-2 gap-3">
+              <div 
+                className="text-center p-2 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+                onClick={() => onTaskDetailClick?.('completed')}
+              >
+                <div className="text-base font-bold text-green-600 flex items-center justify-center gap-1">
+                  <AnimatedNumber value={statistics.completedTasks} />
+                  <ArrowRight className="h-3 w-3" />
                 </div>
-                <div 
-                  className="text-center p-3 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
-                  onClick={() => onTaskDetailClick?.('pending')}
-                >
-                  <div className="text-lg font-bold text-orange-600 flex items-center justify-center gap-1">
-                    <AnimatedNumber value={statistics.totalTasks - statistics.completedTasks} />
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                  <div className="text-xs text-gray-600">待完成</div>
+                <div className="text-xs text-gray-600">已完成</div>
+              </div>
+              <div 
+                className="text-center p-2 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
+                onClick={() => onTaskDetailClick?.('pending')}
+              >
+                <div className="text-base font-bold text-orange-600 flex items-center justify-center gap-1">
+                  <AnimatedNumber value={statistics.totalTasks - statistics.completedTasks} />
+                  <ArrowRight className="h-3 w-3" />
                 </div>
+                <div className="text-xs text-gray-600">待完成</div>
               </div>
             </div>
           </CardContent>
