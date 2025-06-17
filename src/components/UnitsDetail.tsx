@@ -12,7 +12,14 @@ import {
   Minus,
   MapPin,
   Users,
-  Activity
+  Activity,
+  User,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  BarChart3,
+  Target
 } from 'lucide-react';
 import { Role } from '../types/Role';
 import AnimatedNumber from './AnimatedNumber';
@@ -30,6 +37,11 @@ interface Unit {
   trendValue: number;
   region: string;
   employees: number;
+  totalDataVolume: number; // GB
+  processedDataVolume: number; // GB
+  responsiblePerson: string;
+  urgentTasks: number;
+  overdueRate: number;
 }
 
 interface UnitsDetailProps {
@@ -39,6 +51,7 @@ interface UnitsDetailProps {
 
 const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
   const [sortBy, setSortBy] = useState<'governance' | 'quality' | 'completion'>('governance');
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
 
   // 模拟数据 - 根据角色层级生成不同的管辖单位
   const generateUnits = (): Unit[] => {
@@ -56,7 +69,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 2.3,
           region: '太原市',
-          employees: 2850
+          employees: 2850,
+          totalDataVolume: 15680,
+          processedDataVolume: 14579,
+          responsiblePerson: '张明华',
+          urgentTasks: 12,
+          overdueRate: 3.2
         },
         {
           id: 2,
@@ -70,7 +88,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 1.8,
           region: '大同市',
-          employees: 2340
+          employees: 2340,
+          totalDataVolume: 12340,
+          processedDataVolume: 11015,
+          responsiblePerson: '李建国',
+          urgentTasks: 18,
+          overdueRate: 5.1
         },
         {
           id: 3,
@@ -84,7 +107,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'stable',
           trendValue: 0.2,
           region: '运城市',
-          employees: 2180
+          employees: 2180,
+          totalDataVolume: 10890,
+          processedDataVolume: 9442,
+          responsiblePerson: '王德华',
+          urgentTasks: 25,
+          overdueRate: 7.3
         },
         {
           id: 4,
@@ -98,7 +126,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'down',
           trendValue: -0.8,
           region: '晋中市',
-          employees: 1950
+          employees: 1950,
+          totalDataVolume: 9870,
+          processedDataVolume: 8420,
+          responsiblePerson: '赵志强',
+          urgentTasks: 31,
+          overdueRate: 8.9
         },
         {
           id: 5,
@@ -112,7 +145,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 1.2,
           region: '临汾市',
-          employees: 1820
+          employees: 1820,
+          totalDataVolume: 9120,
+          processedDataVolume: 7580,
+          responsiblePerson: '陈建军',
+          urgentTasks: 28,
+          overdueRate: 9.8
         }
       ];
     } else if (currentRole.level === 'city') {
@@ -129,7 +167,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 3.2,
           region: '迎泽区',
-          employees: 45
+          employees: 45,
+          totalDataVolume: 1560,
+          processedDataVolume: 1433,
+          responsiblePerson: '刘敏',
+          urgentTasks: 3,
+          overdueRate: 2.1
         },
         {
           id: 2,
@@ -143,7 +186,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 1.9,
           region: '小店区',
-          employees: 38
+          employees: 38,
+          totalDataVolume: 1340,
+          processedDataVolume: 1182,
+          responsiblePerson: '孙伟',
+          urgentTasks: 5,
+          overdueRate: 4.2
         },
         {
           id: 3,
@@ -157,7 +205,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'stable',
           trendValue: 0.1,
           region: '杏花岭区',
-          employees: 42
+          employees: 42,
+          totalDataVolume: 1280,
+          processedDataVolume: 1083,
+          responsiblePerson: '马晓东',
+          urgentTasks: 7,
+          overdueRate: 6.3
         }
       ];
     } else {
@@ -174,7 +227,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'up',
           trendValue: 2.1,
           region: '城南片区',
-          employees: 8
+          employees: 8,
+          totalDataVolume: 280,
+          processedDataVolume: 251,
+          responsiblePerson: '周磊',
+          urgentTasks: 1,
+          overdueRate: 3.6
         },
         {
           id: 2,
@@ -188,7 +246,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           trend: 'stable',
           trendValue: -0.3,
           region: '城北片区',
-          employees: 6
+          employees: 6,
+          totalDataVolume: 310,
+          processedDataVolume: 264,
+          responsiblePerson: '钱文静',
+          urgentTasks: 2,
+          overdueRate: 6.5
         }
       ];
     }
@@ -231,6 +294,183 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
     }
   };
 
+  const handleUnitClick = (unit: Unit) => {
+    setSelectedUnit(unit);
+  };
+
+  const handleBackToList = () => {
+    setSelectedUnit(null);
+  };
+
+  if (selectedUnit) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <Button variant="ghost" size="sm" onClick={handleBackToList} className="p-2">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">{selectedUnit.name}</h1>
+            <p className="text-sm text-gray-600">详细信息</p>
+          </div>
+        </div>
+
+        {/* 详细信息卡片 */}
+        <div className="space-y-4">
+          {/* 基本信息 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                基本信息
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">单位类型</span>
+                    <Badge variant="outline">{selectedUnit.type}</Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">所在区域</span>
+                    <span className="font-medium">{selectedUnit.region}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">责任主体</span>
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">{selectedUnit.responsiblePerson}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">员工数量</span>
+                    <span className="font-medium">{selectedUnit.employees}人</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">总数据量</span>
+                    <span className="font-medium">{selectedUnit.totalDataVolume}GB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">已处理数据量</span>
+                    <span className="font-medium text-green-600">{selectedUnit.processedDataVolume}GB</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 数据治理详情 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                数据治理详情
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-600">治理进度</span>
+                    <span className="font-bold text-blue-600">
+                      <AnimatedNumber value={selectedUnit.governanceProgress} suffix="%" />
+                    </span>
+                  </div>
+                  <Progress value={selectedUnit.governanceProgress} className="h-3" />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-600">数据质量</span>
+                    <span className="font-bold text-green-600">
+                      <AnimatedNumber value={selectedUnit.dataQuality} suffix="%" />
+                    </span>
+                  </div>
+                  <Progress value={selectedUnit.dataQuality} className="h-3" />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-600">数据处理率</span>
+                    <span className="font-bold text-purple-600">
+                      <AnimatedNumber value={(selectedUnit.processedDataVolume / selectedUnit.totalDataVolume) * 100} suffix="%" />
+                    </span>
+                  </div>
+                  <Progress value={(selectedUnit.processedDataVolume / selectedUnit.totalDataVolume) * 100} className="h-3" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 任务完成情况 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                任务完成情况
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    <AnimatedNumber value={selectedUnit.completedTasks} />
+                  </div>
+                  <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                    <CheckCircle2 className="h-4 w-4" />
+                    已完成任务
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    责任主体: {selectedUnit.responsiblePerson}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">
+                    <AnimatedNumber value={selectedUnit.totalTasks - selectedUnit.completedTasks} />
+                  </div>
+                  <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    待完成任务
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    责任主体: {selectedUnit.responsiblePerson}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">任务完成率</span>
+                  <span className="font-bold text-blue-600">
+                    <AnimatedNumber value={selectedUnit.taskCompletion} suffix="%" />
+                  </span>
+                </div>
+                <Progress value={selectedUnit.taskCompletion} className="h-3" />
+                
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-red-600">
+                      <AnimatedNumber value={selectedUnit.urgentTasks} />
+                    </div>
+                    <div className="text-xs text-gray-600">紧急任务</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-orange-600">
+                      <AnimatedNumber value={selectedUnit.overdueRate} suffix="%" />
+                    </div>
+                    <div className="text-xs text-gray-600">逾期率</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       {/* Header */}
@@ -272,7 +512,11 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
       {/* 单位列表 */}
       <div className="space-y-3">
         {sortedUnits.map((unit, index) => (
-          <Card key={unit.id} className="hover:shadow-md transition-shadow">
+          <Card 
+            key={unit.id} 
+            className="hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => handleUnitClick(unit)}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -287,6 +531,10 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                       <Badge variant="outline" className="text-xs">
                         {unit.type}
                       </Badge>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                      <User className="h-3 w-3" />
+                      <span>责任主体: {unit.responsiblePerson}</span>
                     </div>
                   </div>
                 </div>
@@ -304,7 +552,7 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-3">
+              <div className="grid grid-cols-4 gap-3 mb-3">
                 <div className="text-center">
                   <div className="text-lg font-bold text-gray-900">
                     <AnimatedNumber value={unit.dataQuality} suffix="%" />
@@ -324,6 +572,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                   </div>
                   <div className="text-xs text-gray-600">员工数</div>
                 </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-purple-600">
+                    <AnimatedNumber value={unit.totalDataVolume} />GB
+                  </div>
+                  <div className="text-xs text-gray-600">数据量</div>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -338,9 +592,17 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
 
               <div className="flex justify-between items-center mt-3 text-sm text-gray-600">
                 <span>任务进度: {unit.completedTasks}/{unit.totalTasks}</span>
-                <div className="flex items-center gap-1">
-                  <Activity className="h-3 w-3" />
-                  <span>活跃度: 高</span>
+                <div className="flex items-center gap-3">
+                  {unit.urgentTasks > 0 && (
+                    <div className="flex items-center gap-1 text-red-600">
+                      <AlertTriangle className="h-3 w-3" />
+                      <span>紧急: {unit.urgentTasks}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1">
+                    <Activity className="h-3 w-3" />
+                    <span>活跃度: 高</span>
+                  </div>
                 </div>
               </div>
             </CardContent>

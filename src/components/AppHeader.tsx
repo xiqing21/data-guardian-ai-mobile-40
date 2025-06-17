@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Bell, User } from 'lucide-react';
@@ -19,7 +20,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     <div className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="flex items-center justify-between p-4">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">数据要素智能体</h1>
+          <h1 className="text-lg font-semibold text-gray-900">智能体</h1>
         </div>
         <div className="flex items-center gap-3">
           <RoleSelector

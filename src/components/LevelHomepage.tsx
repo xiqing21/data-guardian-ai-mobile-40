@@ -18,7 +18,9 @@ import {
   BarChart3,
   FileText,
   Shield,
-  Cpu
+  Cpu,
+  Database,
+  CheckSquare
 } from 'lucide-react';
 import { Role } from '../types/Role';
 import AnimatedNumber from './AnimatedNumber';
@@ -71,30 +73,61 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
 
   const handleTotalTasksClick = () => {
     console.log('查看总任务详情');
-    window.location.href = '/tasks-overview';
+    // 这里可以跳转到任务概览页面或弹出详细面板
+    alert('跳转到任务总览页面');
+  };
+
+  const handleDataVolumeClick = () => {
+    console.log('查看数据量详情');
+    alert('显示数据量详细分析报告');
   };
 
   const handleAIFeatureClick = (feature: string) => {
     console.log(`使用AI功能: ${feature}`);
     switch (feature) {
       case 'analysis':
-        window.location.href = '/ai-analysis';
+        alert('启动AI智能分析功能\n- 数据质量分析\n- 趋势预测\n- 异常检测');
         break;
       case 'task-assignment':
-        window.location.href = '/ai-task-assignment';
+        alert('启动AI任务分配功能\n- 智能任务分派\n- 负载均衡\n- 能力匹配');
         break;
       case 'quality-monitor':
-        window.location.href = '/ai-quality-monitor';
+        alert('启动AI质量监控功能\n- 实时质量监测\n- 风险预警\n- 自动修复建议');
         break;
       case 'decision-support':
-        window.location.href = '/ai-decision-support';
+        alert('启动AI决策支持功能\n- 决策建议生成\n- 方案优化\n- 效果预测');
         break;
     }
   };
 
+  // 生成数据量统计
+  const getDataVolumeStats = () => {
+    if (currentRole.level === 'province') {
+      return {
+        totalDataVolume: 156800, // GB
+        processedDataVolume: 142560, // GB
+        processingRate: 90.9
+      };
+    } else if (currentRole.level === 'city') {
+      return {
+        totalDataVolume: 15680,
+        processedDataVolume: 14256,
+        processingRate: 90.9
+      };
+    } else {
+      return {
+        totalDataVolume: 1568,
+        processedDataVolume: 1425,
+        processingRate: 90.9
+      };
+    }
+  };
+
+  const dataVolumeStats = getDataVolumeStats();
+
   const renderProvinceView = () => (
     <div className="space-y-4">
-      {/* 融合的数据要素智能体主卡片 */}
+      {/* 融合的智能体主卡片 */}
       <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 text-white overflow-hidden relative">
         <CardContent className="p-6 relative z-10">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
@@ -106,7 +139,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                 <Brain className="h-8 w-8" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">数据要素智能体</h2>
+                <h2 className="text-2xl font-bold">智能体</h2>
                 <div className="flex items-center gap-3 text-blue-100 text-sm mt-1">
                   {getLevelIcon()}
                   <span>{currentRole.name}</span>
@@ -146,17 +179,25 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
               </div>
               <div className="text-sm text-blue-100 mt-1">总任务数</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-2xl font-bold">
-                <AnimatedNumber value={statistics.dataQuality} suffix="%" />
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+              onClick={handleDataVolumeClick}
+            >
+              <div className="text-2xl font-bold flex items-center justify-center gap-1">
+                <Database className="h-5 w-5" />
+                <AnimatedNumber value={dataVolumeStats.totalDataVolume / 1000} suffix="TB" />
               </div>
-              <div className="text-sm text-blue-100 mt-1">数据质量</div>
+              <div className="text-sm text-blue-100 mt-1">总数据量</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4">
-              <div className="text-2xl font-bold text-yellow-200">
-                <AnimatedNumber value={92.5} suffix="%" />
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+              onClick={handleDataVolumeClick}
+            >
+              <div className="text-2xl font-bold flex items-center justify-center gap-1">
+                <CheckSquare className="h-5 w-5" />
+                <AnimatedNumber value={dataVolumeStats.processedDataVolume / 1000} suffix="TB" />
               </div>
-              <div className="text-sm text-blue-100 mt-1">智能化率</div>
+              <div className="text-sm text-blue-100 mt-1">已处理量</div>
             </div>
           </div>
 
@@ -199,15 +240,15 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
             </div>
           </div>
 
-          {/* 进度条和任务统计 */}
+          {/* 数据处理进度 */}
           <div className="mb-4">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-blue-100">全省治理进度</span>
+              <span className="text-sm text-blue-100">数据处理进度</span>
               <span className="text-sm font-medium">
-                <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
+                <AnimatedNumber value={dataVolumeStats.processingRate} suffix="%" />
               </span>
             </div>
-            <Progress value={statistics.taskCompletion} className="h-3 bg-white/20" />
+            <Progress value={dataVolumeStats.processingRate} className="h-3 bg-white/20" />
           </div>
 
           {/* 任务统计 */}
@@ -537,7 +578,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
               </Badge>
             </div>
             
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-3">
               <div 
                 className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-colors"
                 onClick={handleUnitsClick}
@@ -554,11 +595,25 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                 </div>
                 <div className="text-xs opacity-90">完成率</div>
               </div>
-              <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
-                <div className="text-lg font-bold">
-                  <AnimatedNumber value={statistics.dataQuality} suffix="%" />
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-colors"
+                onClick={handleDataVolumeClick}
+              >
+                <div className="text-lg font-bold flex items-center justify-center gap-1">
+                  <Database className="h-4 w-4" />
+                  <AnimatedNumber value={dataVolumeStats.totalDataVolume} suffix="GB" />
                 </div>
-                <div className="text-xs opacity-90">数据质量</div>
+                <div className="text-xs opacity-90">总数据量</div>
+              </div>
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-colors"
+                onClick={handleDataVolumeClick}
+              >
+                <div className="text-lg font-bold flex items-center justify-center gap-1">
+                  <CheckSquare className="h-4 w-4" />
+                  <AnimatedNumber value={dataVolumeStats.processedDataVolume} suffix="GB" />
+                </div>
+                <div className="text-xs opacity-90">已处理量</div>
               </div>
             </div>
           </CardContent>
@@ -573,7 +628,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                   <Brain className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">AI数据治理智能体</h3>
+                  <h3 className="text-base font-bold">AI智能体</h3>
                   <p className="text-xs text-indigo-100">智能化数据治理平台</p>
                 </div>
               </div>
