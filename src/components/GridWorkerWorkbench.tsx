@@ -15,7 +15,8 @@ import {
   List,
   PlayCircle,
   Calendar,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from 'lucide-react';
 import { Task } from '../types/Task';
 import AnimatedNumber from './AnimatedNumber';
@@ -57,7 +58,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* 统一工作台标题 */}
+      {/* 统一工作台 */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -66,9 +67,9 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
             <Badge className="bg-blue-100 text-blue-700 text-xs">实时更新</Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           {/* 关键指标概览 */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-4 gap-3">
             <div className="text-center p-3 bg-blue-50 rounded-lg">
               <div className="text-xl font-bold text-blue-600">
                 <AnimatedNumber value={pendingTasks.length} />
@@ -96,7 +97,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
           </div>
           
           {/* 完成率进度条 */}
-          <div className="space-y-2 mb-6">
+          <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="flex items-center gap-1">
                 <Target className="h-4 w-4 text-green-600" />
@@ -112,6 +113,65 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
               总计 {employeeTasks?.totalToday || tasks.length} 个任务
             </div>
           </div>
+
+          {/* 紧急任务和AI助手提醒区域 */}
+          {(urgentTasks.length > 0 || aiProcessableTasks.length > 0) && (
+            <div className="space-y-3">
+              {/* 紧急任务提醒 */}
+              {urgentTasks.length > 0 && (
+                <div className="p-3 rounded-lg border-l-4 border-l-red-500 bg-red-50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                      <div>
+                        <div className="font-medium text-red-700 text-sm">
+                          紧急任务提醒 ({urgentTasks.length}个)
+                        </div>
+                        <div className="text-xs text-red-600">
+                          {urgentTasks[0]?.title} 等任务需要立即处理
+                        </div>
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="destructive"
+                      onClick={() => onTaskClick(urgentTasks[0])}
+                      className="text-xs"
+                    >
+                      立即处理
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* AI智能助手 */}
+              {aiProcessableTasks.length > 0 && (
+                <div className="p-3 rounded-lg border-l-4 border-l-purple-500 bg-purple-50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Bot className="h-4 w-4 text-purple-600" />
+                      <div>
+                        <div className="font-medium text-purple-700 text-sm">
+                          AI智能助手 ({aiProcessableTasks.length}个可处理)
+                        </div>
+                        <div className="text-xs text-purple-600">
+                          预计节省80%处理时间，提升工作效率
+                        </div>
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      onClick={onAIAssistClick}
+                      className="bg-purple-600 hover:bg-purple-700 text-xs"
+                    >
+                      <Zap className="h-3 w-3 mr-1" />
+                      启动AI
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 任务分类标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -131,7 +191,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
             </TabsList>
 
             {/* 待办任务 */}
-            <TabsContent value="overview" className="space-y-3">
+            <TabsContent value="overview" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-gray-900">我的待办 ({pendingTasks.length})</h3>
                 <Button
@@ -181,7 +241,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
             </TabsContent>
 
             {/* 进行中任务 */}
-            <TabsContent value="progress" className="space-y-3">
+            <TabsContent value="progress" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-gray-900">进行中 ({inProgressTasks.length})</h3>
               </div>
@@ -218,7 +278,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
             </TabsContent>
 
             {/* 已完成任务 */}
-            <TabsContent value="completed" className="space-y-3">
+            <TabsContent value="completed" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-gray-900">今日已完成 ({employeeTasks?.completedToday || completedTasks.length})</h3>
               </div>
@@ -249,59 +309,6 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
           </Tabs>
         </CardContent>
       </Card>
-
-      {/* 紧急任务提醒 */}
-      {urgentTasks.length > 0 && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                <div>
-                  <div className="font-medium text-red-700">紧急任务提醒</div>
-                  <div className="text-sm text-red-600">
-                    有 {urgentTasks.length} 个紧急任务需要立即处理
-                  </div>
-                </div>
-              </div>
-              <Button 
-                size="sm" 
-                variant="destructive"
-                onClick={() => onTaskClick(urgentTasks[0])}
-              >
-                立即处理
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* AI智能助手 */}
-      {aiProcessableTasks.length > 0 && (
-        <Card className="border-purple-200 bg-purple-50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-purple-600" />
-                <div>
-                  <div className="font-medium text-purple-700">AI智能助手</div>
-                  <div className="text-sm text-purple-600">
-                    {aiProcessableTasks.length}个任务可自动处理，预计节省80%时间
-                  </div>
-                </div>
-              </div>
-              <Button 
-                size="sm" 
-                onClick={onAIAssistClick}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                <PlayCircle className="h-4 w-4 mr-1" />
-                启动AI
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
