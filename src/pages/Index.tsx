@@ -5,6 +5,7 @@ import AnalyticsReports from '@/components/AnalyticsReports';
 import TaskManagement from '@/components/TaskManagement';
 import LevelHomepage from '@/components/LevelHomepage';
 import TaskDetailModal from '@/components/TaskDetailModal';
+import UnitsDetail from '@/components/UnitsDetail';
 import { useRoleManagement } from '@/hooks/useRoleManagement';
 import AppHeader from '@/components/AppHeader';
 import DataQualityRadar from '@/components/DataQualityRadar';
@@ -13,6 +14,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [taskDetailType, setTaskDetailType] = useState<'completed' | 'pending' | null>(null);
+  const [showUnitsDetail, setShowUnitsDetail] = useState(false);
   
   const {
     currentRole,
@@ -62,6 +64,14 @@ const Index = () => {
     setTaskDetailType(type);
   };
 
+  const handleUnitsDetailClick = () => {
+    setShowUnitsDetail(true);
+  };
+
+  const handleBackFromUnitsDetail = () => {
+    setShowUnitsDetail(false);
+  };
+
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
       {/* 层级化首页展示 */}
@@ -70,6 +80,7 @@ const Index = () => {
         statistics={roleStatistics}
         tasks={roleTasks}
         onTaskDetailClick={handleTaskDetailClick}
+        onUnitsDetailClick={handleUnitsDetailClick}
       />
 
       {/* 数据质量雷达图 */}
@@ -91,7 +102,12 @@ const Index = () => {
       />
 
       <div className="flex-1">
-        {taskDetailType ? (
+        {showUnitsDetail ? (
+          <UnitsDetail 
+            currentRole={currentRole}
+            onBack={handleBackFromUnitsDetail}
+          />
+        ) : taskDetailType ? (
           <TaskDetailModal 
             type={taskDetailType}
             onBack={() => setTaskDetailType(null)}
@@ -110,11 +126,13 @@ const Index = () => {
         ) : null}
       </div>
 
-      <BottomNavigation
-        activeTab={activeTab}
-        roleContent={roleContent}
-        onTabChange={setActiveTab}
-      />
+      {!showUnitsDetail && !taskDetailType && (
+        <BottomNavigation
+          activeTab={activeTab}
+          roleContent={roleContent}
+          onTabChange={setActiveTab}
+        />
+      )}
     </div>
   );
 };

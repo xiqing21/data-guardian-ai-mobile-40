@@ -30,13 +30,15 @@ interface LevelHomepageProps {
   statistics: any;
   tasks: any;
   onTaskDetailClick?: (type: 'completed' | 'pending') => void;
+  onUnitsDetailClick?: () => void;
 }
 
 const LevelHomepage: React.FC<LevelHomepageProps> = ({ 
   currentRole, 
   statistics, 
   tasks, 
-  onTaskDetailClick 
+  onTaskDetailClick,
+  onUnitsDetailClick 
 }) => {
   const getLevelIcon = () => {
     switch (currentRole.level) {
@@ -61,8 +63,10 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
   };
 
   const handleUnitsClick = () => {
-    console.log('查看管理单位详情');
-    window.location.href = '/units-detail';
+    console.log('查看管辖单位详情');
+    if (onUnitsDetailClick) {
+      onUnitsDetailClick();
+    }
   };
 
   const handleTotalTasksClick = () => {
@@ -90,141 +94,141 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
 
   const renderProvinceView = () => (
     <div className="space-y-4">
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              {getLevelIcon()}
+      {/* 融合的数据要素智能体主卡片 */}
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 text-white overflow-hidden relative">
+        <CardContent className="p-6 relative z-10">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
+          <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
+          
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Brain className="h-8 w-8" />
+              </div>
               <div>
-                <h2 className="text-xl font-bold">{currentRole.name}</h2>
-                <p className="text-blue-100">省级电力数据治理中心</p>
+                <h2 className="text-2xl font-bold">数据要素智能体</h2>
+                <div className="flex items-center gap-3 text-blue-100 text-sm mt-1">
+                  {getLevelIcon()}
+                  <span>{currentRole.name}</span>
+                  <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                    省级管理中心
+                  </Badge>
+                </div>
               </div>
             </div>
-            <Badge className="bg-white/20 text-white border-white/30">
-              省级管理
-            </Badge>
+            <div className="text-right">
+              <div className="text-3xl font-bold">
+                <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
+              </div>
+              <div className="text-sm text-blue-100">总体完成率</div>
+            </div>
           </div>
           
-          <div className="grid grid-cols-4 gap-4">
+          {/* 核心指标展示 */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
               onClick={handleUnitsClick}
             >
               <div className="text-2xl font-bold flex items-center justify-center gap-1">
                 <AnimatedNumber value={statistics.totalUnits} />
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-5 w-5" />
               </div>
-              <div className="text-xs text-blue-100">管辖单位</div>
+              <div className="text-sm text-blue-100 mt-1">管辖单位</div>
             </div>
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
               onClick={handleTotalTasksClick}
             >
               <div className="text-2xl font-bold flex items-center justify-center gap-1">
                 <AnimatedNumber value={statistics.totalTasks} />
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-5 w-5" />
               </div>
-              <div className="text-xs text-blue-100">总任务数</div>
+              <div className="text-sm text-blue-100 mt-1">总任务数</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
-              <div className="text-2xl font-bold">
-                <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
-              </div>
-              <div className="text-xs text-blue-100">完成率</div>
-            </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4">
               <div className="text-2xl font-bold">
                 <AnimatedNumber value={statistics.dataQuality} suffix="%" />
               </div>
-              <div className="text-xs text-blue-100">数据质量</div>
+              <div className="text-sm text-blue-100 mt-1">数据质量</div>
+            </div>
+            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-4">
+              <div className="text-2xl font-bold text-yellow-200">
+                <AnimatedNumber value={92.5} suffix="%" />
+              </div>
+              <div className="text-sm text-blue-100 mt-1">智能化率</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* 融合的AI智能体与任务完成进度 */}
-      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-white/20 rounded-lg">
-                <Brain className="h-4 w-4" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold">AI数据治理智能体</h3>
-                <p className="text-xs text-indigo-100">智能化数据治理平台</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xl font-bold">
-                <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
-              </div>
-              <div className="text-xs text-indigo-100">完成率</div>
-            </div>
-          </div>
-          
           {/* AI功能模块 */}
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
-              onClick={() => handleAIFeatureClick('analysis')}
-            >
-              <BarChart3 className="h-4 w-4 mx-auto mb-1 text-cyan-200" />
-              <div className="text-xs text-indigo-100">智能分析</div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Cpu className="h-5 w-5 text-cyan-200" />
+              <span className="text-lg font-semibold">AI智能功能</span>
+              <Badge className="bg-green-500 text-xs px-2 py-1">运行中</Badge>
             </div>
-            <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
-              onClick={() => handleAIFeatureClick('task-assignment')}
-            >
-              <Target className="h-4 w-4 mx-auto mb-1 text-green-200" />
-              <div className="text-xs text-indigo-100">任务分配</div>
-            </div>
-            <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
-              onClick={() => handleAIFeatureClick('quality-monitor')}
-            >
-              <Shield className="h-4 w-4 mx-auto mb-1 text-yellow-200" />
-              <div className="text-xs text-indigo-100">质量监控</div>
-            </div>
-            <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
-              onClick={() => handleAIFeatureClick('decision-support')}
-            >
-              <Cpu className="h-4 w-4 mx-auto mb-1 text-purple-200" />
-              <div className="text-xs text-indigo-100">决策支持</div>
+            <div className="grid grid-cols-4 gap-3">
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('analysis')}
+              >
+                <BarChart3 className="h-5 w-5 mx-auto mb-2 text-cyan-200" />
+                <div className="text-sm text-indigo-100">智能分析</div>
+              </div>
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('task-assignment')}
+              >
+                <Target className="h-5 w-5 mx-auto mb-2 text-green-200" />
+                <div className="text-sm text-indigo-100">任务分配</div>
+              </div>
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('quality-monitor')}
+              >
+                <Shield className="h-5 w-5 mx-auto mb-2 text-yellow-200" />
+                <div className="text-sm text-indigo-100">质量监控</div>
+              </div>
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('decision-support')}
+              >
+                <FileText className="h-5 w-5 mx-auto mb-2 text-purple-200" />
+                <div className="text-sm text-indigo-100">决策支持</div>
+              </div>
             </div>
           </div>
 
-          {/* 进度条 */}
-          <div className="mb-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xs text-indigo-100">全省任务完成进度</span>
-              <span className="text-xs font-medium">
+          {/* 进度条和任务统计 */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm text-blue-100">全省治理进度</span>
+              <span className="text-sm font-medium">
                 <AnimatedNumber value={statistics.taskCompletion} suffix="%" />
               </span>
             </div>
-            <Progress value={statistics.taskCompletion} className="h-2 bg-white/20" />
+            <Progress value={statistics.taskCompletion} className="h-3 bg-white/20" />
           </div>
 
           {/* 任务统计 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div 
-              className="text-center p-2 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+              className="text-center p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
               onClick={() => onTaskDetailClick?.('completed')}
             >
-              <div className="text-base font-bold text-green-600 flex items-center justify-center gap-1">
+              <div className="text-lg font-bold text-green-600 flex items-center justify-center gap-1">
                 <AnimatedNumber value={statistics.completedTasks} />
-                <ArrowRight className="h-3 w-3" />
+                <ArrowRight className="h-4 w-4" />
               </div>
               <div className="text-xs text-gray-600">已完成任务</div>
             </div>
             <div 
-              className="text-center p-2 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
+              className="text-center p-3 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors"
               onClick={() => onTaskDetailClick?.('pending')}
             >
-              <div className="text-base font-bold text-orange-600 flex items-center justify-center gap-1">
+              <div className="text-lg font-bold text-orange-600 flex items-center justify-center gap-1">
                 <AnimatedNumber value={statistics.totalTasks - statistics.completedTasks} />
-                <ArrowRight className="h-3 w-3" />
+                <ArrowRight className="h-4 w-4" />
               </div>
               <div className="text-xs text-gray-600">待完成任务</div>
             </div>
