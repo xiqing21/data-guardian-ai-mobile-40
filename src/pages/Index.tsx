@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import AIAssistantWithProps from '@/components/AIAssistantWithProps';
 import AnalyticsReports from '@/components/AnalyticsReports';
 import TaskManagement from '@/components/TaskManagement';
 import LevelHomepage from '@/components/LevelHomepage';
+import TaskDetailModal from '@/components/TaskDetailModal';
 import { useRoleManagement } from '@/hooks/useRoleManagement';
 import AppHeader from '@/components/AppHeader';
 import AIWorkbench from '@/components/AIWorkbench';
@@ -13,6 +13,7 @@ import FloatingAvatar from '@/components/FloatingAvatar';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [taskDetailType, setTaskDetailType] = useState<'completed' | 'pending' | null>(null);
   
   const {
     currentRole,
@@ -72,6 +73,10 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleTaskDetailClick = (type: 'completed' | 'pending') => {
+    setTaskDetailType(type);
+  };
+
   const renderDashboard = () => (
     <div className="space-y-4 p-4 pb-20">
       {/* 层级化首页展示 */}
@@ -79,6 +84,7 @@ const Index = () => {
         currentRole={currentRole}
         statistics={roleStatistics}
         tasks={roleTasks}
+        onTaskDetailClick={handleTaskDetailClick}
       />
 
       {/* AI智能工作台 */}
@@ -109,15 +115,23 @@ const Index = () => {
       />
 
       <div className="flex-1">
-        {activeTab === 'dashboard' && renderDashboard()}
-        {activeTab === 'ai-assistant' && (
+        {taskDetailType ? (
+          <TaskDetailModal 
+            type={taskDetailType}
+            onBack={() => setTaskDetailType(null)}
+          />
+        ) : activeTab === 'dashboard' ? (
+          renderDashboard()
+        ) : activeTab === 'ai-assistant' ? (
           <AIAssistantWithProps 
             employeeTasks={roleTasks} 
             currentRole={currentRole}
           />
-        )}
-        {activeTab === 'analytics' && roleContent.showAnalytics && <AnalyticsReports />}
-        {activeTab === 'tasks' && roleContent.showTasks && <TaskManagement employeeTasks={roleTasks} />}
+        ) : activeTab === 'analytics' && roleContent.showAnalytics ? (
+          <AnalyticsReports />
+        ) : activeTab === 'tasks' && roleContent.showTasks ? (
+          <TaskManagement employeeTasks={roleTasks} />
+        ) : null}
       </div>
 
       <FloatingAvatar onAvatarClick={() => setActiveTab('ai-assistant')} />
