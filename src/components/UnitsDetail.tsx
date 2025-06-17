@@ -1,33 +1,18 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   ArrowLeft, 
-  Building2, 
-  TrendingUp, 
-  TrendingDown, 
-  Minus,
-  MapPin,
-  Users,
-  Activity,
-  User,
-  Calendar,
   Clock,
   CheckCircle2,
-  AlertTriangle,
-  BarChart3,
-  Target,
-  List,
-  PlayCircle,
-  Settings,
-  FileText,
-  Zap
+  Settings
 } from 'lucide-react';
 import { Role } from '../types/Role';
-import AnimatedNumber from './AnimatedNumber';
+import TaskStatistics from './TaskStatistics';
+import TaskList from './TaskList';
+import UnitBasicInfo from './UnitBasicInfo';
+import UnitCard from './UnitCard';
 
 interface Task {
   id: number;
@@ -55,12 +40,12 @@ interface Unit {
   trendValue: number;
   region: string;
   employees: number;
-  totalDataVolume: number; // GB
-  processedDataVolume: number; // GB
+  totalDataVolume: number;
+  processedDataVolume: number;
   responsiblePerson: string;
   urgentTasks: number;
   overdueRate: number;
-  tasks?: Task[]; // 添加任务列表
+  tasks?: Task[];
 }
 
 interface UnitsDetailProps {
@@ -367,55 +352,6 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
     }
   });
 
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
-    switch (trend) {
-      case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-500" />;
-      case 'stable':
-        return <Minus className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
-  const getTrendColor = (trend: 'up' | 'down' | 'stable') => {
-    switch (trend) {
-      case 'up':
-        return 'text-green-600';
-      case 'down':
-        return 'text-red-600';
-      case 'stable':
-        return 'text-gray-600';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed': return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'in-progress': return <Clock className="h-4 w-4 text-blue-500" />;
-      case 'pending': return <AlertTriangle className="h-4 w-4 text-orange-500" />;
-      default: return <FileText className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-700 border-green-200';
-      case 'in-progress': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'pending': return 'bg-orange-100 text-orange-700 border-orange-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
   const handleUnitClick = (unit: Unit) => {
     setSelectedUnit(unit);
   };
@@ -426,7 +362,6 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
 
   const handleTaskClick = (task: Task) => {
     console.log('跳转到任务处理:', task.id, task.title);
-    // 触发事件跳转到任务管理页面
     window.dispatchEvent(new CustomEvent('openTaskManagement'));
   };
 
@@ -435,8 +370,6 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
     const pendingTasks = tasks.filter(t => t.status === 'pending');
     const inProgressTasks = tasks.filter(t => t.status === 'in-progress');
     const completedTasks = tasks.filter(t => t.status === 'completed');
-    const urgentTasks = tasks.filter(t => t.priority === 'high' && t.status !== 'completed');
-    const aiProcessableTasks = tasks.filter(t => t.autoProcessable && t.status === 'pending');
 
     return (
       <div className="min-h-screen bg-gray-50 p-3 pb-20">
@@ -452,40 +385,7 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
         </div>
 
         {/* 统计概览 */}
-        <div className="grid grid-cols-4 gap-2 mb-4">
-          <Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100">
-            <CardContent className="p-2">
-              <div className="text-lg font-bold text-blue-600">
-                <AnimatedNumber value={tasks.length} />
-              </div>
-              <div className="text-xs text-gray-600">总任务</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center bg-gradient-to-br from-orange-50 to-orange-100">
-            <CardContent className="p-2">
-              <div className="text-lg font-bold text-orange-600">
-                <AnimatedNumber value={pendingTasks.length} />
-              </div>
-              <div className="text-xs text-gray-600">待处理</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center bg-gradient-to-br from-green-50 to-green-100">
-            <CardContent className="p-2">
-              <div className="text-lg font-bold text-green-600">
-                <AnimatedNumber value={completedTasks.length} />
-              </div>
-              <div className="text-xs text-gray-600">已完成</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center bg-gradient-to-br from-red-50 to-red-100">
-            <CardContent className="p-2">
-              <div className="text-lg font-bold text-red-600">
-                <AnimatedNumber value={urgentTasks.length} />
-              </div>
-              <div className="text-xs text-gray-600">紧急</div>
-            </CardContent>
-          </Card>
-        </div>
+        <TaskStatistics tasks={tasks} />
 
         {/* 任务分类标签页 */}
         <Card>
@@ -506,193 +406,23 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                 </TabsTrigger>
               </TabsList>
 
-              {/* 待办任务 */}
               <TabsContent value="overview" className="space-y-3 mt-0">
-                {/* AI助手提醒 */}
-                {aiProcessableTasks.length > 0 && (
-                  <div className="p-3 rounded-lg border-l-4 border-l-purple-500 bg-purple-50 mb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-purple-600" />
-                        <div>
-                          <div className="font-medium text-purple-700 text-sm">
-                            AI智能助手 ({aiProcessableTasks.length}个可处理)
-                          </div>
-                          <div className="text-xs text-purple-600">
-                            预计节省80%处理时间
-                          </div>
-                        </div>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="bg-purple-600 hover:bg-purple-700 text-xs"
-                      >
-                        <Zap className="h-3 w-3 mr-1" />
-                        启动AI
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {pendingTasks.length > 0 ? (
-                  <div className="space-y-2">
-                    {pendingTasks.map((task) => (
-                      <div 
-                        key={task.id}
-                        className="p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => handleTaskClick(task)}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(task.status)}
-                            <span className="font-medium text-sm">{task.title}</span>
-                            <div className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`}></div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {task.priority === 'high' && (
-                              <Badge variant="destructive" className="text-xs">紧急</Badge>
-                            )}
-                            {task.autoProcessable && (
-                              <Badge className="bg-purple-100 text-purple-600 text-xs">AI可处理</Badge>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-600 mb-3">{task.description}</div>
-                        <div className="flex justify-between items-center">
-                          <div className="text-xs text-gray-400">
-                            <span>负责人: {task.assignee}</span>
-                            <span className="ml-3">截止: {task.deadline}</span>
-                          </div>
-                          <Button
-                            size="sm"
-                            className="text-xs h-6"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTaskClick(task);
-                            }}
-                          >
-                            <PlayCircle className="h-3 w-3 mr-1" />
-                            处理
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-gray-500">
-                    <CheckCircle2 className="h-10 w-10 mx-auto mb-2 text-green-500" />
-                    <div className="text-sm">太棒了！暂无待办任务</div>
-                  </div>
-                )}
+                <TaskList tasks={tasks} status="pending" onTaskClick={handleTaskClick} />
               </TabsContent>
 
-              {/* 进行中任务 */}
               <TabsContent value="progress" className="space-y-3 mt-0">
-                {inProgressTasks.length > 0 ? (
-                  <div className="space-y-2">
-                    {inProgressTasks.map((task) => (
-                      <div 
-                        key={task.id}
-                        className="p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => handleTaskClick(task)}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(task.status)}
-                            <span className="font-medium text-sm">{task.title}</span>
-                          </div>
-                          <Badge className="bg-orange-100 text-orange-600 text-xs">进行中</Badge>
-                        </div>
-                        <div className="text-xs text-gray-600 mb-2">{task.description}</div>
-                        <div className="space-y-2">
-                          <Progress value={task.progress} className="h-1" />
-                          <div className="flex justify-between text-xs text-gray-400">
-                            <span>进度: {task.progress}%</span>
-                            <span>负责人: {task.assignee}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-gray-500">
-                    <Clock className="h-10 w-10 mx-auto mb-2 text-gray-400" />
-                    <div className="text-sm">暂无进行中的任务</div>
-                  </div>
-                )}
+                <TaskList tasks={tasks} status="in-progress" onTaskClick={handleTaskClick} />
               </TabsContent>
 
-              {/* 已完成任务 */}
               <TabsContent value="completed" className="space-y-3 mt-0">
-                {completedTasks.length > 0 ? (
-                  <div className="space-y-2">
-                    {completedTasks.map((task) => (
-                      <div 
-                        key={task.id} 
-                        className="flex items-center justify-between p-3 bg-green-50 rounded-lg border"
-                      >
-                        <div className="flex-1">
-                          <div className="font-medium text-sm text-green-700">{task.title}</div>
-                          <div className="text-xs text-green-600">{task.description}</div>
-                          <div className="text-xs text-green-500 mt-1">完成时间: {task.deadline}</div>
-                        </div>
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-gray-500">
-                    <Calendar className="h-10 w-10 mx-auto mb-2 text-gray-400" />
-                    <div className="text-sm">暂无完成任务</div>
-                  </div>
-                )}
+                <TaskList tasks={tasks} status="completed" onTaskClick={handleTaskClick} />
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
 
-        {/* 基本信息卡片 - 移动到底部 */}
-        <Card className="mt-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Building2 className="h-4 w-4" />
-              基本信息
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">单位类型</span>
-                  <Badge variant="outline" className="text-xs">{selectedUnit.type}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">所在区域</span>
-                  <span className="font-medium text-xs">{selectedUnit.region}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">责任主体</span>
-                  <div className="flex items-center gap-1">
-                    <User className="h-3 w-3 text-blue-500" />
-                    <span className="font-medium text-xs">{selectedUnit.responsiblePerson}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">员工数量</span>
-                  <span className="font-medium text-xs">{selectedUnit.employees}人</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">总数据量</span>
-                  <span className="font-medium text-xs">{selectedUnit.totalDataVolume}GB</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">已处理数据量</span>
-                  <span className="font-medium text-green-600 text-xs">{selectedUnit.processedDataVolume}GB</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* 基本信息卡片 */}
+        <UnitBasicInfo unit={selectedUnit} />
       </div>
     );
   }
@@ -741,101 +471,12 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
       {/* 单位列表 - 移动端优化 */}
       <div className="space-y-2">
         {sortedUnits.map((unit, index) => (
-          <Card 
-            key={unit.id} 
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => handleUnitClick(unit)}
-          >
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
-                    <span className="text-xs font-bold text-blue-600">#{index + 1}</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">{unit.name}</h3>
-                    <div className="flex items-center gap-1 text-xs text-gray-600">
-                      <MapPin className="h-3 w-3" />
-                      <span>{unit.region}</span>
-                      <Badge variant="outline" className="text-xs px-1">
-                        {unit.type}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                      <User className="h-3 w-3" />
-                      <span>责任主体: {unit.responsiblePerson}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1">
-                    <span className="text-base font-bold text-blue-600">
-                      <AnimatedNumber value={unit.governanceProgress} suffix="%" />
-                    </span>
-                    {getTrendIcon(unit.trend)}
-                  </div>
-                  <div className={`text-xs ${getTrendColor(unit.trend)}`}>
-                    {unit.trend === 'up' ? '+' : unit.trend === 'down' ? '' : '±'}
-                    <AnimatedNumber value={Math.abs(unit.trendValue)} suffix="%" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                <div className="text-center">
-                  <div className="text-sm font-bold text-gray-900">
-                    <AnimatedNumber value={unit.dataQuality} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-600">数据质量</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm font-bold text-gray-900">
-                    <AnimatedNumber value={unit.taskCompletion} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-600">任务完成率</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm font-bold text-gray-900 flex items-center justify-center gap-1">
-                    <Users className="h-3 w-3" />
-                    <AnimatedNumber value={unit.employees} />
-                  </div>
-                  <div className="text-xs text-gray-600">员工数</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm font-bold text-purple-600">
-                    <AnimatedNumber value={unit.totalDataVolume} />GB
-                  </div>
-                  <div className="text-xs text-gray-600">数据量</div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-600">治理进度</span>
-                  <span className="font-medium">
-                    <AnimatedNumber value={unit.governanceProgress} suffix="%" />
-                  </span>
-                </div>
-                <Progress value={unit.governanceProgress} className="h-1.5" />
-              </div>
-
-              <div className="flex justify-between items-center mt-2 text-xs text-gray-600">
-                <span>任务进度: {unit.completedTasks}/{unit.totalTasks}</span>
-                <div className="flex items-center gap-2">
-                  {unit.urgentTasks > 0 && (
-                    <div className="flex items-center gap-1 text-red-600">
-                      <AlertTriangle className="h-3 w-3" />
-                      <span>紧急: {unit.urgentTasks}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1">
-                    <Activity className="h-3 w-3" />
-                    <span>活跃度: 高</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <UnitCard 
+            key={unit.id}
+            unit={unit}
+            index={index}
+            onClick={handleUnitClick}
+          />
         ))}
       </div>
     </div>
