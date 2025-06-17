@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { Role } from '../types/Role';
 import AnimatedNumber from './AnimatedNumber';
+import PowerSupplyRanking from './PowerSupplyRanking';
+import GridWorkerRanking from './GridWorkerRanking';
 
 interface LevelHomepageProps {
   currentRole: Role;
@@ -141,6 +143,8 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      <PowerSupplyRanking currentRole={currentRole} />
     </div>
   );
 
@@ -234,6 +238,8 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      <GridWorkerRanking currentRole={currentRole} />
     </div>
   );
 
@@ -316,6 +322,8 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      <GridWorkerRanking currentRole={currentRole} />
     </div>
   );
 
@@ -407,6 +415,8 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
             </div>
           </CardContent>
         </Card>
+
+        <PowerSupplyRanking currentRole={currentRole} />
       </div>
     );
   };
