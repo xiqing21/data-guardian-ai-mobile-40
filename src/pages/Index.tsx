@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AIAssistantWithProps from '@/components/AIAssistantWithProps';
 import EnhancedAnalyticsReports from '@/components/EnhancedAnalyticsReports';
@@ -58,7 +57,23 @@ const Index = () => {
       }));
     }, 5000);
 
-    return () => clearInterval(interval);
+    // 添加自定义事件监听
+    const handleOpenAIAssistant = () => {
+      setActiveTab('ai-assistant');
+    };
+
+    const handleOpenTaskManagement = () => {
+      setActiveTab('tasks');
+    };
+
+    window.addEventListener('openAIAssistant', handleOpenAIAssistant);
+    window.addEventListener('openTaskManagement', handleOpenTaskManagement);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('openAIAssistant', handleOpenAIAssistant);
+      window.removeEventListener('openTaskManagement', handleOpenTaskManagement);
+    };
   }, []);
 
   const handleTaskDetailClick = (type: 'completed' | 'pending') => {
