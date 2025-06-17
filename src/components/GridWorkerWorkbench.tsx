@@ -9,11 +9,9 @@ import {
   Clock, 
   AlertTriangle, 
   Bot, 
-  Calendar,
-  ArrowRight,
   TrendingUp,
-  Users,
-  Target
+  List,
+  PlayCircle
 } from 'lucide-react';
 import { Task } from '../types/Task';
 import AnimatedNumber from './AnimatedNumber';
@@ -39,8 +37,6 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
   onViewAllTasks,
   employeeTasks
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'pending' | 'completed' | 'ai'>('overview');
-
   // 任务统计
   const pendingTasks = tasks.filter(t => t.status === 'pending');
   const completedTasks = tasks.filter(t => t.status === 'completed');
@@ -53,264 +49,179 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
     Math.round((employeeTasks.completedToday / employeeTasks.totalToday) * 100) : 
     Math.round((completedTasks.length / tasks.length) * 100);
 
-  const renderOverview = () => (
+  return (
     <div className="space-y-4">
-      {/* 关键指标卡片 */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardContent className="p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-blue-600 mb-1">我的待办</div>
-                <div className="text-2xl font-bold text-blue-700">
-                  <AnimatedNumber value={pendingTasks.length} />
-                </div>
-              </div>
-              <Clock className="h-8 w-8 text-blue-500" />
-            </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full mt-2 h-6 text-xs border-blue-300 text-blue-600 hover:bg-blue-50"
-              onClick={() => setActiveTab('pending')}
-            >
-              查看详情
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardContent className="p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-green-600 mb-1">今日完成</div>
-                <div className="text-2xl font-bold text-green-700">
-                  <AnimatedNumber value={employeeTasks?.completedToday || completedTasks.length} />
-                </div>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full mt-2 h-6 text-xs border-green-300 text-green-600 hover:bg-green-50"
-              onClick={() => setActiveTab('completed')}
-            >
-              查看详情
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 完成率进度 */}
+      {/* 工作概览 - 关键指标 */}
       <Card>
-        <CardContent className="p-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">今日完成率</span>
-            <span className="text-sm font-bold text-green-600">
-              <AnimatedNumber value={todayCompletionRate} suffix="%" />
-            </span>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-blue-600" />
+            我的工作概览
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">
+                <AnimatedNumber value={pendingTasks.length} />
+              </div>
+              <div className="text-sm text-blue-700">待办任务</div>
+            </div>
+            <div className="text-center p-3 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">
+                <AnimatedNumber value={employeeTasks?.completedToday || completedTasks.length} />
+              </div>
+              <div className="text-sm text-green-700">今日完成</div>
+            </div>
           </div>
-          <Progress value={todayCompletionRate} className="h-2" />
-          <div className="text-xs text-gray-500 mt-1">
-            已完成 {employeeTasks?.completedToday || completedTasks.length} / 
-            总计 {employeeTasks?.totalToday || tasks.length} 个任务
+          
+          {/* 完成率进度条 */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>今日完成率</span>
+              <span className="font-semibold text-green-600">
+                <AnimatedNumber value={todayCompletionRate} suffix="%" />
+              </span>
+            </div>
+            <Progress value={todayCompletionRate} className="h-2" />
+            <div className="text-xs text-gray-500 text-center">
+              已完成 {employeeTasks?.completedToday || completedTasks.length} / 
+              总计 {employeeTasks?.totalToday || tasks.length} 个任务
+            </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* AI智能助手卡片 */}
-      {aiProcessableTasks.length > 0 && (
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Bot className="h-5 w-5 text-purple-600" />
-              <span className="text-sm font-medium text-purple-700">AI工作助手</span>
-              <Badge className="bg-purple-100 text-purple-600 text-xs">智能处理</Badge>
-            </div>
-            <div className="text-xs text-purple-600 mb-3">
-              {aiProcessableTasks.length}个任务可自动处理，预计节省80%时间
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={onAIAssistClick}
-                className="flex-1 h-7 text-xs bg-purple-500 hover:bg-purple-600"
-              >
-                <Bot className="h-3 w-3 mr-1" />
-                启动AI助手
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setActiveTab('ai')}
-                className="h-7 text-xs border-purple-300 text-purple-600"
-              >
-                详情
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* 紧急任务提醒 */}
       {urgentTasks.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-4 w-4 text-orange-500" />
-              <span className="text-sm font-medium text-orange-700">紧急任务提醒</span>
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                <div>
+                  <div className="font-medium text-red-700">紧急任务提醒</div>
+                  <div className="text-sm text-red-600">
+                    有 {urgentTasks.length} 个紧急任务需要立即处理
+                  </div>
+                </div>
+              </div>
+              <Button 
+                size="sm" 
+                variant="destructive"
+                onClick={() => onTaskClick(urgentTasks[0])}
+              >
+                立即处理
+              </Button>
             </div>
-            <div className="text-xs text-orange-600 mb-2">
-              有 {urgentTasks.length} 个紧急任务需要处理
-            </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full h-6 text-xs border-orange-300 text-orange-600 hover:bg-orange-50"
-              onClick={() => setActiveTab('pending')}
-            >
-              立即处理
-            </Button>
           </CardContent>
         </Card>
       )}
-    </div>
-  );
 
-  const renderPendingTasks = () => (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium">待办任务 ({pendingTasks.length})</h3>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={onViewAllTasks}
-          className="h-6 text-xs"
-        >
-          查看全部
-        </Button>
-      </div>
-      {pendingTasks.slice(0, 5).map((task) => (
-        <Card 
-          key={task.id} 
-          className="cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => onTaskClick(task)}
-        >
-          <CardContent className="p-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-medium truncate">{task.title}</span>
-              <Badge variant={task.priority === 'high' ? 'destructive' : 'default'} className="text-xs">
-                {task.priority === 'high' ? '紧急' : task.priority === 'medium' ? '普通' : '一般'}
-              </Badge>
-            </div>
-            <div className="text-xs text-gray-500 mb-2">{task.description}</div>
+      {/* AI智能助手 */}
+      {aiProcessableTasks.length > 0 && (
+        <Card className="border-purple-200 bg-purple-50">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">截止: {task.deadline}</span>
-              {task.autoProcessable && (
-                <Badge className="bg-purple-100 text-purple-600 text-xs">可AI处理</Badge>
-              )}
+              <div className="flex items-center gap-2">
+                <Bot className="h-5 w-5 text-purple-600" />
+                <div>
+                  <div className="font-medium text-purple-700">AI智能助手</div>
+                  <div className="text-sm text-purple-600">
+                    {aiProcessableTasks.length}个任务可自动处理，预计节省80%时间
+                  </div>
+                </div>
+              </div>
+              <Button 
+                size="sm" 
+                onClick={onAIAssistClick}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <PlayCircle className="h-4 w-4 mr-1" />
+                启动AI
+              </Button>
             </div>
           </CardContent>
         </Card>
-      ))}
-    </div>
-  );
+      )}
 
-  const renderCompletedTasks = () => (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium">已完成任务 ({completedTasks.length})</h3>
-        <div className="text-xs text-green-600">
-          完成率 <AnimatedNumber value={todayCompletionRate} suffix="%" />
-        </div>
-      </div>
-      {completedTasks.slice(0, 5).map((task) => (
-        <Card key={task.id} className="bg-green-50 border-green-200">
-          <CardContent className="p-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-medium text-green-700 truncate">{task.title}</span>
-              <CheckCircle className="h-4 w-4 text-green-500" />
-            </div>
-            <div className="text-xs text-green-600 mb-1">{task.description}</div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-green-500">完成人: {task.assignee}</span>
-              <Badge className="bg-green-100 text-green-600 text-xs">已完成</Badge>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-
-  const renderAIAssistant = () => (
-    <div className="space-y-3">
-      <div className="text-center p-4 bg-purple-50 rounded-lg">
-        <Bot className="h-12 w-12 text-purple-500 mx-auto mb-2" />
-        <h3 className="text-sm font-medium text-purple-700 mb-1">AI工作助手</h3>
-        <p className="text-xs text-purple-600">智能化处理，提升工作效率</p>
-      </div>
-
+      {/* 待办任务列表 */}
       <Card>
-        <CardContent className="p-3">
-          <h4 className="text-sm font-medium mb-2">可自动处理任务</h4>
-          <div className="space-y-2">
-            {aiProcessableTasks.slice(0, 3).map((task) => (
-              <div key={task.id} className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                <span className="text-sm truncate">{task.title}</span>
-                <Button
-                  size="sm"
-                  onClick={() => onTaskClick(task)}
-                  className="h-6 text-xs bg-purple-500 hover:bg-purple-600"
-                >
-                  AI处理
-                </Button>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-600" />
+              我的待办 ({pendingTasks.length})
+            </CardTitle>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onViewAllTasks}
+              className="text-xs"
+            >
+              <List className="h-3 w-3 mr-1" />
+              查看全部
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {pendingTasks.slice(0, 4).map((task) => (
+              <div 
+                key={task.id}
+                className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => onTaskClick(task)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium text-sm">{task.title}</span>
+                  <div className="flex items-center gap-2">
+                    {task.priority === 'high' && (
+                      <Badge variant="destructive" className="text-xs">紧急</Badge>
+                    )}
+                    {task.autoProcessable && (
+                      <Badge className="bg-purple-100 text-purple-600 text-xs">AI可处理</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-600 mb-2">{task.description}</div>
+                <div className="flex justify-between text-xs text-gray-400">
+                  <span>负责人: {task.assignee}</span>
+                  <span>截止: {task.deadline}</span>
+                </div>
               </div>
             ))}
+            
+            {pendingTasks.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                <div className="text-sm">太棒了！暂无待办任务</div>
+              </div>
+            )}
           </div>
-          <Button
-            className="w-full mt-3 bg-purple-500 hover:bg-purple-600"
-            onClick={onAIAssistClick}
-          >
-            启动AI智能助手
-          </Button>
         </CardContent>
       </Card>
-    </div>
-  );
 
-  return (
-    <div className="space-y-3">
-      {/* 标签页导航 */}
-      <div className="grid grid-cols-4 gap-1 bg-gray-100 p-1 rounded-lg">
-        {[
-          { key: 'overview', label: '概览', icon: Target },
-          { key: 'pending', label: '待办', icon: Clock },
-          { key: 'completed', label: '完成', icon: CheckCircle },
-          { key: 'ai', label: 'AI助手', icon: Bot }
-        ].map(({ key, label, icon: Icon }) => (
-          <Button
-            key={key}
-            variant={activeTab === key ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab(key as any)}
-            className={`h-8 text-xs flex items-center gap-1 ${
-              activeTab === key ? 'bg-white shadow-sm' : 'text-gray-600'
-            }`}
-          >
-            <Icon className="h-3 w-3" />
-            {label}
-          </Button>
-        ))}
-      </div>
-
-      {/* 内容区域 */}
-      <div className="min-h-[400px]">
-        {activeTab === 'overview' && renderOverview()}
-        {activeTab === 'pending' && renderPendingTasks()}
-        {activeTab === 'completed' && renderCompletedTasks()}
-        {activeTab === 'ai' && renderAIAssistant()}
-      </div>
+      {/* 今日已完成 */}
+      {completedTasks.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              今日已完成 ({employeeTasks?.completedToday || completedTasks.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {completedTasks.slice(0, 3).map((task) => (
+                <div key={task.id} className="flex items-center justify-between p-2 bg-green-50 rounded">
+                  <span className="text-sm font-medium text-green-700">{task.title}</span>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
