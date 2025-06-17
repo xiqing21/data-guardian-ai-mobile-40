@@ -20,8 +20,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     <div className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="flex items-center justify-between p-4">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">山西省AI数据治理智能体</h1>
-          <p className="text-xs text-gray-500">角色化智能服务平台 - {currentRole.name}</p>
+          <h1 className="text-lg font-semibold text-gray-900">山西省数据要素智能体</h1>
         </div>
         <div className="flex items-center gap-3">
           <RoleSelector
