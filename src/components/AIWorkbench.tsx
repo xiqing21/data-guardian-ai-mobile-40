@@ -12,11 +12,9 @@ import {
   Activity
 } from 'lucide-react';
 import { Role, RoleContent } from '../types/Role';
-import RoleSelector from './RoleSelector';
 
 interface AIWorkbenchProps {
   currentRole: Role;
-  availableRoles: Role[];
   roleContent: RoleContent;
   roleTasks: {
     pendingTasks: number;
@@ -32,17 +30,14 @@ interface AIWorkbenchProps {
     pendingAutoTasks: number;
     aiProcessingTasks: number;
   };
-  onRoleChange: (roleId: string) => void;
   onTabChange: (tab: string) => void;
 }
 
 const AIWorkbench: React.FC<AIWorkbenchProps> = ({
   currentRole,
-  availableRoles,
   roleContent,
   roleTasks,
   integratedAIStatus,
-  onRoleChange,
   onTabChange
 }) => {
   return (
@@ -52,7 +47,7 @@ const AIWorkbench: React.FC<AIWorkbenchProps> = ({
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
         <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div>
         
-        {/* 头部区域 - 整合角色信息和AI助手 */}
+        {/* 头部区域 - AI助手信息 */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -73,16 +68,6 @@ const AIWorkbench: React.FC<AIWorkbenchProps> = ({
             <div className="text-2xl font-bold">{integratedAIStatus.completionRate}%</div>
             <div className="text-xs text-indigo-100">智能化率</div>
           </div>
-        </div>
-        
-        {/* 角色切换区域 - 整合在智能体卡片内 */}
-        <div className="mb-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg">
-          <div className="text-sm font-medium mb-2 text-indigo-100">智能体角色切换</div>
-          <RoleSelector
-            currentRole={currentRole}
-            availableRoles={availableRoles}
-            onRoleChange={onRoleChange}
-          />
         </div>
         
         {/* 任务状态统一展示 */}

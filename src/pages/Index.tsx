@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AIAssistantWithProps from '@/components/AIAssistantWithProps';
 import AnalyticsReports from '@/components/AnalyticsReports';
@@ -89,11 +88,9 @@ const Index = () => {
       {/* 整合的AI智能工作台 */}
       <AIWorkbench
         currentRole={currentRole}
-        availableRoles={availableRoles}
         roleContent={roleContent}
         roleTasks={roleTasks}
         integratedAIStatus={integratedAIStatus}
-        onRoleChange={switchRole}
         onTabChange={setActiveTab}
       />
 
@@ -117,8 +114,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <AppHeader currentRole={currentRole} />
+      {/* 顶部导航栏 - 现在包含角色切换功能 */}
+      <AppHeader 
+        currentRole={currentRole} 
+        availableRoles={availableRoles}
+        onRoleChange={switchRole}
+      />
 
       {/* 主要内容区域 */}
       <div className="flex-1">
