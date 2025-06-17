@@ -55,12 +55,39 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
     }
   };
 
+  const handleRoleSelect = (roleId: string) => {
+    console.log('角色选择:', roleId);
+    onRoleChange(roleId);
+    setIsOpen(false);
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+    console.log('切换下拉菜单:', !isOpen);
+  };
+
+  // 点击外部关闭下拉菜单
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isOpen && !target.closest('.role-selector-container')) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative role-selector-container">
       <Button
         variant="outline"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 min-w-48 justify-between"
+        onClick={toggleDropdown}
+        className="flex items-center gap-2 min-w-48 justify-between hover:bg-gray-50"
       >
         <div className="flex items-center gap-2">
           {getRoleIcon(currentRole.level)}
@@ -73,7 +100,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
           <Badge className={`text-xs px-2 py-0 ${getRoleLevelColor(currentRole.level)}`}>
             {getRoleLevelText(currentRole.level)}
           </Badge>
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </Button>
 
@@ -82,12 +109,12 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
           {availableRoles.map((role) => (
             <div
               key={role.id}
-              className={`p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 ${
+              className={`p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors ${
                 role.id === currentRole.id ? 'bg-blue-50' : ''
               }`}
-              onClick={() => {
-                onRoleChange(role.id);
-                setIsOpen(false);
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRoleSelect(role.id);
               }}
             >
               <div className="flex items-center justify-between">
