@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { User, Calendar, Bot } from 'lucide-react';
+import { User, Calendar, Bot, Zap, Shield, FileText, Activity, AlertTriangle, Settings, Search, BookOpen, UserPlus, Phone } from 'lucide-react';
 
 interface Task {
   id: number;
@@ -46,6 +46,27 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
     return priorityMap[priority] || priorityMap.medium;
   };
 
+  const getCategoryIcon = (category: string) => {
+    const iconMap = {
+      'phone': <Phone className="h-3 w-3" />,
+      'address': <Search className="h-3 w-3" />,
+      'contract': <FileText className="h-3 w-3" />,
+      'certificate': <Shield className="h-3 w-3" />,
+      'call': <Phone className="h-3 w-3" />,
+      'archive': <FileText className="h-3 w-3" />,
+      'meter': <Zap className="h-3 w-3" />,
+      'safety': <Shield className="h-3 w-3" />,
+      'payment': <Activity className="h-3 w-3" />,
+      'equipment': <Settings className="h-3 w-3" />,
+      'inspection': <Search className="h-3 w-3" />,
+      'repair': <AlertTriangle className="h-3 w-3" />,
+      'education': <BookOpen className="h-3 w-3" />,
+      'violation': <AlertTriangle className="h-3 w-3" />,
+      'newservice': <UserPlus className="h-3 w-3" />
+    };
+    return iconMap[category] || <FileText className="h-3 w-3" />;
+  };
+
   const statusBadge = getStatusBadge(task.status);
   const priorityBadge = getPriorityBadge(task.priority);
 
@@ -55,7 +76,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="font-medium text-gray-900 text-sm">{task.title}</h3>
+              <div className="flex items-center gap-1">
+                {getCategoryIcon(task.category)}
+                <h3 className="font-medium text-gray-900 text-sm">{task.title}</h3>
+              </div>
               {task.autoProcessable && (
                 <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
                   <Bot className="h-3 w-3 mr-1" />

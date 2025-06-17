@@ -80,6 +80,127 @@ export const useTaskManagement = (employeeTasks?: {
       assignee: 'AI外呼系统',
       deadline: '2024-01-15',
       autoProcessable: true
+    },
+    // 新增网格员和供电所的更多任务
+    {
+      id: 6,
+      title: '用电户档案完善',
+      description: '完善1,852户用电户基础档案信息',
+      category: 'archive',
+      priority: 'medium',
+      status: 'pending',
+      progress: 0,
+      assignee: '网格员002',
+      deadline: '2024-01-18',
+      autoProcessable: false
+    },
+    {
+      id: 7,
+      title: '电表读数异常处理',
+      description: '处理456个电表读数异常问题',
+      category: 'meter',
+      priority: 'high',
+      status: 'in-progress',
+      progress: 30,
+      assignee: '供电所001',
+      deadline: '2024-01-16',
+      autoProcessable: true
+    },
+    {
+      id: 8,
+      title: '用电安全检查',
+      description: '对234户进行用电安全隐患排查',
+      category: 'safety',
+      priority: 'high',
+      status: 'pending',
+      progress: 0,
+      assignee: '网格员003',
+      deadline: '2024-01-17',
+      autoProcessable: false
+    },
+    {
+      id: 9,
+      title: '缴费通知发送',
+      description: '向1,672户发送电费缴费通知',
+      category: 'payment',
+      priority: 'medium',
+      status: 'in-progress',
+      progress: 80,
+      assignee: 'AI外呼系统',
+      deadline: '2024-01-15',
+      autoProcessable: true
+    },
+    {
+      id: 10,
+      title: '台账信息录入',
+      description: '录入589条设备台账信息',
+      category: 'equipment',
+      priority: 'low',
+      status: 'pending',
+      progress: 0,
+      assignee: '供电所002',
+      deadline: '2024-01-19',
+      autoProcessable: false
+    },
+    {
+      id: 11,
+      title: '线路巡检记录',
+      description: '完成12.5公里线路巡检并记录',
+      category: 'inspection',
+      priority: 'medium',
+      status: 'in-progress',
+      progress: 65,
+      assignee: '网格员004',
+      deadline: '2024-01-16',
+      autoProcessable: false
+    },
+    {
+      id: 12,
+      title: '故障报修处理',
+      description: '处理78起用户故障报修',
+      category: 'repair',
+      priority: 'high',
+      status: 'pending',
+      progress: 0,
+      assignee: '供电所003',
+      deadline: '2024-01-15',
+      autoProcessable: false
+    },
+    {
+      id: 13,
+      title: '电力设施保护宣传',
+      description: '向156户宣传电力设施保护知识',
+      category: 'education',
+      priority: 'low',
+      status: 'in-progress',
+      progress: 40,
+      assignee: '网格员005',
+      deadline: '2024-01-20',
+      autoProcessable: false
+    },
+    {
+      id: 14,
+      title: '违约用电排查',
+      description: '排查89起疑似违约用电行为',
+      category: 'violation',
+      priority: 'high',
+      status: 'pending',
+      progress: 0,
+      assignee: '供电所004',
+      deadline: '2024-01-17',
+      autoProcessable: true
+    },
+    {
+      id: 15,
+      title: '新装用电业务',
+      description: '办理23户新装用电业务',
+      category: 'newservice',
+      priority: 'medium',
+      status: 'in-progress',
+      progress: 55,
+      assignee: '网格员006',
+      deadline: '2024-01-18',
+      autoProcessable: false
     }
   ]);
 
@@ -89,7 +210,17 @@ export const useTaskManagement = (employeeTasks?: {
     { key: 'address', label: '地址', count: tasks.filter(t => t.category === 'address').length },
     { key: 'contract', label: '合同', count: tasks.filter(t => t.category === 'contract').length },
     { key: 'certificate', label: '证照', count: tasks.filter(t => t.category === 'certificate').length },
-    { key: 'call', label: '外呼', count: tasks.filter(t => t.category === 'call').length }
+    { key: 'call', label: '外呼', count: tasks.filter(t => t.category === 'call').length },
+    { key: 'archive', label: '档案', count: tasks.filter(t => t.category === 'archive').length },
+    { key: 'meter', label: '电表', count: tasks.filter(t => t.category === 'meter').length },
+    { key: 'safety', label: '安全', count: tasks.filter(t => t.category === 'safety').length },
+    { key: 'payment', label: '缴费', count: tasks.filter(t => t.category === 'payment').length },
+    { key: 'equipment', label: '设备', count: tasks.filter(t => t.category === 'equipment').length },
+    { key: 'inspection', label: '巡检', count: tasks.filter(t => t.category === 'inspection').length },
+    { key: 'repair', label: '报修', count: tasks.filter(t => t.category === 'repair').length },
+    { key: 'education', label: '宣传', count: tasks.filter(t => t.category === 'education').length },
+    { key: 'violation', label: '违约', count: tasks.filter(t => t.category === 'violation').length },
+    { key: 'newservice', label: '新装', count: tasks.filter(t => t.category === 'newservice').length }
   ];
 
   const overallProgress = Math.round(
@@ -130,8 +261,10 @@ export const useTaskManagement = (employeeTasks?: {
           if (task.autoProcessable) {
             newAssignee = task.category === 'call' ? 'AI外呼系统' : 'AI智能体';
           } else {
-            const gridWorkers = ['网格员001', '网格员002', '网格员003', '网格员004', '网格员005'];
-            newAssignee = gridWorkers[Math.floor(Math.random() * gridWorkers.length)];
+            const gridWorkers = ['网格员001', '网格员002', '网格员003', '网格员004', '网格员005', '网格员006'];
+            const substations = ['供电所001', '供电所002', '供电所003', '供电所004'];
+            const allWorkers = [...gridWorkers, ...substations];
+            newAssignee = allWorkers[Math.floor(Math.random() * allWorkers.length)];
           }
           
           return {
