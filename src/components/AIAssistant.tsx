@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, Phone, Settings, User, Brain, Zap, TrendingUp } from 'lucide-react';
+import { MessageSquare, Phone, Settings, User, Brain, Zap, TrendingUp, Camera, Video, FileText } from 'lucide-react';
 import EnhancedMessageInput from './ai-assistant/EnhancedMessageInput';
+import MediaRecognition from './ai-assistant/MediaRecognition';
 
 interface Message {
   id: number;
@@ -13,6 +14,7 @@ interface Message {
   confidence?: number;
   processingTime?: string;
   suggestions?: string[];
+  mediaType?: 'text' | 'image' | 'video' | 'document';
 }
 
 const AIAssistant = () => {
@@ -20,18 +22,21 @@ const AIAssistant = () => {
     {
       id: 1,
       type: 'ai',
-      content: '您好！我是基于光明大模型的数据治理智能助手，具备深度学习和自然语言处理能力。我可以为您提供：\n\n🤖 智能数据分析与治理\n📊 实时质量监控与预警\n🔄 自动化处理流程\n📱 智能外呼与验证\n\n请告诉我您需要什么帮助？',
+      content: '您好！我是基于光明大模型的多媒体数据治理智能助手，具备深度学习和自然语言处理能力。我可以为您提供：\n\n🤖 智能数据分析与治理\n📊 实时质量监控与预警\n🔄 自动化处理流程\n📱 智能外呼与验证\n🖼️ 图像识别与分析\n🎥 视频内容理解\n📄 文档智能解析\n\n请告诉我您需要什么帮助？',
       timestamp: new Date(),
       confidence: 98.5,
       processingTime: '0.3s'
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [showMediaPanel, setShowMediaPanel] = useState(false);
   const [aiCapabilities, setAiCapabilities] = useState({
     dataProcessed: 1247892,
     accuracy: 96.8,
     tasksCompleted: 3456,
-    responseTime: '0.2s'
+    responseTime: '0.2s',
+    mediaAnalyzed: 1542,
+    videoProcessed: 234
   });
   const messagesEndRef = useRef(null);
 
@@ -43,14 +48,15 @@ const AIAssistant = () => {
     scrollToBottom();
   }, [messages]);
 
-  // 实时更新AI能力指标
   useEffect(() => {
     const interval = setInterval(() => {
       setAiCapabilities(prev => ({
         ...prev,
         dataProcessed: prev.dataProcessed + Math.floor(Math.random() * 50),
         accuracy: Math.min(99.9, prev.accuracy + (Math.random() - 0.5) * 0.1),
-        tasksCompleted: prev.tasksCompleted + Math.floor(Math.random() * 3)
+        tasksCompleted: prev.tasksCompleted + Math.floor(Math.random() * 3),
+        mediaAnalyzed: prev.mediaAnalyzed + Math.floor(Math.random() * 5),
+        videoProcessed: prev.videoProcessed + Math.floor(Math.random() * 2)
       }));
     }, 10000);
 
@@ -60,10 +66,10 @@ const AIAssistant = () => {
   const quickActions = [
     { label: '智能数据分析', action: '请对当前数据进行深度质量分析，包括完整性、准确性、一致性等维度', icon: '📊' },
     { label: '异常智能检测', action: '启动AI异常检测算法，识别数据中的异常模式和潜在问题', icon: '🔍' },
-    { label: '自动治理建议', action: '基于机器学习模型，为当前数据质量问题提供智能治理方案', icon: '🤖' },
-    { label: '外呼任务优化', action: '分析外呼成功率，优化外呼策略和时间安排', icon: '📞' },
-    { label: '实时监控设置', action: '配置数据质量实时监控规则和预警机制', icon: '⚡' },
-    { label: '治理效果评估', action: '评估当前数据治理措施的效果和ROI', icon: '📈' }
+    { label: '图像识别分析', action: '启动图像识别功能，分析设备状态和安全隐患', icon: '📸' },
+    { label: '视频内容分析', action: '分析巡检视频，识别作业规范性和安全问题', icon: '🎬' },
+    { label: '文档智能解析', action: '解析文档内容，提取关键信息并进行结构化处理', icon: '📝' },
+    { label: '实时监控设置', action: '配置数据质量实时监控规则和预警机制', icon: '⚡' }
   ];
 
   const handleSendMessage = async (content: string) => {
@@ -79,7 +85,6 @@ const AIAssistant = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
 
-    // 模拟AI响应处理时间
     const processingTime = Math.random() * 2 + 0.5;
     setTimeout(() => {
       const aiResponse = generateIntelligentAIResponse(content);
@@ -95,6 +100,29 @@ const AIAssistant = () => {
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
     }, processingTime * 1000);
+  };
+
+  const handleMediaAnalysis = (result: any) => {
+    const mediaMessage: Message = {
+      id: messages.length + 1,
+      type: 'ai',
+      content: result.content,
+      timestamp: new Date(),
+      confidence: result.confidence,
+      processingTime: '2.3s',
+      mediaType: result.type,
+      suggestions: ['查看详细报告', '生成处理任务', '保存分析结果']
+    };
+    
+    setMessages(prev => [...prev, mediaMessage]);
+    setShowMediaPanel(false);
+    
+    // 更新统计数据
+    setAiCapabilities(prev => ({
+      ...prev,
+      mediaAnalyzed: prev.mediaAnalyzed + 1,
+      videoProcessed: result.type === 'video' ? prev.videoProcessed + 1 : prev.videoProcessed
+    }));
   };
 
   const generateIntelligentAIResponse = (userInput: string) => {
@@ -143,7 +171,7 @@ const AIAssistant = () => {
     return {
       content: '🤖 **智能分析中...**\n\n我正在调用光明大模型的多个AI能力模块进行深度分析：\n\n🧠 自然语言理解模块\n🔍 数据智能分析模块\n📊 预测分析模块\n⚡ 实时处理模块\n\n基于您的问题，我将为您提供最专业的数据治理建议。如果您有具体的数据问题，请详细描述，我可以提供更精准的解决方案。\n\n💡 您也可以尝试问我关于数据质量、异常检测、自动化处理等方面的问题。',
       confidence: 89.3,
-      suggestions: ['数据质量分析', '异常检测', '自动化处理', '效果评估']
+      suggestions: ['数据质量分析', '异常检测', '图像识别', '视频分析']
     };
   };
 
@@ -158,17 +186,26 @@ const AIAssistant = () => {
             </div>
             <div>
               <h2 className="font-semibold text-gray-900">光明大模型助手</h2>
-              <p className="text-sm text-gray-500">深度学习 • 智能分析 • 实时在线</p>
+              <p className="text-sm text-gray-500">多媒体AI • 智能分析 • 实时在线</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="bg-green-50 text-green-600">
               AI活跃
             </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowMediaPanel(!showMediaPanel)}
+              className="text-xs"
+            >
+              <Camera className="h-3 w-3 mr-1" />
+              多媒体
+            </Button>
           </div>
         </div>
         
-        {/* AI能力指标 */}
+        {/* AI能力指标 - 增加多媒体指标 */}
         <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
           <div className="text-center p-2 bg-blue-50 rounded">
             <div className="font-semibold text-blue-600">{aiCapabilities.dataProcessed.toLocaleString()}</div>
@@ -179,8 +216,8 @@ const AIAssistant = () => {
             <div className="text-gray-600">准确率</div>
           </div>
           <div className="text-center p-2 bg-purple-50 rounded">
-            <div className="font-semibold text-purple-600">{aiCapabilities.tasksCompleted}</div>
-            <div className="text-gray-600">完成任务</div>
+            <div className="font-semibold text-purple-600">{aiCapabilities.mediaAnalyzed}</div>
+            <div className="text-gray-600">媒体分析</div>
           </div>
           <div className="text-center p-2 bg-orange-50 rounded">
             <div className="font-semibold text-orange-600">{aiCapabilities.responseTime}</div>
@@ -188,6 +225,13 @@ const AIAssistant = () => {
           </div>
         </div>
       </div>
+
+      {/* 多媒体识别面板 */}
+      {showMediaPanel && (
+        <div className="p-4 bg-white border-b">
+          <MediaRecognition onAnalysisComplete={handleMediaAnalysis} />
+        </div>
+      )}
 
       {/* 快捷操作 */}
       <div className="p-4 bg-white border-b">
@@ -222,6 +266,20 @@ const AIAssistant = () => {
                   : 'bg-white border shadow-sm'
               }`}
             >
+              {/* 媒体类型标识 */}
+              {message.mediaType && (
+                <div className="mb-2 flex items-center gap-2">
+                  {message.mediaType === 'image' && <Camera className="h-4 w-4 text-blue-500" />}
+                  {message.mediaType === 'video' && <Video className="h-4 w-4 text-green-500" />}
+                  {message.mediaType === 'document' && <FileText className="h-4 w-4 text-orange-500" />}
+                  <Badge variant="outline" className="text-xs">
+                    {message.mediaType === 'image' && '图像分析'}
+                    {message.mediaType === 'video' && '视频分析'}
+                    {message.mediaType === 'document' && '文档解析'}
+                  </Badge>
+                </div>
+              )}
+              
               <div className="whitespace-pre-wrap text-sm">{message.content}</div>
               
               {/* AI消息的额外信息 */}
@@ -293,7 +351,7 @@ const AIAssistant = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 输入区域 - 使用新的增强版输入组件 */}
+      {/* 输入区域 */}
       <div className="bg-white border-t p-4">
         <EnhancedMessageInput onSendMessage={handleSendMessage} />
       </div>
