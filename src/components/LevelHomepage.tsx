@@ -4,6 +4,7 @@ import { Role } from '../types/Role';
 import GridWorkerWorkbench from './GridWorkerWorkbench';
 import GridWorkerRanking from './GridWorkerRanking';
 import PowerSupplyRanking from './PowerSupplyRanking';
+import TaskOverview from './TaskOverview';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -17,7 +18,9 @@ import {
   Zap,
   CheckCircle2,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Database,
+  Activity
 } from 'lucide-react';
 
 interface LevelHomepageProps {
@@ -171,7 +174,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
     );
   }
 
-  // 管理层级界面（省市县）
+  // 管理层级界面（省市县）- 整合任务进度和数据量统计
   return (
     <div className="space-y-3">
       {/* 管理层概览 */}
@@ -209,139 +212,170 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
         </Card>
       </div>
 
-      {/* 任务进度概览 */}
+      {/* 整合的任务进度与数据量统计 */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            任务进度概览
+            <Activity className="h-5 w-5" />
+            任务进度与数据量统计
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>总体任务完成度</span>
-                <span className="font-medium">
+          <div className="space-y-4">
+            {/* 整体进度展示 */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-blue-600" />
+                  <span className="font-medium text-blue-800">总体任务完成度</span>
+                </div>
+                <div className="text-2xl font-bold text-blue-700">
                   <AnimatedNumber value={statistics.overallCompletion} suffix="%" />
-                </span>
+                </div>
               </div>
-              <Progress value={statistics.overallCompletion} className="h-2" />
+              <Progress value={statistics.overallCompletion} className="h-3 mb-2" />
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">
+                    <AnimatedNumber value={tasks.completedToday} />
+                  </div>
+                  <div className="text-xs text-gray-600">已完成</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">
+                    <AnimatedNumber value={tasks.inProgressTasks} />
+                  </div>
+                  <div className="text-xs text-gray-600">进行中</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-orange-600">
+                    <AnimatedNumber value={tasks.urgentTasks} />
+                  </div>
+                  <div className="text-xs text-gray-600">待处理</div>
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>AI智能处理率</span>
-                <span className="font-medium">
+
+            {/* AI处理统计 */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-purple-600" />
+                  <span className="font-medium text-purple-800">AI智能处理统计</span>
+                </div>
+                <div className="text-2xl font-bold text-purple-700">
                   <AnimatedNumber value={statistics.aiProcessingRate} suffix="%" />
-                </span>
+                </div>
               </div>
-              <Progress value={statistics.aiProcessingRate} className="h-2" />
+              <Progress value={statistics.aiProcessingRate} className="h-3 mb-2" />
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">
+                    <AnimatedNumber value={tasks.aiProcessed} />
+                  </div>
+                  <div className="text-xs text-gray-600">AI处理量</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">
+                    <AnimatedNumber value={statistics.dataProcessingProgress} suffix="%" />
+                  </div>
+                  <div className="text-xs text-gray-600">处理进度</div>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>数据处理进度</span>
-                <span className="font-medium">
-                  <AnimatedNumber value={statistics.dataProcessingProgress} suffix="%" />
-                </span>
+            {/* 数据量统计矩阵 */}
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Database className="h-5 w-5 text-orange-600" />
+                <span className="font-medium text-orange-800">数据处理量统计</span>
               </div>
-              <Progress value={statistics.dataProcessingProgress} className="h-2" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                  <div className="p-2 bg-blue-500 rounded-full">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-blue-700">
+                      <AnimatedNumber value={tasks.totalProcessed} />
+                    </div>
+                    <div className="text-xs text-blue-600">已处理总量</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                  <div className="p-2 bg-green-500 rounded-full">
+                    <Zap className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-green-700">
+                      <AnimatedNumber value={tasks.aiProcessed} />
+                    </div>
+                    <div className="text-xs text-green-600">AI智能处理</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                  <div className="p-2 bg-orange-500 rounded-full">
+                    <Clock className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-orange-700">
+                      <AnimatedNumber value={tasks.pendingData} />
+                    </div>
+                    <div className="text-xs text-orange-600">待处理数据</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                  <div className="p-2 bg-red-500 rounded-full">
+                    <AlertTriangle className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-red-700">
+                      <AnimatedNumber value={tasks.errorData} />
+                    </div>
+                    <div className="text-xs text-red-600">异常数据量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 关键指标趋势 */}
+            <div className="grid grid-cols-3 gap-2">
+              <Card className="text-center bg-gradient-to-br from-green-50 to-green-100">
+                <CardContent className="p-3">
+                  <div className="text-lg font-bold text-green-600">
+                    <AnimatedNumber value={Math.round((tasks.completedToday / tasks.totalToday) * 100)} suffix="%" />
+                  </div>
+                  <div className="text-xs text-gray-500">完成率</div>
+                  <div className="text-xs text-green-600 mt-1">↗ +2.3%</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100">
+                <CardContent className="p-3">
+                  <div className="text-lg font-bold text-blue-600">
+                    <AnimatedNumber value={Math.round((tasks.aiProcessed / tasks.totalProcessed) * 100)} suffix="%" />
+                  </div>
+                  <div className="text-xs text-gray-500">AI处理率</div>
+                  <div className="text-xs text-blue-600 mt-1">↗ +5.1%</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="text-center bg-gradient-to-br from-purple-50 to-purple-100">
+                <CardContent className="p-3">
+                  <div className="text-lg font-bold text-purple-600">
+                    <AnimatedNumber value={Math.round(((tasks.totalProcessed - tasks.errorData) / tasks.totalProcessed) * 100)} suffix="%" />
+                  </div>
+                  <div className="text-xs text-gray-500">质量率</div>
+                  <div className="text-xs text-purple-600 mt-1">↗ +1.8%</div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* 任务数据量统计 */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            任务数据量统计
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-              <div className="p-2 bg-blue-500 rounded-full">
-                <CheckCircle2 className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-blue-700">
-                  <AnimatedNumber value={tasks.totalProcessed} />
-                </div>
-                <div className="text-xs text-blue-600">已处理数据量</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
-              <div className="p-2 bg-green-500 rounded-full">
-                <Zap className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-green-700">
-                  <AnimatedNumber value={tasks.aiProcessed} />
-                </div>
-                <div className="text-xs text-green-600">AI智能处理量</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
-              <div className="p-2 bg-orange-500 rounded-full">
-                <Clock className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-orange-700">
-                  <AnimatedNumber value={tasks.pendingData} />
-                </div>
-                <div className="text-xs text-orange-600">待处理数据量</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-              <div className="p-2 bg-purple-500 rounded-full">
-                <AlertTriangle className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-purple-700">
-                  <AnimatedNumber value={tasks.errorData} />
-                </div>
-                <div className="text-xs text-purple-600">异常数据量</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 关键指标卡片 */}
-      <div className="grid grid-cols-3 gap-2">
-        <Card className="text-center">
-          <CardContent className="p-3">
-            <div className="text-lg font-bold text-orange-600">
-              <AnimatedNumber value={tasks.urgentTasks} />
-            </div>
-            <div className="text-xs text-gray-500">紧急任务</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="text-center">
-          <CardContent className="p-3">
-            <div className="text-lg font-bold text-blue-600">
-              <AnimatedNumber value={tasks.inProgressTasks} />
-            </div>
-            <div className="text-xs text-gray-500">进行中</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="text-center">
-          <CardContent className="p-3">
-            <div className="text-lg font-bold text-green-600">
-              <AnimatedNumber value={tasks.completedToday} />
-            </div>
-            <div className="text-xs text-gray-500">今日完成</div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 };
