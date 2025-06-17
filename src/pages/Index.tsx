@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AIAssistantWithProps from '@/components/AIAssistantWithProps';
-import AnalyticsReports from '@/components/AnalyticsReports';
+import EnhancedAnalyticsReports from '@/components/EnhancedAnalyticsReports';
 import TaskManagement from '@/components/TaskManagement';
 import LevelHomepage from '@/components/LevelHomepage';
 import TaskDetailModal from '@/components/TaskDetailModal';
@@ -73,7 +73,7 @@ const Index = () => {
   };
 
   const renderDashboard = () => (
-    <div className="space-y-4 p-4 pb-20">
+    <div className="space-y-3 p-3 pb-20">
       {/* 层级化首页展示 */}
       <LevelHomepage
         currentRole={currentRole}
@@ -120,7 +120,7 @@ const Index = () => {
             currentRole={currentRole}
           />
         ) : activeTab === 'analytics' && roleContent.showAnalytics ? (
-          <AnalyticsReports />
+          <EnhancedAnalyticsReports />
         ) : activeTab === 'tasks' && roleContent.showTasks ? (
           <TaskManagement employeeTasks={roleTasks} />
         ) : null}

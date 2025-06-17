@@ -304,134 +304,132 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
 
   if (selectedUnit) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Button variant="ghost" size="sm" onClick={handleBackToList} className="p-2">
+      <div className="min-h-screen bg-gray-50 p-3">
+        {/* Header - 移动端优化 */}
+        <div className="flex items-center gap-2 mb-4">
+          <Button variant="ghost" size="sm" onClick={handleBackToList} className="p-1.5 h-8 w-8">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{selectedUnit.name}</h1>
-            <p className="text-sm text-gray-600">详细信息</p>
+            <h1 className="text-lg font-bold text-gray-900">{selectedUnit.name}</h1>
+            <p className="text-xs text-gray-600">详细信息</p>
           </div>
         </div>
 
-        {/* 详细信息卡片 */}
-        <div className="space-y-4">
+        {/* 详细信息卡片 - 移动端优化 */}
+        <div className="space-y-3">
           {/* 基本信息 */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Building2 className="h-4 w-4" />
                 基本信息
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-3">
+            <CardContent className="pt-0">
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">单位类型</span>
-                    <Badge variant="outline">{selectedUnit.type}</Badge>
+                    <Badge variant="outline" className="text-xs">{selectedUnit.type}</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">所在区域</span>
-                    <span className="font-medium">{selectedUnit.region}</span>
+                    <span className="font-medium text-xs">{selectedUnit.region}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">责任主体</span>
                     <div className="flex items-center gap-1">
-                      <User className="h-4 w-4 text-blue-500" />
-                      <span className="font-medium">{selectedUnit.responsiblePerson}</span>
+                      <User className="h-3 w-3 text-blue-500" />
+                      <span className="font-medium text-xs">{selectedUnit.responsiblePerson}</span>
                     </div>
                   </div>
-                </div>
-                <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">员工数量</span>
-                    <span className="font-medium">{selectedUnit.employees}人</span>
+                    <span className="font-medium text-xs">{selectedUnit.employees}人</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">总数据量</span>
-                    <span className="font-medium">{selectedUnit.totalDataVolume}GB</span>
+                    <span className="font-medium text-xs">{selectedUnit.totalDataVolume}GB</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">已处理数据量</span>
-                    <span className="font-medium text-green-600">{selectedUnit.processedDataVolume}GB</span>
+                    <span className="font-medium text-green-600 text-xs">{selectedUnit.processedDataVolume}GB</span>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* 数据治理详情 */}
+          {/* 数据治理详情 - 移动端优化 */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <BarChart3 className="h-4 w-4" />
                 数据治理详情
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="pt-0">
+              <div className="space-y-3">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">治理进度</span>
-                    <span className="font-bold text-blue-600">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-gray-600 text-sm">治理进度</span>
+                    <span className="font-bold text-blue-600 text-sm">
                       <AnimatedNumber value={selectedUnit.governanceProgress} suffix="%" />
                     </span>
                   </div>
-                  <Progress value={selectedUnit.governanceProgress} className="h-3" />
+                  <Progress value={selectedUnit.governanceProgress} className="h-2" />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">数据质量</span>
-                    <span className="font-bold text-green-600">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-gray-600 text-sm">数据质量</span>
+                    <span className="font-bold text-green-600 text-sm">
                       <AnimatedNumber value={selectedUnit.dataQuality} suffix="%" />
                     </span>
                   </div>
-                  <Progress value={selectedUnit.dataQuality} className="h-3" />
+                  <Progress value={selectedUnit.dataQuality} className="h-2" />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">数据处理率</span>
-                    <span className="font-bold text-purple-600">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-gray-600 text-sm">数据处理率</span>
+                    <span className="font-bold text-purple-600 text-sm">
                       <AnimatedNumber value={(selectedUnit.processedDataVolume / selectedUnit.totalDataVolume) * 100} suffix="%" />
                     </span>
                   </div>
-                  <Progress value={(selectedUnit.processedDataVolume / selectedUnit.totalDataVolume) * 100} className="h-3" />
+                  <Progress value={(selectedUnit.processedDataVolume / selectedUnit.totalDataVolume) * 100} className="h-2" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* 任务完成情况 */}
+          {/* 任务完成情况 - 移动端优化 */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Target className="h-4 w-4" />
                 任务完成情况
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="text-center p-3 bg-green-50 rounded-lg">
+                  <div className="text-lg font-bold text-green-600">
                     <AnimatedNumber value={selectedUnit.completedTasks} />
                   </div>
-                  <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                    <CheckCircle2 className="h-4 w-4" />
+                  <div className="text-xs text-gray-600 flex items-center justify-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
                     已完成任务
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
                     责任主体: {selectedUnit.responsiblePerson}
                   </div>
                 </div>
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
-                  <div className="text-2xl font-bold text-orange-600">
+                <div className="text-center p-3 bg-orange-50 rounded-lg">
+                  <div className="text-lg font-bold text-orange-600">
                     <AnimatedNumber value={selectedUnit.totalTasks - selectedUnit.completedTasks} />
                   </div>
-                  <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                    <Clock className="h-4 w-4" />
+                  <div className="text-xs text-gray-600 flex items-center justify-center gap-1">
+                    <Clock className="h-3 w-3" />
                     待完成任务
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
@@ -440,24 +438,24 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                 </div>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">任务完成率</span>
-                  <span className="font-bold text-blue-600">
+                  <span className="text-gray-600 text-sm">任务完成率</span>
+                  <span className="font-bold text-blue-600 text-sm">
                     <AnimatedNumber value={selectedUnit.taskCompletion} suffix="%" />
                   </span>
                 </div>
-                <Progress value={selectedUnit.taskCompletion} className="h-3" />
+                <Progress value={selectedUnit.taskCompletion} className="h-2" />
                 
-                <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-2 gap-3 pt-2">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-red-600">
+                    <div className="text-base font-bold text-red-600">
                       <AnimatedNumber value={selectedUnit.urgentTasks} />
                     </div>
                     <div className="text-xs text-gray-600">紧急任务</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-orange-600">
+                    <div className="text-base font-bold text-orange-600">
                       <AnimatedNumber value={selectedUnit.overdueRate} suffix="%" />
                     </div>
                     <div className="text-xs text-gray-600">逾期率</div>
@@ -472,24 +470,25 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="sm" onClick={onBack} className="p-2">
+    <div className="min-h-screen bg-gray-50 p-3">
+      {/* Header - 移动端优化 */}
+      <div className="flex items-center gap-2 mb-4">
+        <Button variant="ghost" size="sm" onClick={onBack} className="p-1.5 h-8 w-8">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">管辖单位详情</h1>
-          <p className="text-sm text-gray-600">{currentRole.name} - 按治理进度排名</p>
+          <h1 className="text-lg font-bold text-gray-900">管辖单位详情</h1>
+          <p className="text-xs text-gray-600">{currentRole.name} - 按治理进度排名</p>
         </div>
       </div>
 
-      {/* 排序选择 */}
-      <div className="flex gap-2 mb-4">
+      {/* 排序选择 - 移动端优化 */}
+      <div className="flex gap-1.5 mb-3">
         <Button
           variant={sortBy === 'governance' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setSortBy('governance')}
+          className="text-xs px-3 py-1.5 h-auto"
         >
           治理进度
         </Button>
@@ -497,6 +496,7 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           variant={sortBy === 'quality' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setSortBy('quality')}
+          className="text-xs px-3 py-1.5 h-auto"
         >
           数据质量
         </Button>
@@ -504,35 +504,36 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
           variant={sortBy === 'completion' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setSortBy('completion')}
+          className="text-xs px-3 py-1.5 h-auto"
         >
           任务完成率
         </Button>
       </div>
 
-      {/* 单位列表 */}
-      <div className="space-y-3">
+      {/* 单位列表 - 移动端优化 */}
+      <div className="space-y-2">
         {sortedUnits.map((unit, index) => (
           <Card 
             key={unit.id} 
             className="hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleUnitClick(unit)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                    <span className="text-sm font-bold text-blue-600">#{index + 1}</span>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
+                    <span className="text-xs font-bold text-blue-600">#{index + 1}</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{unit.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <h3 className="font-semibold text-gray-900 text-sm">{unit.name}</h3>
+                    <div className="flex items-center gap-1 text-xs text-gray-600">
                       <MapPin className="h-3 w-3" />
                       <span>{unit.region}</span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs px-1">
                         {unit.type}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
                       <User className="h-3 w-3" />
                       <span>责任主体: {unit.responsiblePerson}</span>
                     </div>
@@ -540,7 +541,7 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1">
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-base font-bold text-blue-600">
                       <AnimatedNumber value={unit.governanceProgress} suffix="%" />
                     </span>
                     {getTrendIcon(unit.trend)}
@@ -552,47 +553,47 @@ const UnitsDetail: React.FC<UnitsDetailProps> = ({ currentRole, onBack }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-3 mb-3">
+              <div className="grid grid-cols-4 gap-2 mb-2">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-gray-900">
+                  <div className="text-sm font-bold text-gray-900">
                     <AnimatedNumber value={unit.dataQuality} suffix="%" />
                   </div>
                   <div className="text-xs text-gray-600">数据质量</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-gray-900">
+                  <div className="text-sm font-bold text-gray-900">
                     <AnimatedNumber value={unit.taskCompletion} suffix="%" />
                   </div>
                   <div className="text-xs text-gray-600">任务完成率</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-gray-900 flex items-center justify-center gap-1">
-                    <Users className="h-4 w-4" />
+                  <div className="text-sm font-bold text-gray-900 flex items-center justify-center gap-1">
+                    <Users className="h-3 w-3" />
                     <AnimatedNumber value={unit.employees} />
                   </div>
                   <div className="text-xs text-gray-600">员工数</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">
+                  <div className="text-sm font-bold text-purple-600">
                     <AnimatedNumber value={unit.totalDataVolume} />GB
                   </div>
                   <div className="text-xs text-gray-600">数据量</div>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center text-xs">
                   <span className="text-gray-600">治理进度</span>
                   <span className="font-medium">
                     <AnimatedNumber value={unit.governanceProgress} suffix="%" />
                   </span>
                 </div>
-                <Progress value={unit.governanceProgress} className="h-2" />
+                <Progress value={unit.governanceProgress} className="h-1.5" />
               </div>
 
-              <div className="flex justify-between items-center mt-3 text-sm text-gray-600">
+              <div className="flex justify-between items-center mt-2 text-xs text-gray-600">
                 <span>任务进度: {unit.completedTasks}/{unit.totalTasks}</span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {unit.urgentTasks > 0 && (
                     <div className="flex items-center gap-1 text-red-600">
                       <AlertTriangle className="h-3 w-3" />

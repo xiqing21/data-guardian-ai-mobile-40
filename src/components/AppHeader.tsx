@@ -18,21 +18,21 @@ const AppHeader: React.FC<AppHeaderProps> = ({
 }) => {
   return (
     <div className="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between px-3 py-3">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">智能体</h1>
+          <h1 className="text-base font-semibold text-gray-900">智能体</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <RoleSelector
             currentRole={currentRole}
             availableRoles={availableRoles}
             onRoleChange={onRoleChange}
           />
-          <Button variant="ghost" size="sm" className="p-2">
-            <Bell className="h-4 w-4" />
+          <Button variant="ghost" size="sm" className="p-1.5 h-8 w-8">
+            <Bell className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="ghost" size="sm" className="p-2">
-            <User className="h-4 w-4" />
+          <Button variant="ghost" size="sm" className="p-1.5 h-8 w-8">
+            <User className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>

@@ -131,7 +131,7 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
   }
 
   return (
-    <div className="p-4 pb-20 bg-gray-50 min-h-screen">
+    <div className="p-3 pb-20 bg-gray-50 min-h-screen">
       <IntegratedTaskOverview
         overallProgress={overallProgress}
         completedTasks={completedTasks}
@@ -141,14 +141,14 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
         taskStats={taskStats}
       />
 
-      <Card className="mb-4 border-0 shadow-sm">
-        <CardHeader className="pb-3">
+      <Card className="mb-3 border-0 shadow-sm">
+        <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between text-base">
             <span>任务管理</span>
             <Button 
               onClick={() => setShowNewTaskForm(true)}
               size="sm"
-              className="h-8 px-3 text-xs bg-blue-500 hover:bg-blue-600"
+              className="h-7 px-2 text-xs bg-blue-500 hover:bg-blue-600"
             >
               <Plus className="h-3 w-3 mr-1" />
               新建任务
@@ -163,7 +163,7 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
         onCategoryChange={setSelectedCategory}
       />
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {filteredTasks.map((task) => (
           <TaskCard
             key={task.id}
