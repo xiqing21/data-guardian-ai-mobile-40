@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,15 +12,15 @@ import {
   Bot, 
   User,
   Target,
-  PlayCircle,
   ArrowRight,
-  Settings,
   Bell,
   BellDot,
-  Calendar,
   Zap,
   TrendingUp,
-  CheckCircle2
+  CheckCircle2,
+  Play,
+  ChevronRight,
+  Activity
 } from 'lucide-react';
 import { Task } from '../types/Task';
 import AnimatedNumber from './AnimatedNumber';
@@ -70,11 +71,9 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
   // 快速处理任务 - 与任务管理模块保持一致
   const handleQuickProcess = (task: Task) => {
     console.log('工作台快速处理任务:', task.id);
-    // 如果有自定义快速处理逻辑，使用它；否则使用默认的任务点击逻辑
     if (onQuickProcess) {
       onQuickProcess(task);
     } else {
-      // 触发任务管理页面的显示
       window.dispatchEvent(new CustomEvent('openTaskManagement', { detail: { selectedTask: task } }));
     }
   };
@@ -140,74 +139,101 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="border-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
-            统一工作台
-            <Badge className="bg-blue-100 text-blue-700 text-xs">实时更新</Badge>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <User className="h-4 w-4 text-blue-600" />
+              </div>
+              <span className="text-gray-900">网格员工作台</span>
+            </div>
+            <Badge className="bg-blue-100 text-blue-700 text-xs ml-auto">实时更新</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* 快速概览指标 */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-xl font-bold text-blue-600">
-                <AnimatedNumber value={pendingTasks.length} />
+          {/* 优化后的快速概览指标 */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="flex items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-center h-10 w-10 bg-blue-500 rounded-full mr-3">
+                <Clock className="h-5 w-5 text-white" />
               </div>
-              <div className="text-xs text-blue-700">待办任务</div>
+              <div>
+                <div className="text-lg font-bold text-blue-600">
+                  <AnimatedNumber value={pendingTasks.length} />
+                </div>
+                <div className="text-xs text-blue-700">待办任务</div>
+              </div>
             </div>
-            <div className="text-center p-3 bg-orange-50 rounded-lg">
-              <div className="text-xl font-bold text-orange-600">
-                <AnimatedNumber value={inProgressTasks.length} />
+            
+            <div className="flex items-center p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg border border-red-200">
+              <div className="flex items-center justify-center h-10 w-10 bg-red-500 rounded-full mr-3">
+                <AlertTriangle className="h-5 w-5 text-white" />
               </div>
-              <div className="text-xs text-orange-700">进行中</div>
+              <div>
+                <div className="text-lg font-bold text-red-600">
+                  <AnimatedNumber value={urgentTasks.length} />
+                </div>
+                <div className="text-xs text-red-700">紧急任务</div>
+              </div>
             </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-xl font-bold text-green-600">
-                <AnimatedNumber value={employeeTasks?.completedToday || completedTasks.length} />
+            
+            <div className="flex items-center p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+              <div className="flex items-center justify-center h-10 w-10 bg-orange-500 rounded-full mr-3">
+                <Activity className="h-5 w-5 text-white" />
               </div>
-              <div className="text-xs text-green-700">今日完成</div>
+              <div>
+                <div className="text-lg font-bold text-orange-600">
+                  <AnimatedNumber value={inProgressTasks.length} />
+                </div>
+                <div className="text-xs text-orange-700">进行中</div>
+              </div>
             </div>
-            <div className="text-center p-3 bg-red-50 rounded-lg">
-              <div className="text-xl font-bold text-red-600">
-                <AnimatedNumber value={urgentTasks.length} />
+            
+            <div className="flex items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+              <div className="flex items-center justify-center h-10 w-10 bg-green-500 rounded-full mr-3">
+                <CheckCircle className="h-5 w-5 text-white" />
               </div>
-              <div className="text-xs text-red-700">紧急任务</div>
+              <div>
+                <div className="text-lg font-bold text-green-600">
+                  <AnimatedNumber value={employeeTasks?.completedToday || completedTasks.length} />
+                </div>
+                <div className="text-xs text-green-700">今日完成</div>
+              </div>
             </div>
           </div>
 
-          {/* 完成率进度条 */}
-          <div className="space-y-2 mb-6">
-            <div className="flex justify-between text-sm">
-              <span className="flex items-center gap-1">
-                <Target className="h-4 w-4 text-green-600" />
-                今日完成率
-              </span>
-              <span className="font-semibold text-green-600">
+          {/* 优化后的完成率进度条 */}
+          <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200 mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-emerald-600" />
+                <span className="font-medium text-emerald-800">今日完成率</span>
+              </div>
+              <span className="text-xl font-bold text-emerald-600">
                 <AnimatedNumber value={todayCompletionRate} suffix="%" />
               </span>
             </div>
-            <Progress value={todayCompletionRate} className="h-2" />
-            <div className="text-xs text-gray-500 text-center">
+            <Progress value={todayCompletionRate} className="h-3 mb-2" />
+            <div className="text-xs text-emerald-600 text-center">
               已完成 {employeeTasks?.completedToday || completedTasks.length} / 
               总计 {employeeTasks?.totalToday || tasks.length} 个任务
             </div>
           </div>
 
-          {/* 集成标签页 */}
+          {/* 优化后的集成标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="workbench" className="text-xs">
-                <Target className="h-3 w-3 mr-1" />
+            <TabsList className="grid w-full grid-cols-3 bg-gray-100">
+              <TabsTrigger value="workbench" className="text-xs flex items-center gap-1">
+                <Target className="h-3 w-3" />
                 工作台
               </TabsTrigger>
-              <TabsTrigger value="todos" className="text-xs">
-                <Clock className="h-3 w-3 mr-1" />
+              <TabsTrigger value="todos" className="text-xs flex items-center gap-1">
+                <Clock className="h-3 w-3" />
                 我的待办
               </TabsTrigger>
-              <TabsTrigger value="reminders" className="text-xs relative">
-                <BellDot className="h-3 w-3 mr-1" />
+              <TabsTrigger value="reminders" className="text-xs flex items-center gap-1 relative">
+                <BellDot className="h-3 w-3" />
                 我的提醒
                 {reminders.filter(r => r.priority === 'high').length > 0 && (
                   <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -215,32 +241,33 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
               </TabsTrigger>
             </TabsList>
 
-            {/* 工作台总览 */}
+            {/* 工作台总览 - 优化UI */}
             <TabsContent value="workbench" className="space-y-4 mt-4">
-              {/* 紧急任务和AI助手提醒 */}
+              {/* 紧急任务和AI助手提醒 - 重新设计 */}
               {(urgentTasks.length > 0 || aiProcessableTasks.length > 0) && (
                 <div className="space-y-3">
                   {urgentTasks.length > 0 && (
-                    <div className="p-3 rounded-lg border-l-4 border-l-red-500 bg-red-50">
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 border border-red-200">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center h-10 w-10 bg-red-500 rounded-full">
+                            <AlertTriangle className="h-5 w-5 text-white" />
+                          </div>
                           <div>
-                            <div className="font-medium text-red-700 text-sm">
-                              紧急任务提醒 ({urgentTasks.length}个)
+                            <div className="font-semibold text-red-800 text-sm">
+                              紧急任务提醒
                             </div>
                             <div className="text-xs text-red-600">
-                              {urgentTasks[0]?.title} 等任务需要立即处理
+                              {urgentTasks.length}个紧急任务需要立即处理
                             </div>
                           </div>
                         </div>
                         <Button 
                           size="sm" 
-                          variant="destructive"
                           onClick={() => handleTaskProcess(urgentTasks[0])}
-                          className="text-xs"
+                          className="bg-red-500 hover:bg-red-600 text-white border-0 text-xs px-4 h-8"
                         >
-                          <Settings className="h-3 w-3 mr-1" />
+                          <Play className="h-3 w-3 mr-1" />
                           立即处理
                         </Button>
                       </div>
@@ -248,23 +275,25 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                   )}
 
                   {aiProcessableTasks.length > 0 && (
-                    <div className="p-3 rounded-lg border-l-4 border-l-purple-500 bg-purple-50">
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Bot className="h-4 w-4 text-purple-600" />
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center h-10 w-10 bg-purple-500 rounded-full">
+                            <Bot className="h-5 w-5 text-white" />
+                          </div>
                           <div>
-                            <div className="font-medium text-purple-700 text-sm">
-                              AI智能助手 ({aiProcessableTasks.length}个可处理)
+                            <div className="font-semibold text-purple-800 text-sm">
+                              AI智能助手
                             </div>
                             <div className="text-xs text-purple-600">
-                              预计节省80%处理时间，提升工作效率
+                              {aiProcessableTasks.length}个任务可自动处理，节省80%时间
                             </div>
                           </div>
                         </div>
                         <Button 
                           size="sm" 
                           onClick={onAIAssistClick}
-                          className="bg-purple-600 hover:bg-purple-700 text-xs"
+                          className="bg-purple-500 hover:bg-purple-600 text-white border-0 text-xs px-4 h-8"
                         >
                           <Zap className="h-3 w-3 mr-1" />
                           启动AI
@@ -275,60 +304,85 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                 </div>
               )}
 
-              {/* 今日重点任务 - 统一处理逻辑 */}
+              {/* 今日重点任务 - 统一样式 */}
               <div className="space-y-3">
-                <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  今日重点任务
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                    今日重点任务
+                  </h3>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onViewAllTasks}
+                    className="text-xs h-7 border-gray-300"
+                  >
+                    查看全部
+                    <ChevronRight className="h-3 w-3 ml-1" />
+                  </Button>
+                </div>
+                
                 {pendingTasks.slice(0, 3).map((task) => (
                   <div 
                     key={task.id}
-                    className="p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="p-4 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 bg-white"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-sm">{task.title}</span>
-                      <div className="flex items-center gap-2">
-                        {task.priority === 'high' && (
-                          <Badge variant="destructive" className="text-xs">紧急</Badge>
-                        )}
-                        {task.autoProcessable && (
-                          <Badge className="bg-purple-100 text-purple-600 text-xs">AI可处理</Badge>
-                        )}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-medium text-gray-900 text-sm">{task.title}</span>
+                          <div className="flex gap-1">
+                            {task.priority === 'high' && (
+                              <Badge className="bg-red-100 text-red-600 text-xs px-2 py-0.5">紧急</Badge>
+                            )}
+                            {task.autoProcessable && (
+                              <Badge className="bg-purple-100 text-purple-600 text-xs px-2 py-0.5">AI可处理</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-xs text-gray-500 mb-2">{task.description}</div>
+                        <div className="text-xs text-gray-400">
+                          截止时间: {task.deadline}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-600 mb-3">{task.description}</div>
-                    <div className="flex justify-between items-center">
-                      <div className="text-xs text-gray-400">
-                        截止: {task.deadline}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleQuickProcess(task)}
-                          className="text-xs h-7"
-                        >
-                          <PlayCircle className="h-3 w-3 mr-1" />
-                          快速处理
-                        </Button>
-                      </div>
+                    
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleTaskProcess(task)}
+                        className="text-xs h-7 px-3 border-gray-300 hover:bg-gray-50"
+                      >
+                        <ArrowRight className="h-3 w-3 mr-1" />
+                        查看详情
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleQuickProcess(task)}
+                        className="text-xs h-7 px-3 bg-blue-500 hover:bg-blue-600 text-white border-0"
+                      >
+                        <Play className="h-3 w-3 mr-1" />
+                        快速处理
+                      </Button>
                     </div>
                   </div>
                 ))}
               </div>
             </TabsContent>
 
-            {/* 我的待办 - 统一处理逻辑 */}
+            {/* 我的待办 - 统一处理逻辑和样式 */}
             <TabsContent value="todos" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium text-gray-900">我的待办 ({pendingTasks.length})</h3>
+                <h3 className="font-semibold text-gray-900">我的待办 ({pendingTasks.length})</h3>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={onViewAllTasks}
-                  className="text-xs"
+                  className="text-xs h-7 border-gray-300"
                 >
                   查看全部
+                  <ChevronRight className="h-3 w-3 ml-1" />
                 </Button>
               </div>
               
@@ -337,67 +391,73 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                   {pendingTasks.map((task) => (
                     <div 
                       key={task.id}
-                      className="p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                      className="p-3 border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-200 bg-white"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-sm">{task.title}</span>
-                        <div className="flex items-center gap-2">
-                          {task.priority === 'high' && (
-                            <Badge variant="destructive" className="text-xs">紧急</Badge>
-                          )}
-                          {task.autoProcessable && (
-                            <Badge className="bg-purple-100 text-purple-600 text-xs">AI可处理</Badge>
-                          )}
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-gray-900 text-sm">{task.title}</span>
+                            <div className="flex gap-1">
+                              {task.priority === 'high' && (
+                                <Badge className="bg-red-100 text-red-600 text-xs">紧急</Badge>
+                              )}
+                              {task.autoProcessable && (
+                                <Badge className="bg-purple-100 text-purple-600 text-xs">AI可处理</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500 mb-2">{task.description}</div>
+                          <div className="flex items-center gap-4 text-xs text-gray-400">
+                            <span>负责人: {task.assignee}</span>
+                            <span>截止: {task.deadline}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-xs text-gray-600 mb-3">{task.description}</div>
-                      <div className="flex justify-between items-center">
-                        <div className="text-xs text-gray-400">
-                          <span>负责人: {task.assignee}</span>
-                          <span className="ml-3">截止: {task.deadline}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleTaskProcess(task)}
-                            className="text-xs h-7"
-                          >
-                            <ArrowRight className="h-3 w-3 mr-1" />
-                            处理
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleQuickProcess(task)}
-                            className="text-xs h-7"
-                          >
-                            <PlayCircle className="h-3 w-3 mr-1" />
-                            快速处理
-                          </Button>
-                        </div>
+                      
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleTaskProcess(task)}
+                          className="text-xs h-7 px-3 border-gray-300 hover:bg-gray-50"
+                        >
+                          <ArrowRight className="h-3 w-3 mr-1" />
+                          查看详情
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleQuickProcess(task)}
+                          className="text-xs h-7 px-3 bg-blue-500 hover:bg-blue-600 text-white border-0"
+                        >
+                          <Play className="h-3 w-3 mr-1" />
+                          快速处理
+                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 text-gray-500">
-                  <CheckCircle className="h-10 w-10 mx-auto mb-2 text-green-500" />
-                  <div className="text-sm">太棒了！暂无待办任务</div>
+                <div className="text-center py-8 text-gray-500">
+                  <div className="flex items-center justify-center h-16 w-16 bg-green-100 rounded-full mx-auto mb-3">
+                    <CheckCircle className="h-8 w-8 text-green-500" />
+                  </div>
+                  <div className="text-sm font-medium">太棒了！暂无待办任务</div>
+                  <div className="text-xs text-gray-400 mt-1">您已完成所有任务</div>
                 </div>
               )}
             </TabsContent>
 
-            {/* 我的提醒 */}
+            {/* 我的提醒 - 保持现有样式 */}
             <TabsContent value="reminders" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                   <Bell className="h-4 w-4" />
                   我的提醒 ({reminders.length})
                 </h3>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-xs"
+                  className="text-xs h-7 border-gray-300"
                 >
                   全部已读
                 </Button>
@@ -427,7 +487,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                             size="sm"
                             variant="outline"
                             onClick={() => handleTaskProcess(reminder.relatedTask)}
-                            className="text-xs h-6"
+                            className="text-xs h-6 px-2"
                           >
                             立即处理
                           </Button>
@@ -436,7 +496,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                           <Button
                             size="sm"
                             onClick={onAIAssistClick}
-                            className="text-xs h-6"
+                            className="text-xs h-6 px-2"
                           >
                             启动AI助手
                           </Button>
@@ -444,7 +504,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-xs h-6"
+                          className="text-xs h-6 px-2"
                         >
                           忽略
                         </Button>
