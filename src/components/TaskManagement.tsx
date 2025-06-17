@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Plus, Bot, MessageSquare } from 'lucide-react';
 import TaskDetail from './TaskDetail';
 import AIProcessingDetail from './AIProcessingDetail';
 import IntegratedTaskOverview from './IntegratedTaskOverview';
@@ -21,9 +21,10 @@ interface TaskManagementProps {
     completedToday: number;
     totalToday: number;
   };
+  onSwitchToAI?: () => void;
 }
 
-const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
+const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks, onSwitchToAI }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
@@ -46,6 +47,9 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
   const filteredTasks = selectedCategory === 'all' 
     ? tasks 
     : tasks.filter(task => task.category === selectedCategory);
+
+  // 获取可AI处理的任务数量
+  const aiProcessableTasks = tasks.filter(task => task.autoProcessable && task.status === 'pending').length;
 
   const handleTaskConfirm = (taskId: number, result: any) => {
     updateTask(taskId, {
@@ -87,6 +91,13 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
 
   const handleNewTaskSubmit = (newTask: Task) => {
     addTask(newTask);
+  };
+
+  // 智能助手入口
+  const handleAIAssistantEntry = () => {
+    if (onSwitchToAI) {
+      onSwitchToAI();
+    }
   };
 
   if (showNewTaskForm) {
@@ -140,6 +151,43 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks }) => {
         onReassignTasks={handleAIReassignTasks}
         taskStats={taskStats}
       />
+
+      {/* AI助手联动卡片 */}
+      {aiProcessableTasks > 0 && (
+        <Card className="mb-3 border-0 shadow-sm bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-l-purple-500">
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bot className="h-5 w-5 text-purple-600" />
+                <div>
+                  <div className="text-sm font-medium text-purple-700">AI智能处理</div>
+                  <div className="text-xs text-purple-600">
+                    {aiProcessableTasks}个任务可自动处理，节省80%时间
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  onClick={handleAIAssistantEntry}
+                  className="h-7 px-3 text-xs bg-purple-500 hover:bg-purple-600"
+                >
+                  <MessageSquare className="h-3 w-3 mr-1" />
+                  AI助手
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={handleAIReassignTasks}
+                  className="h-7 px-3 text-xs"
+                >
+                  <Bot className="h-3 w-3 mr-1" />
+                  智能分配
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mb-3 border-0 shadow-sm">
         <CardHeader className="pb-2">

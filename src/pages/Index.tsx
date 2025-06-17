@@ -6,6 +6,7 @@ import TaskManagement from '@/components/TaskManagement';
 import LevelHomepage from '@/components/LevelHomepage';
 import TaskDetailModal from '@/components/TaskDetailModal';
 import UnitsDetail from '@/components/UnitsDetail';
+import FloatingAvatar from '@/components/FloatingAvatar';
 import { useRoleManagement } from '@/hooks/useRoleManagement';
 import AppHeader from '@/components/AppHeader';
 import DataQualityRadar from '@/components/DataQualityRadar';
@@ -72,6 +73,16 @@ const Index = () => {
     setShowUnitsDetail(false);
   };
 
+  // 处理悬浮AI图标点击
+  const handleAvatarClick = () => {
+    setActiveTab('ai-assistant');
+  };
+
+  // 处理从任务管理切换到AI助手
+  const handleSwitchToAI = () => {
+    setActiveTab('ai-assistant');
+  };
+
   const renderDashboard = () => (
     <div className="space-y-3 p-3 pb-20">
       {/* 层级化首页展示 */}
@@ -122,9 +133,17 @@ const Index = () => {
         ) : activeTab === 'analytics' && roleContent.showAnalytics ? (
           <EnhancedAnalyticsReports />
         ) : activeTab === 'tasks' && roleContent.showTasks ? (
-          <TaskManagement employeeTasks={roleTasks} />
+          <TaskManagement 
+            employeeTasks={roleTasks} 
+            onSwitchToAI={handleSwitchToAI}
+          />
         ) : null}
       </div>
+
+      {/* 悬浮AI智能体图标 */}
+      {!showUnitsDetail && !taskDetailType && (
+        <FloatingAvatar onAvatarClick={handleAvatarClick} />
+      )}
 
       {!showUnitsDetail && !taskDetailType && (
         <BottomNavigation
