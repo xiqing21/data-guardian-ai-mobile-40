@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -14,400 +15,419 @@ import {
   FileText,
   PieChart,
   LineChart,
-  Users,
   Database,
-  Activity,
   Target,
-  Clock,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown,
+  Search,
+  Users,
+  Activity
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart as RechartsLineChart,
+  Line,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  AreaChart,
+  Area
+} from 'recharts';
 import AnimatedNumber from './AnimatedNumber';
 
-interface ReportData {
-  unitName: string;
-  period: string;
-  dataQuality: number;
-  governanceProgress: number;
-  taskCompletion: number;
-  dataVolume: number;
-  processedVolume: number;
-  issues: number;
-  trend: number;
-}
-
 const EnhancedAnalyticsReports: React.FC = () => {
-  const [selectedDimension, setSelectedDimension] = useState<'unit' | 'time'>('unit');
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
-  const [selectedUnit, setSelectedUnit] = useState<'all' | 'province' | 'city' | 'county'>('all');
-  const [reportType, setReportType] = useState<'overview' | 'quality' | 'governance' | 'performance'>('overview');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedTimeRange, setSelectedTimeRange] = useState('month');
+  const [selectedUnit, setSelectedUnit] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
-  // 模拟报表数据
-  const generateReportData = (): ReportData[] => {
-    if (selectedDimension === 'unit') {
-      return [
-        {
-          unitName: '太原供电公司',
-          period: '2024年12月',
-          dataQuality: 96.1,
-          governanceProgress: 94.2,
-          taskCompletion: 92.5,
-          dataVolume: 15680,
-          processedVolume: 14579,
-          issues: 45,
-          trend: 2.3
-        },
-        {
-          unitName: '大同供电公司',
-          period: '2024年12月',
-          dataQuality: 93.4,
-          governanceProgress: 91.8,
-          taskCompletion: 89.2,
-          dataVolume: 12340,
-          processedVolume: 11015,
-          issues: 67,
-          trend: 1.8
-        },
-        {
-          unitName: '运城供电公司',
-          period: '2024年12月',
-          dataQuality: 90.2,
-          governanceProgress: 88.5,
-          taskCompletion: 86.7,
-          dataVolume: 10890,
-          processedVolume: 9442,
-          issues: 89,
-          trend: 0.2
-        }
-      ];
-    } else {
-      return [
-        {
-          unitName: '全省汇总',
-          period: '2024年9月',
-          dataQuality: 89.5,
-          governanceProgress: 87.2,
-          taskCompletion: 85.1,
-          dataVolume: 145600,
-          processedVolume: 127800,
-          issues: 356,
-          trend: -1.2
-        },
-        {
-          unitName: '全省汇总',
-          period: '2024年10月',
-          dataQuality: 91.8,
-          governanceProgress: 89.6,
-          taskCompletion: 87.8,
-          dataVolume: 148900,
-          processedVolume: 132400,
-          issues: 298,
-          trend: 2.3
-        },
-        {
-          unitName: '全省汇总',
-          period: '2024年11月',
-          dataQuality: 94.2,
-          governanceProgress: 92.1,
-          taskCompletion: 90.5,
-          dataVolume: 152300,
-          processedVolume: 138200,
-          issues: 245,
-          trend: 2.4
-        },
-        {
-          unitName: '全省汇总',
-          period: '2024年12月',
-          dataQuality: 95.8,
-          governanceProgress: 94.7,
-          taskCompletion: 93.2,
-          dataVolume: 156800,
-          processedVolume: 142560,
-          issues: 201,
-          trend: 1.6
-        }
-      ];
-    }
+  // 时间范围选项
+  const timeRanges = [
+    { key: 'week', label: '近一周', desc: '最近7天数据' },
+    { key: 'month', label: '近一月', desc: '最近30天数据' },
+    { key: 'quarter', label: '近一季', desc: '最近90天数据' },
+    { key: 'year', label: '近一年', desc: '最近365天数据' }
+  ];
+
+  // 单位选项
+  const unitOptions = [
+    { key: 'all', label: '全部单位', count: 156 },
+    { key: 'province', label: '省级单位', count: 1 },
+    { key: 'city', label: '市级单位', count: 11 },
+    { key: 'county', label: '县级单位', count: 144 }
+  ];
+
+  // 模拟数据
+  const overviewData = {
+    totalDataVolume: 8657000,
+    processedVolume: 8483860,
+    qualityScore: 95.8,
+    governanceRate: 94.7,
+    issuesCount: 201,
+    completionRate: 98.0,
+    trend: '+2.3%'
   };
 
-  const reportData = generateReportData();
-
-  const handleGenerateReport = () => {
-    console.log('生成报表:', {
-      dimension: selectedDimension,
-      period: selectedPeriod,
-      unit: selectedUnit,
-      type: reportType
-    });
-    alert(`正在生成${selectedDimension === 'unit' ? '按单位' : '按时间'}维度的${reportType}报表...`);
+  const chartData = {
+    qualityTrends: [
+      { date: '12-01', quality: 92, governance: 89, completion: 87 },
+      { date: '12-08', quality: 93, governance: 91, completion: 89 },
+      { date: '12-15', quality: 94, governance: 92, completion: 91 },
+      { date: '12-22', quality: 95, governance: 94, completion: 93 },
+      { date: '12-29', quality: 96, governance: 95, completion: 95 }
+    ],
+    unitRanking: [
+      { unit: '太原供电', score: 96.5, volume: 1567, issues: 12 },
+      { unit: '大同供电', score: 94.2, volume: 1234, issues: 18 },
+      { unit: '运城供电', score: 92.8, volume: 1089, issues: 25 },
+      { unit: '临汾供电', score: 91.5, volume: 987, issues: 31 }
+    ],
+    dataDistribution: [
+      { name: '已处理', value: 78, color: '#22c55e' },
+      { name: '处理中', value: 15, color: '#3b82f6' },
+      { name: '待处理', value: 5, color: '#f59e0b' },
+      { name: '异常', value: 2, color: '#ef4444' }
+    ],
+    qualityDimensions: [
+      { dimension: '完整性', score: 96.5, target: 98 },
+      { dimension: '准确性', score: 94.2, target: 96 },
+      { dimension: '一致性', score: 91.8, target: 95 },
+      { dimension: '时效性', score: 93.6, target: 97 },
+      { dimension: '有效性', score: 89.4, target: 93 },
+      { dimension: '唯一性', score: 97.8, target: 99 }
+    ]
   };
 
-  const handleExportReport = () => {
-    console.log('导出报表');
-    alert('报表导出功能启动中...');
-  };
+  const renderOverview = () => (
+    <div className="space-y-4">
+      {/* 核心指标 */}
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Database className="h-5 w-5 text-blue-600" />
+              <Badge variant="outline" className="text-xs">{overviewData.trend}</Badge>
+            </div>
+            <div className="text-2xl font-bold text-blue-700">
+              <AnimatedNumber value={overviewData.totalDataVolume / 10000} suffix="万" />
+            </div>
+            <div className="text-xs text-blue-600">数据总量</div>
+            <div className="text-xs text-gray-500 mt-1">
+              已处理 {(overviewData.processedVolume / 10000).toFixed(1)}万
+            </div>
+          </CardContent>
+        </Card>
 
-  const getReportIcon = (type: string) => {
-    switch (type) {
-      case 'overview': return <BarChart3 className="h-4 w-4" />;
-      case 'quality': return <Target className="h-4 w-4" />;
-      case 'governance': return <Database className="h-4 w-4" />;
-      case 'performance': return <TrendingUp className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
-    }
-  };
+        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Target className="h-5 w-5 text-green-600" />
+              <Badge variant="outline" className="text-xs">优秀</Badge>
+            </div>
+            <div className="text-2xl font-bold text-green-700">
+              <AnimatedNumber value={overviewData.qualityScore} suffix="%" />
+            </div>
+            <div className="text-xs text-green-600">质量得分</div>
+            <div className="text-xs text-gray-500 mt-1">
+              治理率 {overviewData.governanceRate}%
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-  const getReportTitle = (type: string) => {
-    switch (type) {
-      case 'overview': return '综合概览报表';
-      case 'quality': return '数据质量分析报表';
-      case 'governance': return '数据治理进度报表';
-      case 'performance': return '绩效分析报表';
-      default: return '分析报表';
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-3 pb-20">
-      {/* 报表配置区 */}
-      <Card className="mb-4">
+      {/* 处理进度 */}
+      <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <BarChart3 className="h-5 w-5" />
-            智能分析报表
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          {/* 维度选择 */}
-          <div className="mb-3">
-            <div className="text-xs text-gray-600 mb-2">分析维度</div>
-            <div className="flex gap-2">
-              <Button
-                variant={selectedDimension === 'unit' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedDimension('unit')}
-                className="text-xs px-3 py-1.5 h-auto"
-              >
-                <Building2 className="h-3 w-3 mr-1" />
-                按单位
-              </Button>
-              <Button
-                variant={selectedDimension === 'time' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedDimension('time')}
-                className="text-xs px-3 py-1.5 h-auto"
-              >
-                <Calendar className="h-3 w-3 mr-1" />
-                按时间
-              </Button>
-            </div>
-          </div>
-
-          {/* 报表类型选择 */}
-          <div className="mb-3">
-            <div className="text-xs text-gray-600 mb-2">报表类型</div>
-            <div className="grid grid-cols-2 gap-1.5">
-              {['overview', 'quality', 'governance', 'performance'].map((type) => (
-                <Button
-                  key={type}
-                  variant={reportType === type ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setReportType(type as any)}
-                  className="text-xs px-2 py-1.5 h-auto justify-start"
-                >
-                  {getReportIcon(type)}
-                  <span className="ml-1">{getReportTitle(type).replace('报表', '')}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* 时间周期选择 */}
-          {selectedDimension === 'time' && (
-            <div className="mb-3">
-              <div className="text-xs text-gray-600 mb-2">时间周期</div>
-              <div className="flex gap-1.5">
-                {[
-                  { key: 'week', label: '周' },
-                  { key: 'month', label: '月' },
-                  { key: 'quarter', label: '季' },
-                  { key: 'year', label: '年' }
-                ].map(({ key, label }) => (
-                  <Button
-                    key={key}
-                    variant={selectedPeriod === key ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedPeriod(key as any)}
-                    className="text-xs px-3 py-1.5 h-auto"
-                  >
-                    {label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 操作按钮 */}
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleGenerateReport}
-              className="flex-1 text-xs py-2 h-auto"
-            >
-              <Filter className="h-3 w-3 mr-1" />
-              生成报表
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={handleExportReport}
-              className="text-xs px-3 py-2 h-auto"
-            >
-              <Download className="h-3 w-3 mr-1" />
-              导出
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 报表展示区 */}
-      <Card className="mb-4">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-base">
-            <div className="flex items-center gap-2">
-              {getReportIcon(reportType)}
-              {getReportTitle(reportType)}
-            </div>
-            <Badge variant="outline" className="text-xs">
-              {selectedDimension === 'unit' ? '按单位' : '按时间'}
-            </Badge>
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            数据处理进度
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="space-y-3">
-            {reportData.map((data, index) => (
-              <Card key={index} className="border border-gray-200">
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h4 className="font-semibold text-sm text-gray-900">{data.unitName}</h4>
-                      <p className="text-xs text-gray-600">{data.period}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className={`h-3 w-3 ${data.trend >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-                        <span className={`text-xs font-medium ${data.trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {data.trend >= 0 ? '+' : ''}<AnimatedNumber value={data.trend} suffix="%" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span>整体完成率</span>
+                <span className="font-medium">{overviewData.completionRate}%</span>
+              </div>
+              <Progress value={overviewData.completionRate} className="h-2" />
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="p-2 bg-green-50 rounded">
+                <div className="text-sm font-bold text-green-600">
+                  {(overviewData.processedVolume / 10000).toFixed(1)}万
+                </div>
+                <div className="text-xs text-gray-600">已完成</div>
+              </div>
+              <div className="p-2 bg-blue-50 rounded">
+                <div className="text-sm font-bold text-blue-600">
+                  {((overviewData.totalDataVolume - overviewData.processedVolume) / 10000).toFixed(1)}万
+                </div>
+                <div className="text-xs text-gray-600">处理中</div>
+              </div>
+              <div className="p-2 bg-orange-50 rounded">
+                <div className="text-sm font-bold text-orange-600">{overviewData.issuesCount}</div>
+                <div className="text-xs text-gray-600">待解决</div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-                  {/* 关键指标网格 */}
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    <div className="text-center p-2 bg-blue-50 rounded-lg">
-                      <div className="text-sm font-bold text-blue-600">
-                        <AnimatedNumber value={data.dataQuality} suffix="%" />
-                      </div>
-                      <div className="text-xs text-gray-600">数据质量</div>
-                    </div>
-                    <div className="text-center p-2 bg-green-50 rounded-lg">
-                      <div className="text-sm font-bold text-green-600">
-                        <AnimatedNumber value={data.governanceProgress} suffix="%" />
-                      </div>
-                      <div className="text-xs text-gray-600">治理进度</div>
-                    </div>
-                    <div className="text-center p-2 bg-purple-50 rounded-lg">
-                      <div className="text-sm font-bold text-purple-600">
-                        <AnimatedNumber value={data.taskCompletion} suffix="%" />
-                      </div>
-                      <div className="text-xs text-gray-600">任务完成率</div>
-                    </div>
-                  </div>
+      {/* 趋势图表 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">质量趋势</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={200}>
+            <RechartsLineChart data={chartData.qualityTrends}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+              <YAxis domain={[85, 100]} tick={{ fontSize: 10 }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'white', 
+                  border: '1px solid #e5e7eb', 
+                  borderRadius: '6px',
+                  fontSize: '12px'
+                }} 
+              />
+              <Line type="monotone" dataKey="quality" stroke="#3b82f6" strokeWidth={2} name="质量分数" />
+              <Line type="monotone" dataKey="governance" stroke="#22c55e" strokeWidth={2} name="治理进度" />
+              <Line type="monotone" dataKey="completion" stroke="#8b5cf6" strokeWidth={2} name="完成率" />
+            </RechartsLineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
-                  {/* 数据量统计 */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-gray-600">数据处理进度</span>
-                      <span className="font-medium">
-                        <AnimatedNumber value={(data.processedVolume / data.dataVolume) * 100} suffix="%" />
-                      </span>
-                    </div>
-                    <Progress value={(data.processedVolume / data.dataVolume) * 100} className="h-1.5" />
-                    <div className="flex justify-between text-xs text-gray-600">
-                      <span>已处理: {data.processedVolume}GB</span>
-                      <span>总量: {data.dataVolume}GB</span>
-                    </div>
+  const renderUnitAnalysis = () => (
+    <div className="space-y-4">
+      {/* 单位排名 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Building2 className="h-4 w-4" />
+            单位排名
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-3">
+            {chartData.unitRanking.map((unit, index) => (
+              <div key={unit.unit} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                    index === 0 ? 'bg-yellow-500 text-white' :
+                    index === 1 ? 'bg-gray-400 text-white' :
+                    index === 2 ? 'bg-orange-600 text-white' : 'bg-gray-300 text-gray-600'
+                  }`}>
+                    {index + 1}
                   </div>
-
-                  {/* 问题统计 */}
-                  <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3 text-orange-500" />
-                      <span className="text-xs text-gray-600">待解决问题</span>
-                    </div>
-                    <Badge variant={data.issues > 100 ? 'destructive' : data.issues > 50 ? 'secondary' : 'default'} className="text-xs">
-                      {data.issues}
-                    </Badge>
+                  <div>
+                    <div className="text-sm font-medium">{unit.unit}</div>
+                    <div className="text-xs text-gray-500">{unit.volume}万条数据</div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-blue-600">{unit.score}%</div>
+                  <div className="text-xs text-gray-500">{unit.issues}个问题</div>
+                </div>
+              </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* 快速操作区 */}
+      {/* 数据分布 */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">快速操作</CardTitle>
+          <CardTitle className="text-sm">数据处理分布</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="grid grid-cols-2 gap-2">
-            <Button 
-              variant="outline" 
-              className="justify-start text-xs py-3 h-auto"
-              onClick={() => alert('生成周报功能启动中...')}
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              <div className="text-left">
-                <div>生成周报</div>
-                <div className="text-xs text-gray-500">自动汇总周度数据</div>
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start text-xs py-3 h-auto"
-              onClick={() => alert('生成月报功能启动中...')}
-            >
-              <PieChart className="h-4 w-4 mr-2" />
-              <div className="text-left">
-                <div>生成月报</div>
-                <div className="text-xs text-gray-500">详细月度分析</div>
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start text-xs py-3 h-auto"
-              onClick={() => alert('趋势分析功能启动中...')}
-            >
-              <LineChart className="h-4 w-4 mr-2" />
-              <div className="text-left">
-                <div>趋势分析</div>
-                <div className="text-xs text-gray-500">多维度趋势对比</div>
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start text-xs py-3 h-auto"
-              onClick={() => alert('预警报告功能启动中...')}
-            >
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              <div className="text-left">
-                <div>预警报告</div>
-                <div className="text-xs text-gray-500">风险识别与预警</div>
-              </div>
-            </Button>
-          </div>
+          <ResponsiveContainer width="100%" height={180}>
+            <RechartsPieChart>
+              <Pie
+                data={chartData.dataDistribution}
+                cx="50%"
+                cy="50%"
+                outerRadius={60}
+                dataKey="value"
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                labelLine={false}
+                fontSize={10}
+              >
+                {chartData.dataDistribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </RechartsPieChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
+    </div>
+  );
+
+  const renderQualityAnalysis = () => (
+    <div className="space-y-4">
+      {/* 质量维度雷达图 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">6维度质量分析</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={250}>
+            <RadarChart data={chartData.qualityDimensions}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10 }} />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 8 }} />
+              <Radar name="当前得分" dataKey="score" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
+              <Radar name="目标值" dataKey="target" stroke="#22c55e" fill="#22c55e" fillOpacity={0.3} />
+              <Tooltip />
+            </RadarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* 质量维度详情 */}
+      <div className="space-y-2">
+        {chartData.qualityDimensions.map((item, index) => (
+          <Card key={index}>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">{item.dimension}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">目标{item.target}%</span>
+                  <Badge variant={item.score >= item.target ? 'default' : 'secondary'} className="text-xs">
+                    {item.score}%
+                  </Badge>
+                </div>
+              </div>
+              <Progress value={item.score} className="h-2" />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>当前: {item.score}%</span>
+                <span className={item.score >= item.target ? 'text-green-600' : 'text-orange-600'}>
+                  {item.score >= item.target ? '达标' : `差${item.target - item.score}%`}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* 顶部筛选区 */}
+      <div className="bg-white border-b sticky top-0 z-40">
+        <div className="p-3">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-lg font-semibold">智能分析报表</h1>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+              className="h-8 px-3"
+            >
+              <Filter className="h-3 w-3 mr-1" />
+              筛选
+              <ChevronDown className={`h-3 w-3 ml-1 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+            </Button>
+          </div>
+
+          {/* 筛选器 */}
+          {showFilters && (
+            <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+              <div>
+                <div className="text-xs text-gray-600 mb-2">时间范围</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {timeRanges.map((range) => (
+                    <Button
+                      key={range.key}
+                      variant={selectedTimeRange === range.key ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedTimeRange(range.key)}
+                      className="justify-start text-xs h-auto p-2"
+                    >
+                      <div>
+                        <div>{range.label}</div>
+                        <div className="text-xs opacity-70">{range.desc}</div>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs text-gray-600 mb-2">统计单位</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {unitOptions.map((unit) => (
+                    <Button
+                      key={unit.key}
+                      variant={selectedUnit === unit.key ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedUnit(unit.key)}
+                      className="justify-between text-xs h-auto p-2"
+                    >
+                      <span>{unit.label}</span>
+                      <Badge variant="secondary" className="text-xs">{unit.count}</Badge>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button size="sm" className="flex-1 text-xs">
+                  <FileText className="h-3 w-3 mr-1" />
+                  生成报表
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs px-3">
+                  <Download className="h-3 w-3 mr-1" />
+                  导出
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 标签页内容 */}
+      <div className="p-3">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="overview" className="text-xs">概览</TabsTrigger>
+            <TabsTrigger value="units" className="text-xs">单位分析</TabsTrigger>
+            <TabsTrigger value="quality" className="text-xs">质量分析</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="mt-0">
+            {renderOverview()}
+          </TabsContent>
+
+          <TabsContent value="units" className="mt-0">
+            {renderUnitAnalysis()}
+          </TabsContent>
+
+          <TabsContent value="quality" className="mt-0">
+            {renderQualityAnalysis()}
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
