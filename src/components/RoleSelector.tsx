@@ -78,7 +78,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-[9999] max-h-64 overflow-y-auto">
           {availableRoles.map((role) => (
             <div
               key={role.id}
