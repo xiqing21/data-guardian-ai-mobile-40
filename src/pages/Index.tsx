@@ -203,7 +203,7 @@ const Index = () => {
                   <MapPin className="h-3 w-3" />
                   <span>{currentRole.name}</span>
                   <Badge className="bg-white/20 text-xs px-2 py-0">
-                    {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '管理智能体' : '作业智能体'}
+                    {(currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county') ? '管理智能体' : '作业智能体'}
                   </Badge>
                 </div>
               </div>
@@ -229,7 +229,7 @@ const Index = () => {
             <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
               <div className="text-lg font-bold text-orange-200">{roleTasks.pendingTasks}</div>
               <div className="text-xs text-indigo-100">
-                {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '待审核' : '待处理'}
+                {(currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county') ? '待审核' : '待处理'}
               </div>
             </div>
             <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
@@ -251,7 +251,7 @@ const Index = () => {
             <div className="flex items-center gap-3 mb-3">
               <Activity className="h-4 w-4 text-purple-200" />
               <span className="text-sm font-medium">
-                {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? 
+                {(currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county') ? 
                   'AI管理智能体运行状态' : 'AI作业智能体运行状态'}
               </span>
               <Badge className="bg-green-500 text-xs px-2 py-1">运行中</Badge>
@@ -280,7 +280,7 @@ const Index = () => {
                 className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
               >
                 <Target className="h-3 w-3 mr-1" />
-                {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '审核任务' : '处理任务'}
+                {(currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county') ? '审核任务' : '处理任务'}
               </Button>
             )}
             <Button 
