@@ -2,18 +2,31 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Database, TrendingUp } from 'lucide-react';
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
+import { Progress } from '@/components/ui/progress';
+import { 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  Radar, 
   ResponsiveContainer,
-  Tooltip,
-  Legend
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip
 } from 'recharts';
+import { 
+  TrendingUp, 
+  AlertTriangle, 
+  CheckCircle, 
+  Clock,
+  Shield,
+  Database
+} from 'lucide-react';
 import { Role, RoleContent } from '../types/Role';
+import AnimatedNumber from './AnimatedNumber';
 
 interface DataQualityRadarProps {
   currentRole: Role;
@@ -27,12 +40,11 @@ interface DataQualityRadarProps {
     uniqueness: number;
   };
   dimensionDetails: {
-    completeness: { issues: number; trend: string; level: string };
-    accuracy: { issues: number; trend: string; level: string };
-    consistency: { issues: number; trend: string; level: string };
-    timeliness: { issues: number; trend: string; level: string };
-    compliance: { issues: number; trend: string; level: string };
-    uniqueness: { issues: number; trend: string; level: string };
+    [key: string]: {
+      issues: number;
+      trend: string;
+      level: string;
+    };
   };
 }
 
@@ -43,179 +55,178 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
   dimensionDetails
 }) => {
   const radarData = [
-    {
-      dimension: '完整性',
-      current: dataQuality.completeness,
-      target: 95,
-      fullMark: 100,
-      issues: dimensionDetails.completeness.issues,
-      trend: dimensionDetails.completeness.trend
-    },
-    {
-      dimension: '准确性',
-      current: dataQuality.accuracy,
-      target: 95,
-      fullMark: 100,
-      issues: dimensionDetails.accuracy.issues,
-      trend: dimensionDetails.accuracy.trend
-    },
-    {
-      dimension: '一致性',
-      current: dataQuality.consistency,
-      target: 94,
-      fullMark: 100,
-      issues: dimensionDetails.consistency.issues,
-      trend: dimensionDetails.consistency.trend
-    },
-    {
-      dimension: '时效性',
-      current: dataQuality.timeliness,
-      target: 90,
-      fullMark: 100,
-      issues: dimensionDetails.timeliness.issues,
-      trend: dimensionDetails.timeliness.trend
-    },
-    {
-      dimension: '合规性',
-      current: dataQuality.compliance,
-      target: 95,
-      fullMark: 100,
-      issues: dimensionDetails.compliance.issues,
-      trend: dimensionDetails.compliance.trend
-    },
-    {
-      dimension: '唯一性',
-      current: dataQuality.uniqueness,
-      target: 95,
-      fullMark: 100,
-      issues: dimensionDetails.uniqueness.issues,
-      trend: dimensionDetails.uniqueness.trend
-    }
+    { dimension: '完整性', value: dataQuality.completeness, fullMark: 100 },
+    { dimension: '准确性', value: dataQuality.accuracy, fullMark: 100 },
+    { dimension: '一致性', value: dataQuality.consistency, fullMark: 100 },
+    { dimension: '及时性', value: dataQuality.timeliness, fullMark: 100 },
+    { dimension: '合规性', value: dataQuality.compliance, fullMark: 100 },
+    { dimension: '唯一性', value: dataQuality.uniqueness, fullMark: 100 }
   ];
 
-  const overallScore = Number(
-    ((dataQuality.completeness + dataQuality.accuracy + dataQuality.consistency + 
-     dataQuality.timeliness + dataQuality.compliance + dataQuality.uniqueness) / 6).toFixed(2)
+  // 本月质量趋势数据
+  const trendData = [
+    { month: '1月', quality: 85.2 },
+    { month: '2月', quality: 87.5 },
+    { month: '3月', quality: 89.1 },
+    { month: '4月', quality: 90.8 },
+    { month: '5月', quality: 92.3 },
+    { month: '6月', quality: 93.6 }
+  ];
+
+  const getQualityLevel = (value: number) => {
+    if (value >= 95) return { level: '优秀', color: 'text-green-600', bg: 'bg-green-100' };
+    if (value >= 90) return { level: '良好', color: 'text-blue-600', bg: 'bg-blue-100' };
+    if (value >= 85) return { level: '待改进', color: 'text-orange-600', bg: 'bg-orange-100' };
+    return { level: '需关注', color: 'text-red-600', bg: 'bg-red-100' };
+  };
+
+  const overallQuality = Math.round(
+    (dataQuality.completeness + dataQuality.accuracy + dataQuality.consistency + 
+     dataQuality.timeliness + dataQuality.compliance + dataQuality.uniqueness) / 6
   );
 
-  if (!roleContent.showStatistics) {
-    return null;
-  }
-
   return (
-    <Card className="border-0 shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Database className="h-4 w-4 text-blue-500" />
-          {currentRole.name}数据质量6维度评价
-          <Badge variant="secondary" className="text-xs">
-            综合得分: {overallScore}分
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="h-64 mb-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12 }} />
-              <PolarRadiusAxis 
-                angle={90} 
-                domain={[0, 100]} 
-                tick={{ fontSize: 10 }}
-                tickCount={6}
-              />
-              <Radar
-                name="当前值"
-                dataKey="current"
-                stroke="#3b82f6"
-                fill="#3b82f6"
-                fillOpacity={0.2}
-                strokeWidth={2}
-              />
-              <Radar
-                name="目标值"
-                dataKey="target"
-                stroke="#10b981"
-                fill="transparent"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-              />
-              <Tooltip 
-                formatter={(value, name) => [
-                  `${Number(value).toFixed(2)}%`, 
-                  name === 'current' ? '当前值' : '目标值'
-                ]}
-              />
-              <Legend />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="space-y-3">
-          <div className="text-sm font-medium text-gray-700 mb-3">各维度详细数据</div>
-          <div className="grid grid-cols-1 gap-2">
-            {radarData.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <div>
-                    <div className="text-sm font-medium">{item.dimension}</div>
-                    <div className="text-xs text-gray-500">
-                      问题数量: {item.issues}个 | 趋势: {item.trend}
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5" />
+            数据质量六维度评价
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 雷达图 */}
+            <div className="space-y-4">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12 }} />
+                    <PolarRadiusAxis 
+                      domain={[0, 100]} 
+                      angle={-90} 
+                      tick={{ fontSize: 10 }}
+                    />
+                    <Radar
+                      name="数据质量"
+                      dataKey="value"
+                      stroke="#3b82f6"
+                      fill="#3b82f6"
+                      fillOpacity={0.2}
+                      strokeWidth={2}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* 整体评分 */}
+              <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  <AnimatedNumber value={overallQuality} suffix="%" />
+                </div>
+                <div className="text-sm text-gray-600">整体数据质量评分</div>
+                <Badge className={`mt-2 ${getQualityLevel(overallQuality).bg} ${getQualityLevel(overallQuality).color}`}>
+                  {getQualityLevel(overallQuality).level}
+                </Badge>
+              </div>
+            </div>
+
+            {/* 维度详情 */}
+            <div className="space-y-3">
+              {Object.entries(dataQuality).map(([key, value]) => {
+                const details = dimensionDetails[key];
+                const qualityInfo = getQualityLevel(value);
+                
+                return (
+                  <div key={key} className="p-3 border rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">
+                        {radarData.find(item => item.dimension.includes(key.charAt(0).toUpperCase()))?.dimension || key}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold">
+                          <AnimatedNumber value={Math.round(value)} suffix="%" />
+                        </span>
+                        <Badge className={`text-xs ${qualityInfo.bg} ${qualityInfo.color}`}>
+                          {qualityInfo.level}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Progress value={value} className="h-2 mb-2" />
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                      <span>问题数: <AnimatedNumber value={details?.issues || 0} /></span>
+                      <span className={details?.trend?.startsWith('+') ? 'text-green-600' : 'text-red-600'}>
+                        {details?.trend || '+0%'}
+                      </span>
                     </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-blue-600">{item.current.toFixed(2)}%</div>
-                  <div className="text-xs text-gray-500">目标: {item.target.toFixed(2)}%</div>
-                </div>
+                );
+              })}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 本月质量趋势 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            本月质量趋势
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={[80, 100]} />
+                <Tooltip 
+                  formatter={(value) => [`${value}%`, '数据质量']}
+                  labelFormatter={(label) => `${label}份`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="quality" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="text-center p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                <span className="text-lg font-bold text-green-600">+8.4%</span>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <div className="text-center p-2 bg-green-50 rounded">
-            <div className="text-sm font-medium text-green-700">优秀 (95%+)</div>
-            <div className="text-xs text-gray-500">准确性、合规性、唯一性</div>
-          </div>
-          <div className="text-center p-2 bg-yellow-50 rounded">
-            <div className="text-sm font-medium text-yellow-700">良好 (90-95%)</div>
-            <div className="text-xs text-gray-500">完整性、时效性</div>
-          </div>
-          <div className="text-center p-2 bg-orange-50 rounded">
-            <div className="text-sm font-medium text-orange-700">待改进 (&lt;90%)</div>
-            <div className="text-xs text-gray-500">一致性</div>
-          </div>
-        </div>
-        
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="h-4 w-4 text-blue-500" />
-            <span className="text-sm font-medium">本月质量趋势</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">整体提升:</span>
-              <span className="font-medium text-green-600">+2.30%</span>
+              <div className="text-xs text-gray-600">月度提升</div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">问题解决:</span>
-              <span className="font-medium text-blue-600">1,247个</span>
+            <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Shield className="h-4 w-4 text-blue-600" />
+                <span className="text-lg font-bold text-blue-600">
+                  <AnimatedNumber value={93.6} suffix="%" />
+                </span>
+              </div>
+              <div className="text-xs text-gray-600">当前质量</div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">自动修复率:</span>
-              <span className="font-medium text-purple-600">86.50%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">预计达标:</span>
-              <span className="font-medium text-orange-600">15天</span>
+            <div className="text-center p-3 bg-purple-50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <CheckCircle className="h-4 w-4 text-purple-600" />
+                <span className="text-lg font-bold text-purple-600">95%</span>
+              </div>
+              <div className="text-xs text-gray-600">目标质量</div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

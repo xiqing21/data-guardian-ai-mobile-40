@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -63,12 +62,36 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
 
   const handleUnitsClick = () => {
     console.log('查看管理单位详情');
-    // 这里可以添加跳转到管理单位详情页面的逻辑
+    // 跳转到管理单位详情页面
+    window.location.href = '/units-detail';
   };
 
   const handleTotalTasksClick = () => {
     console.log('查看总任务详情');
-    // 这里可以添加跳转到任务总览页面的逻辑
+    // 跳转到任务总览页面
+    window.location.href = '/tasks-overview';
+  };
+
+  const handleAIFeatureClick = (feature: string) => {
+    console.log(`使用AI功能: ${feature}`);
+    switch (feature) {
+      case 'analysis':
+        // 跳转到智能分析页面
+        window.location.href = '/ai-analysis';
+        break;
+      case 'task-assignment':
+        // 跳转到任务分配页面
+        window.location.href = '/ai-task-assignment';
+        break;
+      case 'quality-monitor':
+        // 跳转到质量监控页面
+        window.location.href = '/ai-quality-monitor';
+        break;
+      case 'decision-support':
+        // 跳转到决策支持页面
+        window.location.href = '/ai-decision-support';
+        break;
+    }
   };
 
   const renderProvinceView = () => (
@@ -147,25 +170,37 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </div>
           
           <div className="grid grid-cols-4 gap-3 mb-4">
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              onClick={() => handleAIFeatureClick('analysis')}
+            >
               <div className="flex items-center justify-center mb-1">
                 <BarChart3 className="h-4 w-4 text-cyan-200" />
               </div>
               <div className="text-xs text-indigo-100">智能分析</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              onClick={() => handleAIFeatureClick('task-assignment')}
+            >
               <div className="flex items-center justify-center mb-1">
                 <Target className="h-4 w-4 text-green-200" />
               </div>
               <div className="text-xs text-indigo-100">任务分配</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              onClick={() => handleAIFeatureClick('quality-monitor')}
+            >
               <div className="flex items-center justify-center mb-1">
                 <Shield className="h-4 w-4 text-yellow-200" />
               </div>
               <div className="text-xs text-indigo-100">质量监控</div>
             </div>
-            <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+            <div 
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              onClick={() => handleAIFeatureClick('decision-support')}
+            >
               <div className="flex items-center justify-center mb-1">
                 <Cpu className="h-4 w-4 text-purple-200" />
               </div>
@@ -570,25 +605,37 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
             </div>
             
             <div className="grid grid-cols-4 gap-3 mb-4">
-              <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('analysis')}
+              >
                 <div className="flex items-center justify-center mb-1">
                   <BarChart3 className="h-4 w-4 text-cyan-200" />
                 </div>
                 <div className="text-xs text-indigo-100">智能分析</div>
               </div>
-              <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('task-assignment')}
+              >
                 <div className="flex items-center justify-center mb-1">
                   <Target className="h-4 w-4 text-green-200" />
                 </div>
                 <div className="text-xs text-indigo-100">任务调度</div>
               </div>
-              <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('quality-monitor')}
+              >
                 <div className="flex items-center justify-center mb-1">
                   <Shield className="h-4 w-4 text-yellow-200" />
                 </div>
                 <div className="text-xs text-indigo-100">质量监控</div>
               </div>
-              <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
+              <div 
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                onClick={() => handleAIFeatureClick('decision-support')}
+              >
                 <div className="flex items-center justify-center mb-1">
                   <FileText className="h-4 w-4 text-purple-200" />
                 </div>

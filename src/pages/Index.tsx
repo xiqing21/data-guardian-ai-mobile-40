@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AIAssistantWithProps from '@/components/AIAssistantWithProps';
 import AnalyticsReports from '@/components/AnalyticsReports';
@@ -6,10 +7,8 @@ import LevelHomepage from '@/components/LevelHomepage';
 import TaskDetailModal from '@/components/TaskDetailModal';
 import { useRoleManagement } from '@/hooks/useRoleManagement';
 import AppHeader from '@/components/AppHeader';
-import AIWorkbench from '@/components/AIWorkbench';
 import DataQualityRadar from '@/components/DataQualityRadar';
 import BottomNavigation from '@/components/BottomNavigation';
-import FloatingAvatar from '@/components/FloatingAvatar';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -47,26 +46,12 @@ const Index = () => {
     uniqueness: { issues: 23, trend: '+0.84%', level: '优秀' }
   });
 
-  const [integratedAIStatus, setIntegratedAIStatus] = useState({
-    activeAgents: 5,
-    processingTasks: 23,
-    completionRate: 96.8,
-    pendingAutoTasks: 8,
-    aiProcessingTasks: 15
-  });
-
   useEffect(() => {
     const interval = setInterval(() => {
       setDataQuality(prev => ({
         ...prev,
         completeness: Math.min(95, prev.completeness + Math.random() * 0.5),
         accuracy: Math.min(98, prev.accuracy + Math.random() * 0.3)
-      }));
-      
-      setIntegratedAIStatus(prev => ({
-        ...prev,
-        processingTasks: Math.max(15, prev.processingTasks + Math.floor(Math.random() * 10 - 5)),
-        aiProcessingTasks: Math.max(10, prev.aiProcessingTasks + Math.floor(Math.random() * 6 - 3))
       }));
     }, 5000);
 
@@ -85,15 +70,6 @@ const Index = () => {
         statistics={roleStatistics}
         tasks={roleTasks}
         onTaskDetailClick={handleTaskDetailClick}
-      />
-
-      {/* AI智能工作台 */}
-      <AIWorkbench
-        currentRole={currentRole}
-        roleContent={roleContent}
-        roleTasks={roleTasks}
-        integratedAIStatus={integratedAIStatus}
-        onTabChange={setActiveTab}
       />
 
       {/* 数据质量雷达图 */}
@@ -133,8 +109,6 @@ const Index = () => {
           <TaskManagement employeeTasks={roleTasks} />
         ) : null}
       </div>
-
-      <FloatingAvatar onAvatarClick={() => setActiveTab('ai-assistant')} />
 
       <BottomNavigation
         activeTab={activeTab}
