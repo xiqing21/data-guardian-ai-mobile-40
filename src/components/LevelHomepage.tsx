@@ -14,7 +14,10 @@ import {
   BarChart3, 
   TrendingUp,
   Target,
-  Zap
+  Zap,
+  CheckCircle2,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
 
 interface LevelHomepageProps {
@@ -206,19 +209,19 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
         </Card>
       </div>
 
-      {/* 整体绩效指标 */}
+      {/* 任务进度概览 */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            整体绩效指标
+            <Target className="h-5 w-5" />
+            任务进度概览
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span>任务完成率</span>
+                <span>总体任务完成度</span>
                 <span className="font-medium">
                   <AnimatedNumber value={statistics.overallCompletion} suffix="%" />
                 </span>
@@ -228,22 +231,83 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
             
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span>数据治理覆盖率</span>
+                <span>AI智能处理率</span>
                 <span className="font-medium">
-                  <AnimatedNumber value={statistics.coverageRate} suffix="%" />
+                  <AnimatedNumber value={statistics.aiProcessingRate} suffix="%" />
                 </span>
               </div>
-              <Progress value={statistics.coverageRate} className="h-2" />
+              <Progress value={statistics.aiProcessingRate} className="h-2" />
             </div>
 
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span>智能化应用率</span>
+                <span>数据处理进度</span>
                 <span className="font-medium">
-                  <AnimatedNumber value={statistics.aiAdoptionRate} suffix="%" />
+                  <AnimatedNumber value={statistics.dataProcessingProgress} suffix="%" />
                 </span>
               </div>
-              <Progress value={statistics.aiAdoptionRate} className="h-2" />
+              <Progress value={statistics.dataProcessingProgress} className="h-2" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 任务数据量统计 */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            任务数据量统计
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+              <div className="p-2 bg-blue-500 rounded-full">
+                <CheckCircle2 className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-blue-700">
+                  <AnimatedNumber value={tasks.totalProcessed} />
+                </div>
+                <div className="text-xs text-blue-600">已处理数据量</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
+              <div className="p-2 bg-green-500 rounded-full">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-green-700">
+                  <AnimatedNumber value={tasks.aiProcessed} />
+                </div>
+                <div className="text-xs text-green-600">AI智能处理量</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
+              <div className="p-2 bg-orange-500 rounded-full">
+                <Clock className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-orange-700">
+                  <AnimatedNumber value={tasks.pendingData} />
+                </div>
+                <div className="text-xs text-orange-600">待处理数据量</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
+              <div className="p-2 bg-purple-500 rounded-full">
+                <AlertTriangle className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-purple-700">
+                  <AnimatedNumber value={tasks.errorData} />
+                </div>
+                <div className="text-xs text-purple-600">异常数据量</div>
+              </div>
             </div>
           </div>
         </CardContent>
