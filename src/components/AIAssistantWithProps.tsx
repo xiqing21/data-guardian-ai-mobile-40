@@ -3,6 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Bot } from 'lucide-react';
 import { useAIMessages } from '../hooks/useAIMessages';
+import { Role } from '../types/Role';
 import MessageList from './ai-assistant/MessageList';
 import QuickActions from './ai-assistant/QuickActions';
 import MessageInput from './ai-assistant/MessageInput';
@@ -15,13 +16,30 @@ interface AIAssistantWithPropsProps {
     completedToday: number;
     totalToday: number;
   };
+  currentRole?: Role;
 }
 
-const AIAssistantWithProps: React.FC<AIAssistantWithPropsProps> = ({ employeeTasks }) => {
-  const { messages, isTyping, sendMessage } = useAIMessages(employeeTasks);
+const AIAssistantWithProps: React.FC<AIAssistantWithPropsProps> = ({ 
+  employeeTasks, 
+  currentRole 
+}) => {
+  const { messages, isTyping, sendMessage } = useAIMessages(employeeTasks, currentRole);
 
   const handleQuickAction = (message: string) => {
     sendMessage(message);
+  };
+
+  const getRoleTypeText = () => {
+    if (!currentRole) return '数据治理';
+    
+    switch (currentRole.level) {
+      case 'province': return '省级管理';
+      case 'city': return '市级管理'; 
+      case 'county': return '县级管理';
+      case 'substation': return '供电所';
+      case 'grid': return '网格作业';
+      default: return '数据治理';
+    }
   };
 
   return (
@@ -34,9 +52,18 @@ const AIAssistantWithProps: React.FC<AIAssistantWithPropsProps> = ({ employeeTas
           </div>
           <div>
             <h2 className="font-semibold text-lg">AI数智助手</h2>
-            <p className="text-sm text-gray-500">专业数据治理智能体</p>
+            <p className="text-sm text-gray-500">
+              {currentRole ? `${currentRole.name} - ${getRoleTypeText()}智能体` : '专业数据治理智能体'}
+            </p>
           </div>
-          <Badge className="ml-auto bg-green-100 text-green-700">在线</Badge>
+          <div className="ml-auto flex items-center gap-2">
+            <Badge className="bg-green-100 text-green-700">在线</Badge>
+            {currentRole && (
+              <Badge className="bg-blue-100 text-blue-700 text-xs">
+                {getRoleTypeText()}
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 
@@ -45,7 +72,7 @@ const AIAssistantWithProps: React.FC<AIAssistantWithPropsProps> = ({ employeeTas
 
       {/* 底部操作区域 */}
       <div className="p-4 bg-white border-t">
-        <QuickActions onActionClick={handleQuickAction} />
+        <QuickActions onActionClick={handleQuickAction} currentRole={currentRole} />
         <MessageInput onSendMessage={sendMessage} />
       </div>
     </div>

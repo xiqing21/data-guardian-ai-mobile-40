@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -164,8 +163,8 @@ const Index = () => {
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-semibold">角色切换</h2>
-              <p className="text-sm text-gray-500">选择您的工作角色</p>
+              <h2 className="text-lg font-semibold">智能工作台</h2>
+              <p className="text-sm text-gray-500">AI数据治理智能体 - 角色化服务</p>
             </div>
           </div>
           <RoleSelector
@@ -184,7 +183,7 @@ const Index = () => {
         tasks={roleTasks}
       />
 
-      {/* AI智能工作台 - 根据角色权限显示 */}
+      {/* AI智能工作台 - 整合角色感知能力 */}
       {hasPermission('view-analytics') && (
         <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
           <CardContent className="p-5 relative z-10">
@@ -192,23 +191,26 @@ const Index = () => {
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
             <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div>
             
-            {/* 头部区域 */}
+            {/* 头部区域 - 整合角色信息 */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Building2 className="h-6 w-6" />
+                  <Brain className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">AI智能工作台</h2>
+                  <h2 className="text-xl font-bold">AI数据治理智能体</h2>
                   <div className="flex items-center gap-2 text-indigo-100 text-sm">
                     <MapPin className="h-3 w-3" />
                     <span>{currentRole.name}</span>
+                    <Badge className="bg-white/20 text-xs px-2 py-0">
+                      {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '管理智能体' : '作业智能体'}
+                    </Badge>
                   </div>
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold">{integratedAIStatus.completionRate}%</div>
-                <div className="text-xs text-indigo-100">完成率</div>
+                <div className="text-xs text-indigo-100">智能化率</div>
               </div>
             </div>
             
@@ -216,7 +218,9 @@ const Index = () => {
             <div className="grid grid-cols-4 gap-3 mb-5">
               <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
                 <div className="text-lg font-bold text-orange-200">{roleTasks.pendingTasks}</div>
-                <div className="text-xs text-indigo-100">待处理</div>
+                <div className="text-xs text-indigo-100">
+                  {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '待审核' : '待处理'}
+                </div>
               </div>
               <div className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3">
                 <div className="text-lg font-bold text-blue-200">{roleTasks.inProgressTasks}</div>
@@ -232,11 +236,14 @@ const Index = () => {
               </div>
             </div>
 
-            {/* AI智能体实时状态 */}
+            {/* AI智能体实时状态 - 角色感知 */}
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
               <div className="flex items-center gap-3 mb-3">
                 <Activity className="h-4 w-4 text-purple-200" />
-                <span className="text-sm font-medium">AI智能体实时处理状态</span>
+                <span className="text-sm font-medium">
+                  {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? 
+                    'AI管理智能体运行状态' : 'AI作业智能体运行状态'}
+                </span>
                 <Badge className="bg-green-500 text-xs px-2 py-1">运行中</Badge>
               </div>
               <div className="grid grid-cols-3 gap-3 text-xs">
@@ -255,7 +262,7 @@ const Index = () => {
               </div>
             </div>
             
-            {/* 操作按钮 */}
+            {/* 操作按钮 - 角色化 */}
             <div className="grid grid-cols-3 gap-2">
               {roleContent.showTasks && (
                 <Button 
@@ -263,18 +270,16 @@ const Index = () => {
                   className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
                 >
                   <Target className="h-3 w-3 mr-1" />
-                  处理任务
+                  {currentRole.level === 'province' || currentRole.level === 'city' || currentRole.level === 'county' ? '审核任务' : '处理任务'}
                 </Button>
               )}
-              {roleContent.showTasks && (
-                <Button 
-                  onClick={() => setActiveTab('tasks')}
-                  className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
-                >
-                  <Plus className="h-3 w-3 mr-1" />
-                  新建任务
-                </Button>
-              )}
+              <Button 
+                onClick={() => setActiveTab('ai-assistant')}
+                className="bg-white/20 hover:bg-white/25 text-white border-white/30 text-xs backdrop-blur-sm transition-all duration-200"
+              >
+                <Bot className="h-3 w-3 mr-1" />
+                AI智能体
+              </Button>
               {roleContent.showAnalytics && (
                 <Button 
                   onClick={() => setActiveTab('analytics')}
@@ -367,8 +372,8 @@ const Index = () => {
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="flex items-center justify-between p-4">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">数据治理智能体</h1>
-            <p className="text-xs text-gray-500">AI驱动的数据治理平台 - {currentRole.name}</p>
+            <h1 className="text-lg font-semibold text-gray-900">AI数据治理智能体</h1>
+            <p className="text-xs text-gray-500">角色化智能服务平台 - {currentRole.name}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="p-2">
@@ -384,7 +389,12 @@ const Index = () => {
       {/* 主要内容区域 */}
       <div className="flex-1">
         {activeTab === 'dashboard' && renderDashboard()}
-        {activeTab === 'ai-assistant' && <AIAssistantWithProps employeeTasks={roleTasks} />}
+        {activeTab === 'ai-assistant' && (
+          <AIAssistantWithProps 
+            employeeTasks={roleTasks} 
+            currentRole={currentRole}
+          />
+        )}
         {activeTab === 'analytics' && roleContent.showAnalytics && <AnalyticsReports />}
         {activeTab === 'tasks' && roleContent.showTasks && <TaskManagement employeeTasks={roleTasks} />}
       </div>
@@ -397,7 +407,7 @@ const Index = () => {
         >
           <VirtualAvatar />
           <div className="absolute -top-8 -left-6 bg-white px-2 py-1 rounded-lg shadow-md text-xs whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
-            AI数智人
+            AI数智助手
           </div>
         </div>
       </div>
