@@ -55,16 +55,20 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
     }
   };
 
-  const handleRoleSelect = (roleId: string) => {
+  const handleRoleSelect = (roleId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     console.log('角色选择:', roleId);
     onRoleChange(roleId);
     setIsOpen(false);
   };
 
-  const toggleDropdown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-    console.log('切换下拉菜单:', !isOpen);
+  const toggleDropdown = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const newState = !isOpen;
+    setIsOpen(newState);
+    console.log('切换下拉菜单:', newState);
   };
 
   // 点击外部关闭下拉菜单
@@ -73,10 +77,14 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       const target = event.target as Element;
       if (isOpen && !target.closest('.role-selector-container')) {
         setIsOpen(false);
+        console.log('点击外部关闭下拉菜单');
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -88,6 +96,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
         variant="outline"
         onClick={toggleDropdown}
         className="flex items-center gap-2 min-w-48 justify-between hover:bg-gray-50"
+        type="button"
       >
         <div className="flex items-center gap-2">
           {getRoleIcon(currentRole.level)}
@@ -100,22 +109,20 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
           <Badge className={`text-xs px-2 py-0 ${getRoleLevelColor(currentRole.level)}`}>
             {getRoleLevelText(currentRole.level)}
           </Badge>
-          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-[9999] max-h-64 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-[99999] max-h-64 overflow-y-auto">
           {availableRoles.map((role) => (
-            <div
+            <button
               key={role.id}
-              className={`p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors ${
+              type="button"
+              className={`w-full p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors text-left ${
                 role.id === currentRole.id ? 'bg-blue-50' : ''
               }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRoleSelect(role.id);
-              }}
+              onClick={(event) => handleRoleSelect(role.id, event)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -131,7 +138,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
                   {getRoleLevelText(role.level)}
                 </Badge>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}
