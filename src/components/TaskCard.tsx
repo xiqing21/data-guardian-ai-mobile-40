@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,9 +24,15 @@ interface TaskCardProps {
   task: Task;
   onTaskSelect: (task: Task) => void;
   onAIProcess: (task: Task) => void;
+  showQuickProcess?: boolean;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ 
+  task, 
+  onTaskSelect, 
+  onAIProcess,
+  showQuickProcess = true
+}) => {
   const getStatusBadge = (status: string) => {
     const statusMap = {
       'pending': { label: '待处理', className: 'bg-orange-100 text-orange-700 border-orange-200' },
@@ -69,6 +74,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
 
   const statusBadge = getStatusBadge(task.status);
   const priorityBadge = getPriorityBadge(task.priority);
+
+  const handleTaskProcess = () => {
+    console.log('任务卡片处理:', task.id, task.title);
+    onTaskSelect(task);
+  };
+
+  const handleAIProcessClick = () => {
+    console.log('任务卡片AI处理:', task.id);
+    onAIProcess(task);
+  };
 
   return (
     <Card className="hover:shadow-md transition-shadow border-0 shadow-sm">
@@ -121,7 +136,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
           </div>
         )}
 
-        {/* 任务详情和操作 - 简化布局 */}
+        {/* 任务详情和操作 - 统一操作逻辑 */}
         <div className="flex items-center justify-between text-xs text-gray-600">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
@@ -141,15 +156,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
                   variant="outline" 
                   size="sm"
                   className="h-7 px-2 text-xs"
-                  onClick={() => onTaskSelect(task)}
+                  onClick={handleTaskProcess}
                 >
-                  处理
+                  {showQuickProcess ? '快速处理' : '处理'}
                 </Button>
                 {task.autoProcessable && !task.aiResult && (
                   <Button 
                     size="sm" 
                     className="h-7 px-2 text-xs bg-purple-500 hover:bg-purple-600 border-0"
-                    onClick={() => onAIProcess(task)}
+                    onClick={handleAIProcessClick}
                   >
                     AI处理
                   </Button>
@@ -161,7 +176,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onTaskSelect, onAIProcess }) 
                 variant="outline" 
                 size="sm"
                 className="h-7 px-2 text-xs"
-                onClick={() => onTaskSelect(task)}
+                onClick={handleTaskProcess}
               >
                 查看
               </Button>

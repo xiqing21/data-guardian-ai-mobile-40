@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Bot, MessageSquare } from 'lucide-react';
@@ -22,11 +21,16 @@ interface TaskManagementProps {
     totalToday: number;
   };
   onSwitchToAI?: () => void;
+  initialSelectedTask?: Task | null;
 }
 
-const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks, onSwitchToAI }) => {
+const TaskManagement: React.FC<TaskManagementProps> = ({ 
+  employeeTasks, 
+  onSwitchToAI,
+  initialSelectedTask
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(initialSelectedTask || null);
   const [aiProcessingTask, setAiProcessingTask] = useState<Task | null>(null);
   const [confirmationTask, setConfirmationTask] = useState<{ task: Task; result: any } | null>(null);
   const [showNewTaskForm, setShowNewTaskForm] = useState(false);
@@ -43,6 +47,29 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks, onSwitch
     updateTask,
     handleAIReassignTasks
   } = useTaskManagement(employeeTasks);
+
+  // 监听来自工作台的任务管理打开事件
+  useEffect(() => {
+    const handleOpenTaskManagement = (event: CustomEvent) => {
+      const taskDetail = event.detail;
+      if (taskDetail?.selectedTask) {
+        setSelectedTask(taskDetail.selectedTask);
+      }
+    };
+
+    window.addEventListener('openTaskManagement', handleOpenTaskManagement as EventListener);
+    
+    return () => {
+      window.removeEventListener('openTaskManagement', handleOpenTaskManagement as EventListener);
+    };
+  }, []);
+
+  // 处理初始选中任务
+  useEffect(() => {
+    if (initialSelectedTask) {
+      setSelectedTask(initialSelectedTask);
+    }
+  }, [initialSelectedTask]);
 
   const filteredTasks = selectedCategory === 'all' 
     ? tasks 
@@ -91,6 +118,13 @@ const TaskManagement: React.FC<TaskManagementProps> = ({ employeeTasks, onSwitch
 
   const handleNewTaskSubmit = (newTask: Task) => {
     addTask(newTask);
+  };
+
+  // 快速处理任务 - 统一处理逻辑
+  const handleQuickProcess = (task: Task) => {
+    console.log('任务管理快速处理:', task.id);
+    // 直接跳转到任务详情页面进行处理
+    setSelectedTask(task);
   };
 
   // 智能助手入口

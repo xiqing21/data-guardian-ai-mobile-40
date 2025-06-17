@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,6 +29,7 @@ interface GridWorkerWorkbenchProps {
   onTaskClick: (task: Task) => void;
   onAIAssistClick: () => void;
   onViewAllTasks: () => void;
+  onQuickProcess?: (task: Task) => void;
   employeeTasks?: {
     pendingTasks: number;
     urgentTasks: number;
@@ -44,6 +44,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
   onTaskClick,
   onAIAssistClick,
   onViewAllTasks,
+  onQuickProcess,
   employeeTasks
 }) => {
   const [activeTab, setActiveTab] = useState('workbench');
@@ -60,19 +61,22 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
     Math.round((employeeTasks.completedToday / employeeTasks.totalToday) * 100) : 
     Math.round((completedTasks.length / tasks.length) * 100);
 
-  // 处理任务点击
+  // 处理任务点击 - 统一跳转逻辑
   const handleTaskProcess = (task: Task) => {
-    console.log('跳转到任务处理页面:', task.id, task.title);
+    console.log('工作台任务处理跳转:', task.id, task.title);
     onTaskClick(task);
   };
 
-  // 快速处理任务
+  // 快速处理任务 - 与任务管理模块保持一致
   const handleQuickProcess = (task: Task) => {
-    console.log('快速处理任务:', task.id);
-    window.dispatchEvent(new CustomEvent('openTaskManagement'));
-    setTimeout(() => {
-      onTaskClick(task);
-    }, 100);
+    console.log('工作台快速处理任务:', task.id);
+    // 如果有自定义快速处理逻辑，使用它；否则使用默认的任务点击逻辑
+    if (onQuickProcess) {
+      onQuickProcess(task);
+    } else {
+      // 触发任务管理页面的显示
+      window.dispatchEvent(new CustomEvent('openTaskManagement', { detail: { selectedTask: task } }));
+    }
   };
 
   // 生成提醒数据
@@ -271,7 +275,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                 </div>
               )}
 
-              {/* 今日重点任务 */}
+              {/* 今日重点任务 - 统一处理逻辑 */}
               <div className="space-y-3">
                 <h3 className="font-medium text-gray-900 flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
@@ -314,7 +318,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
               </div>
             </TabsContent>
 
-            {/* 我的待办 */}
+            {/* 我的待办 - 统一处理逻辑 */}
             <TabsContent value="todos" className="space-y-3 mt-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-gray-900">我的待办 ({pendingTasks.length})</h3>
