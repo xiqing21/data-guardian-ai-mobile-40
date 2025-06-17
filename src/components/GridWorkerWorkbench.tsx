@@ -16,7 +16,9 @@ import {
   PlayCircle,
   Calendar,
   TrendingUp,
-  Zap
+  Zap,
+  ArrowRight,
+  Settings
 } from 'lucide-react';
 import { Task } from '../types/Task';
 import AnimatedNumber from './AnimatedNumber';
@@ -55,6 +57,22 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
   const todayCompletionRate = employeeTasks ? 
     Math.round((employeeTasks.completedToday / employeeTasks.totalToday) * 100) : 
     Math.round((completedTasks.length / tasks.length) * 100);
+
+  // 处理任务点击，跳转到任务处理
+  const handleTaskProcess = (task: Task) => {
+    console.log('跳转到任务处理页面:', task.id, task.title);
+    onTaskClick(task);
+  };
+
+  // 快速处理任务
+  const handleQuickProcess = (task: Task) => {
+    console.log('快速处理任务:', task.id);
+    // 触发自定义事件，通知父组件跳转到任务管理页面
+    window.dispatchEvent(new CustomEvent('openTaskManagement'));
+    setTimeout(() => {
+      onTaskClick(task);
+    }, 100);
+  };
 
   return (
     <div className="space-y-4">
@@ -135,9 +153,10 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                     <Button 
                       size="sm" 
                       variant="destructive"
-                      onClick={() => onTaskClick(urgentTasks[0])}
+                      onClick={() => handleTaskProcess(urgentTasks[0])}
                       className="text-xs"
                     >
+                      <Settings className="h-3 w-3 mr-1" />
                       立即处理
                     </Button>
                   </div>
@@ -210,8 +229,7 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                   {pendingTasks.slice(0, 5).map((task) => (
                     <div 
                       key={task.id}
-                      className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() => onTaskClick(task)}
+                      className="p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{task.title}</span>
@@ -224,10 +242,31 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                           )}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-600 mb-2">{task.description}</div>
-                      <div className="flex justify-between text-xs text-gray-400">
-                        <span>负责人: {task.assignee}</span>
-                        <span>截止: {task.deadline}</span>
+                      <div className="text-xs text-gray-600 mb-3">{task.description}</div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-gray-400">
+                          <span>负责人: {task.assignee}</span>
+                          <span className="ml-3">截止: {task.deadline}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleTaskProcess(task)}
+                            className="text-xs h-7"
+                          >
+                            <ArrowRight className="h-3 w-3 mr-1" />
+                            处理
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleQuickProcess(task)}
+                            className="text-xs h-7"
+                          >
+                            <PlayCircle className="h-3 w-3 mr-1" />
+                            快速处理
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -251,12 +290,22 @@ const GridWorkerWorkbench: React.FC<GridWorkerWorkbenchProps> = ({
                   {inProgressTasks.slice(0, 5).map((task) => (
                     <div 
                       key={task.id}
-                      className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() => onTaskClick(task)}
+                      className="p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{task.title}</span>
-                        <Badge className="bg-orange-100 text-orange-600 text-xs">进行中</Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-orange-100 text-orange-600 text-xs">进行中</Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleTaskProcess(task)}
+                            className="text-xs h-6"
+                          >
+                            <Settings className="h-3 w-3 mr-1" />
+                            继续处理
+                          </Button>
+                        </div>
                       </div>
                       <div className="text-xs text-gray-600 mb-2">{task.description}</div>
                       <div className="space-y-2">
