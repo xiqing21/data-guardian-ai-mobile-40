@@ -4,52 +4,68 @@ import { Role, RoleContent, roleConfigs } from '../types/Role';
 
 export const useRoleManagement = () => {
   const [currentRole, setCurrentRole] = useState<Role>({
-    id: 'zj-province',
-    name: '浙江省电力公司',
+    id: 'sx-province',
+    name: '山西省电力公司',
     level: 'province',
     permissions: ['view-statistics', 'view-analytics', 'manage-units'],
-    unitName: '浙江省电力公司'
+    unitName: '山西省电力公司'
   });
 
   const [availableRoles] = useState<Role[]>([
     {
-      id: 'zj-province',
-      name: '浙江省电力公司',
+      id: 'sx-province',
+      name: '山西省电力公司',
       level: 'province',
       permissions: ['view-statistics', 'view-analytics', 'manage-units'],
-      unitName: '浙江省电力公司'
+      unitName: '山西省电力公司'
     },
     {
-      id: 'hz-city',
-      name: '杭州市供电公司',
+      id: 'ty-city',
+      name: '太原市供电公司',
       level: 'city',
       permissions: ['view-statistics', 'view-analytics'],
-      unitName: '杭州市供电公司',
-      parentUnit: '浙江省电力公司'
+      unitName: '太原市供电公司',
+      parentUnit: '山西省电力公司'
     },
     {
-      id: 'xl-county',
-      name: '西湖区供电公司',
+      id: 'dt-city',
+      name: '大同市供电公司',
+      level: 'city',
+      permissions: ['view-statistics', 'view-analytics'],
+      unitName: '大同市供电公司',
+      parentUnit: '山西省电力公司'
+    },
+    {
+      id: 'yc-county',
+      name: '迎泽区供电公司',
       level: 'county',
       permissions: ['view-statistics'],
-      unitName: '西湖区供电公司',
-      parentUnit: '杭州市供电公司'
+      unitName: '迎泽区供电公司',
+      parentUnit: '太原市供电公司'
     },
     {
-      id: 'wy-substation',
-      name: '文一路供电所',
-      level: 'substation',
-      permissions: ['manage-tasks', 'complete-tasks'],
-      unitName: '文一路供电所',
-      parentUnit: '西湖区供电公司'
+      id: 'jc-county',
+      name: '晋源区供电公司',
+      level: 'county',
+      permissions: ['view-statistics'],
+      unitName: '晋源区供电公司',
+      parentUnit: '太原市供电公司'
     },
     {
-      id: 'zt-substation',
-      name: '转塘供电所',
+      id: 'ty-substation',
+      name: '桃园供电所',
       level: 'substation',
       permissions: ['manage-tasks', 'complete-tasks'],
-      unitName: '转塘供电所',
-      parentUnit: '西湖区供电公司'
+      unitName: '桃园供电所',
+      parentUnit: '迎泽区供电公司'
+    },
+    {
+      id: 'cf-substation',
+      name: '长风供电所',
+      level: 'substation',
+      permissions: ['manage-tasks', 'complete-tasks'],
+      unitName: '长风供电所',
+      parentUnit: '晋源区供电公司'
     },
     {
       id: 'grid-001',
@@ -57,7 +73,7 @@ export const useRoleManagement = () => {
       level: 'grid',
       permissions: ['complete-tasks'],
       unitName: '网格001',
-      parentUnit: '文一路供电所'
+      parentUnit: '桃园供电所'
     },
     {
       id: 'grid-002',
@@ -65,7 +81,7 @@ export const useRoleManagement = () => {
       level: 'grid',
       permissions: ['complete-tasks'],
       unitName: '网格002',
-      parentUnit: '转塘供电所'
+      parentUnit: '长风供电所'
     }
   ]);
 
