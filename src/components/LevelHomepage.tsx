@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Role } from '../types/Role';
 import GridWorkerWorkbench from './GridWorkerWorkbench';
@@ -20,7 +19,10 @@ import {
   Clock,
   AlertTriangle,
   Database,
-  Activity
+  Activity,
+  Trophy,
+  Medal,
+  Award
 } from 'lucide-react';
 
 interface LevelHomepageProps {
@@ -174,15 +176,77 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
     );
   }
 
-  // 管理层级界面（省市县）- 整合任务进度和数据量统计
+  // 获取进度排名数据
+  const getProgressRankingData = () => {
+    if (currentRole.level === 'province') {
+      return [
+        { id: 1, name: '太原市', completion: 96.8, tasks: 28475, totalUnits: 156, rank: 1, trend: '+2.3%' },
+        { id: 2, name: '大同市', completion: 94.2, tasks: 21563, totalUnits: 134, rank: 2, trend: '+1.8%' },
+        { id: 3, name: '临汾市', completion: 92.5, tasks: 19432, totalUnits: 128, rank: 3, trend: '+1.2%' },
+        { id: 4, name: '运城市', completion: 91.8, tasks: 18765, totalUnits: 142, rank: 4, trend: '+0.9%' },
+        { id: 5, name: '长治市', completion: 90.3, tasks: 16547, totalUnits: 118, rank: 5, trend: '+0.6%' },
+        { id: 6, name: '晋中市', completion: 89.7, tasks: 15324, totalUnits: 105, rank: 6, trend: '+0.4%' },
+        { id: 7, name: '晋城市', completion: 88.9, tasks: 14256, totalUnits: 98, rank: 7, trend: '+0.2%' },
+        { id: 8, name: '阳泉市', completion: 87.6, tasks: 13187, totalUnits: 89, rank: 8, trend: '-0.1%' }
+      ];
+    } else if (currentRole.level === 'city') {
+      return [
+        { id: 1, name: '小店区', completion: 97.5, tasks: 4563, totalUnits: 24, rank: 1, trend: '+3.2%' },
+        { id: 2, name: '迎泽区', completion: 95.8, tasks: 3876, totalUnits: 18, rank: 2, trend: '+2.8%' },
+        { id: 3, name: '杏花岭区', completion: 94.2, tasks: 3564, totalUnits: 16, rank: 3, trend: '+2.1%' },
+        { id: 4, name: '万柏林区', completion: 92.6, tasks: 2987, totalUnits: 15, rank: 4, trend: '+1.7%' },
+        { id: 5, name: '尖草坪区', completion: 91.4, tasks: 2675, totalUnits: 12, rank: 5, trend: '+1.3%' },
+        { id: 6, name: '晋源区', completion: 90.1, tasks: 2234, totalUnits: 11, rank: 6, trend: '+0.9%' }
+      ];
+    } else {
+      return [
+        { id: 1, name: '东山供电所', completion: 98.2, tasks: 892, totalUnits: 8, rank: 1, trend: '+4.1%' },
+        { id: 2, name: '西山供电所', completion: 96.7, tasks: 765, totalUnits: 7, rank: 2, trend: '+3.6%' },
+        { id: 3, name: '南山供电所', completion: 95.3, tasks: 684, totalUnits: 6, rank: 3, trend: '+2.9%' },
+        { id: 4, name: '北山供电所', completion: 93.8, tasks: 542, totalUnits: 5, rank: 4, trend: '+2.2%' },
+        { id: 5, name: '中心供电所', completion: 92.5, tasks: 476, totalUnits: 4, rank: 5, trend: '+1.8%' }
+      ];
+    }
+  };
+
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1: return <Trophy className="h-5 w-5 text-yellow-500" />;
+      case 2: return <Medal className="h-5 w-5 text-gray-400" />;
+      case 3: return <Award className="h-5 w-5 text-amber-600" />;
+      default: return <span className="text-base font-bold text-gray-500">#{rank}</span>;
+    }
+  };
+
+  const getRankColor = (rank: number) => {
+    switch (rank) {
+      case 1: return 'border-l-yellow-500 bg-yellow-50';
+      case 2: return 'border-l-gray-400 bg-gray-50';
+      case 3: return 'border-l-amber-600 bg-amber-50';
+      default: return 'border-l-blue-500 bg-white';
+    }
+  };
+
+  const getTitle = () => {
+    if (currentRole.level === 'province') return '地市进度排名';
+    if (currentRole.level === 'city') return '区县进度排名';
+    return '供电所进度排名';
+  };
+
+  const getUnit = () => {
+    if (currentRole.level === 'province') return '个地市';
+    if (currentRole.level === 'city') return '个区县';
+    return '个供电所';
+  };
+
+  const progressRankingData = getProgressRankingData();
+
+  // 管理层级界面（省市县）- 按照省市县展示进度排名
   return (
     <div className="space-y-3">
       {/* 管理层概览 */}
       <div className="grid grid-cols-2 gap-3">
-        <Card 
-          className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={onUnitsDetailClick}
-        >
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
@@ -190,7 +254,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
                 <div className="text-2xl font-bold text-blue-700">
                   <AnimatedNumber value={statistics.totalUnits} />
                 </div>
-                <div className="text-xs text-blue-500">点击查看详情</div>
+                <div className="text-xs text-blue-500">{getUnit()}</div>
               </div>
               <Building2 className="h-8 w-8 text-blue-500" />
             </div>
@@ -201,181 +265,124 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm text-green-600 mb-1">数据质量</div>
+                <div className="text-sm text-green-600 mb-1">平均完成率</div>
                 <div className="text-2xl font-bold text-green-700">
-                  <AnimatedNumber value={statistics.dataQuality} suffix="%" />
+                  <AnimatedNumber value={Math.round(progressRankingData.reduce((sum, item) => sum + item.completion, 0) / progressRankingData.length)} suffix="%" />
                 </div>
+                <div className="text-xs text-green-500">整体表现良好</div>
               </div>
-              <BarChart3 className="h-8 w-8 text-green-500" />
+              <TrendingUp className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* 整合的任务进度与数据量统计 */}
+      {/* 进度排名展示 */}
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            任务进度与数据量统计
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BarChart3 className="h-5 w-5" />
+            {getTitle()}
+            <Badge className="bg-blue-100 text-blue-700 text-xs">实时更新</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {/* 整体进度展示 */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-blue-800">总体任务完成度</span>
-                </div>
-                <div className="text-2xl font-bold text-blue-700">
-                  <AnimatedNumber value={statistics.overallCompletion} suffix="%" />
-                </div>
-              </div>
-              <Progress value={statistics.overallCompletion} className="h-3 mb-2" />
-              <div className="grid grid-cols-3 gap-3 mt-3">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-green-600">
-                    <AnimatedNumber value={tasks.completedToday} />
-                  </div>
-                  <div className="text-xs text-gray-600">已完成</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">
-                    <AnimatedNumber value={tasks.inProgressTasks} />
-                  </div>
-                  <div className="text-xs text-gray-600">进行中</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-orange-600">
-                    <AnimatedNumber value={tasks.urgentTasks} />
-                  </div>
-                  <div className="text-xs text-gray-600">待处理</div>
-                </div>
-              </div>
-            </div>
-
-            {/* AI处理统计 */}
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium text-purple-800">AI智能处理统计</span>
-                </div>
-                <div className="text-2xl font-bold text-purple-700">
-                  <AnimatedNumber value={statistics.aiProcessingRate} suffix="%" />
-                </div>
-              </div>
-              <Progress value={statistics.aiProcessingRate} className="h-3 mb-2" />
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-green-600">
-                    <AnimatedNumber value={tasks.aiProcessed} />
-                  </div>
-                  <div className="text-xs text-gray-600">AI处理量</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">
-                    <AnimatedNumber value={statistics.dataProcessingProgress} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-600">处理进度</div>
-                </div>
-              </div>
-            </div>
-
-            {/* 数据量统计矩阵 */}
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
-              <div className="flex items-center gap-2 mb-3">
-                <Database className="h-5 w-5 text-orange-600" />
-                <span className="font-medium text-orange-800">数据处理量统计</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
-                  <div className="p-2 bg-blue-500 rounded-full">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-blue-700">
-                      <AnimatedNumber value={tasks.totalProcessed} />
+          <div className="space-y-3">
+            {progressRankingData.map((item) => (
+              <div 
+                key={item.id}
+                className={`p-4 rounded-lg border-l-4 ${getRankColor(item.rank)} transition-all hover:shadow-md cursor-pointer`}
+                onClick={onUnitsDetailClick}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    {getRankIcon(item.rank)}
+                    <div>
+                      <span className="font-medium text-base">{item.name}</span>
+                      <div className="text-xs text-gray-500 mt-1">
+                        <AnimatedNumber value={item.totalUnits} />个下级单位 • <AnimatedNumber value={item.tasks} />个任务
+                      </div>
                     </div>
-                    <div className="text-xs text-blue-600">已处理总量</div>
+                    {item.rank <= 3 && (
+                      <Badge className="bg-green-100 text-green-700 text-xs">优秀</Badge>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-green-600">
+                      <AnimatedNumber value={item.completion} suffix="%" />
+                    </div>
+                    <div className={`text-xs ${item.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
+                      {item.trend}
+                    </div>
                   </div>
                 </div>
+                <Progress value={item.completion} className="h-2" />
                 
-                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
-                  <div className="p-2 bg-green-500 rounded-full">
-                    <Zap className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-green-700">
-                      <AnimatedNumber value={tasks.aiProcessed} />
+                {/* 详细指标 */}
+                <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-gray-100">
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-blue-600">
+                      <AnimatedNumber value={Math.round(item.tasks * item.completion / 100)} />
                     </div>
-                    <div className="text-xs text-green-600">AI智能处理</div>
+                    <div className="text-xs text-gray-500">已完成</div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
-                  <div className="p-2 bg-orange-500 rounded-full">
-                    <Clock className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-orange-700">
-                      <AnimatedNumber value={tasks.pendingData} />
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-orange-600">
+                      <AnimatedNumber value={item.tasks - Math.round(item.tasks * item.completion / 100)} />
                     </div>
-                    <div className="text-xs text-orange-600">待处理数据</div>
+                    <div className="text-xs text-gray-500">待处理</div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
-                  <div className="p-2 bg-red-500 rounded-full">
-                    <AlertTriangle className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-red-700">
-                      <AnimatedNumber value={tasks.errorData} />
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-purple-600">
+                      <AnimatedNumber value={Math.round(item.tasks * 0.3)} />
                     </div>
-                    <div className="text-xs text-red-600">异常数据量</div>
+                    <div className="text-xs text-gray-500">AI处理</div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* 关键指标趋势 */}
-            <div className="grid grid-cols-3 gap-2">
-              <Card className="text-center bg-gradient-to-br from-green-50 to-green-100">
-                <CardContent className="p-3">
-                  <div className="text-lg font-bold text-green-600">
-                    <AnimatedNumber value={Math.round((tasks.completedToday / tasks.totalToday) * 100)} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-500">完成率</div>
-                  <div className="text-xs text-green-600 mt-1">↗ +2.3%</div>
-                </CardContent>
-              </Card>
-              
-              <Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100">
-                <CardContent className="p-3">
-                  <div className="text-lg font-bold text-blue-600">
-                    <AnimatedNumber value={Math.round((tasks.aiProcessed / tasks.totalProcessed) * 100)} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-500">AI处理率</div>
-                  <div className="text-xs text-blue-600 mt-1">↗ +5.1%</div>
-                </CardContent>
-              </Card>
-              
-              <Card className="text-center bg-gradient-to-br from-purple-50 to-purple-100">
-                <CardContent className="p-3">
-                  <div className="text-lg font-bold text-purple-600">
-                    <AnimatedNumber value={Math.round(((tasks.totalProcessed - tasks.errorData) / tasks.totalProcessed) * 100)} suffix="%" />
-                  </div>
-                  <div className="text-xs text-gray-500">质量率</div>
-                  <div className="text-xs text-purple-600 mt-1">↗ +1.8%</div>
-                </CardContent>
-              </Card>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
+
+      {/* 整体趋势统计 */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="text-center bg-gradient-to-br from-green-50 to-green-100">
+          <CardContent className="p-3">
+            <div className="text-lg font-bold text-green-600">
+              <AnimatedNumber value={progressRankingData.filter(item => item.completion >= 95).length} />
+            </div>
+            <div className="text-xs text-gray-500">优秀单位</div>
+            <div className="text-xs text-green-600 mt-1">
+              占比 {Math.round(progressRankingData.filter(item => item.completion >= 95).length / progressRankingData.length * 100)}%
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100">
+          <CardContent className="p-3">
+            <div className="text-lg font-bold text-blue-600">
+              <AnimatedNumber value={progressRankingData.reduce((sum, item) => sum + item.tasks, 0)} />
+            </div>
+            <div className="text-xs text-gray-500">总任务数</div>
+            <div className="text-xs text-blue-600 mt-1">
+              今日新增 <AnimatedNumber value={Math.round(progressRankingData.reduce((sum, item) => sum + item.tasks, 0) * 0.05)} />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center bg-gradient-to-br from-purple-50 to-purple-100">
+          <CardContent className="p-3">
+            <div className="text-lg font-bold text-purple-600">
+              <AnimatedNumber value={progressRankingData.filter(item => item.trend.startsWith('+')).length} />
+            </div>
+            <div className="text-xs text-gray-500">上升趋势</div>
+            <div className="text-xs text-purple-600 mt-1">
+              整体向好
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
