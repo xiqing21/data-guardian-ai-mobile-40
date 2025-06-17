@@ -63,6 +63,16 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
     { dimension: '唯一性', value: dataQuality.uniqueness, fullMark: 100 }
   ];
 
+  // 维度名称映射
+  const dimensionMap: { [key: string]: string } = {
+    completeness: '完整性',
+    accuracy: '准确性',
+    consistency: '一致性',
+    timeliness: '及时性',
+    compliance: '合规性',
+    uniqueness: '唯一性'
+  };
+
   // 本月质量趋势数据
   const trendData = [
     { month: '1月', quality: 85.2 },
@@ -137,13 +147,12 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
               {Object.entries(dataQuality).map(([key, value]) => {
                 const details = dimensionDetails[key];
                 const qualityInfo = getQualityLevel(value);
+                const dimensionName = dimensionMap[key] || key;
                 
                 return (
                   <div key={key} className="p-3 border rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">
-                        {radarData.find(item => item.dimension.includes(key.charAt(0).toUpperCase()))?.dimension || key}
-                      </span>
+                      <span className="text-sm font-medium">{dimensionName}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">
                           <AnimatedNumber value={Math.round(value)} suffix="%" />

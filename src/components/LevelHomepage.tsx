@@ -148,64 +148,49 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
         </CardContent>
       </Card>
 
-      {/* AI智能体功能展示 - 优化移动端布局 */}
-      <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
-        <CardContent className="p-4 sm:p-5 relative z-10">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Brain className="h-6 w-6" />
+      {/* AI智能体功能展示 - 紧凑版 */}
+      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-white/20 rounded-lg">
+                <Brain className="h-4 w-4" />
               </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-lg sm:text-xl font-bold break-words">AI数据治理智能体</h2>
-                <div className="flex flex-wrap items-center gap-2 text-indigo-100 text-sm">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate">{currentRole.name}</span>
-                  </div>
-                  <Badge className="bg-white/20 text-xs px-2 py-0 whitespace-nowrap">省级管理</Badge>
-                </div>
+              <div>
+                <h3 className="text-base font-bold">AI数据治理智能体</h3>
+                <p className="text-xs text-indigo-100">智能化数据治理平台</p>
               </div>
             </div>
+            <Badge className="bg-white/20 text-xs px-2 py-1">省级管理</Badge>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-4 gap-2">
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('analysis')}
             >
-              <div className="flex items-center justify-center mb-1">
-                <BarChart3 className="h-4 w-4 text-cyan-200" />
-              </div>
+              <BarChart3 className="h-4 w-4 mx-auto mb-1 text-cyan-200" />
               <div className="text-xs text-indigo-100">智能分析</div>
             </div>
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('task-assignment')}
             >
-              <div className="flex items-center justify-center mb-1">
-                <Target className="h-4 w-4 text-green-200" />
-              </div>
+              <Target className="h-4 w-4 mx-auto mb-1 text-green-200" />
               <div className="text-xs text-indigo-100">任务分配</div>
             </div>
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('quality-monitor')}
             >
-              <div className="flex items-center justify-center mb-1">
-                <Shield className="h-4 w-4 text-yellow-200" />
-              </div>
+              <Shield className="h-4 w-4 mx-auto mb-1 text-yellow-200" />
               <div className="text-xs text-indigo-100">质量监控</div>
             </div>
             <div 
-              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+              className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('decision-support')}
             >
-              <div className="flex items-center justify-center mb-1">
-                <Cpu className="h-4 w-4 text-purple-200" />
-              </div>
+              <Cpu className="h-4 w-4 mx-auto mb-1 text-purple-200" />
               <div className="text-xs text-indigo-100">决策支持</div>
             </div>
           </div>
@@ -583,66 +568,51 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </CardContent>
         </Card>
 
-        {/* AI智能体功能展示 - 优化移动端布局 */}
-        <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
-          <CardContent className="p-4 sm:p-5 relative z-10">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Brain className="h-6 w-6" />
+        {/* AI智能体功能展示 - 紧凑版 */}
+        <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-white/20 rounded-lg">
+                  <Brain className="h-4 w-4" />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-lg sm:text-xl font-bold break-words">AI数据治理智能体</h2>
-                  <div className="flex flex-wrap items-center gap-2 text-indigo-100 text-sm">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 flex-shrink-0" />
-                      <span className="truncate">{currentRole.name}</span>
-                    </div>
-                    <Badge className="bg-white/20 text-xs px-2 py-0 whitespace-nowrap">
-                      {currentRole.level === 'city' ? '地市管理' : '区县管理'}
-                    </Badge>
-                  </div>
+                <div>
+                  <h3 className="text-base font-bold">AI数据治理智能体</h3>
+                  <p className="text-xs text-indigo-100">智能化数据治理平台</p>
                 </div>
               </div>
+              <Badge className="bg-white/20 text-xs px-2 py-1">
+                {currentRole.level === 'city' ? '地市管理' : '区县管理'}
+              </Badge>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-4 gap-2">
               <div 
-                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('analysis')}
               >
-                <div className="flex items-center justify-center mb-1">
-                  <BarChart3 className="h-4 w-4 text-cyan-200" />
-                </div>
+                <BarChart3 className="h-4 w-4 mx-auto mb-1 text-cyan-200" />
                 <div className="text-xs text-indigo-100">智能分析</div>
               </div>
               <div 
-                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('task-assignment')}
               >
-                <div className="flex items-center justify-center mb-1">
-                  <Target className="h-4 w-4 text-green-200" />
-                </div>
+                <Target className="h-4 w-4 mx-auto mb-1 text-green-200" />
                 <div className="text-xs text-indigo-100">任务调度</div>
               </div>
               <div 
-                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('quality-monitor')}
               >
-                <div className="flex items-center justify-center mb-1">
-                  <Shield className="h-4 w-4 text-yellow-200" />
-                </div>
+                <Shield className="h-4 w-4 mx-auto mb-1 text-yellow-200" />
                 <div className="text-xs text-indigo-100">质量监控</div>
               </div>
               <div 
-                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
+                className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-2 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('decision-support')}
               >
-                <div className="flex items-center justify-center mb-1">
-                  <FileText className="h-4 w-4 text-purple-200" />
-                </div>
+                <FileText className="h-4 w-4 mx-auto mb-1 text-purple-200" />
                 <div className="text-xs text-indigo-100">报告生成</div>
               </div>
             </div>
