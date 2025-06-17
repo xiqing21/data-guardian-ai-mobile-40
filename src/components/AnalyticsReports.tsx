@@ -16,7 +16,9 @@ import {
   Database,
   PieChart,
   Activity,
-  Zap
+  Zap,
+  Grid3X3,
+  AlertOctagon
 } from 'lucide-react';
 import {
   BarChart,
@@ -47,6 +49,17 @@ import {
 const AnalyticsReports = () => {
   const [reportPeriod, setReportPeriod] = useState('monthly');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // 新增整体统计数据
+  const overallStats = {
+    totalDataVolume: 8657000,
+    abnormalDataVolume: 173140,
+    gridLevelDataVolume: 4328500,
+    completedDataVolume: 8483860,
+    abnormalRate: 2.0,
+    gridCoverageRate: 50.0,
+    completionRate: 98.0
+  };
 
   // 分析数据
   const analyticsData = {
@@ -158,7 +171,7 @@ const AnalyticsReports = () => {
             </div>
             <div className="flex flex-col items-end gap-2">
               <div className="text-right">
-                <div className="text-3xl font-bold">{reportData.summary.qualityScore}%</div>
+                <div className="text-3xl font-bold">{reportData.summary.qualityScore.toFixed(2)}%</div>
                 <div className="text-sm text-blue-100">综合治理得分</div>
               </div>
               {/* 导出功能 */}
@@ -196,6 +209,88 @@ const AnalyticsReports = () => {
         </CardContent>
       </Card>
 
+      {/* 新增整体统计数据展示 */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5 text-blue-500" />
+            整体数据统计
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Database className="h-6 w-6 text-blue-500" />
+              </div>
+              <div className="text-2xl font-bold text-blue-600">
+                {(overallStats.totalDataVolume / 10000).toFixed(0)}万
+              </div>
+              <div className="text-sm text-gray-600">数据总量</div>
+              <div className="text-xs text-blue-600 mt-1">100.00%</div>
+            </div>
+            
+            <div className="bg-red-50 p-4 rounded-lg text-center">
+              <div className="flex items-center justify-center mb-2">
+                <AlertOctagon className="h-6 w-6 text-red-500" />
+              </div>
+              <div className="text-2xl font-bold text-red-600">
+                {(overallStats.abnormalDataVolume / 10000).toFixed(1)}万
+              </div>
+              <div className="text-sm text-gray-600">异常数据量</div>
+              <div className="text-xs text-red-600 mt-1">{overallStats.abnormalRate.toFixed(2)}%</div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Grid3X3 className="h-6 w-6 text-purple-500" />
+              </div>
+              <div className="text-2xl font-bold text-purple-600">
+                {(overallStats.gridLevelDataVolume / 10000).toFixed(1)}万
+              </div>
+              <div className="text-sm text-gray-600">网格粒度数据</div>
+              <div className="text-xs text-purple-600 mt-1">{overallStats.gridCoverageRate.toFixed(2)}%</div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg text-center">
+              <div className="flex items-center justify-center mb-2">
+                <CheckCircle className="h-6 w-6 text-green-500" />
+              </div>
+              <div className="text-2xl font-bold text-green-600">
+                {(overallStats.completedDataVolume / 10000).toFixed(1)}万
+              </div>
+              <div className="text-sm text-gray-600">完成数据量</div>
+              <div className="text-xs text-green-600 mt-1">{overallStats.completionRate.toFixed(2)}%</div>
+            </div>
+          </div>
+
+          {/* 数据处理进度条 */}
+          <div className="mt-6 space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>数据完成率</span>
+                <span>{overallStats.completionRate.toFixed(2)}%</span>
+              </div>
+              <Progress value={overallStats.completionRate} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>网格覆盖率</span>
+                <span>{overallStats.gridCoverageRate.toFixed(2)}%</span>
+              </div>
+              <Progress value={overallStats.gridCoverageRate} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>异常数据占比</span>
+                <span>{overallStats.abnormalRate.toFixed(2)}%</span>
+              </div>
+              <Progress value={overallStats.abnormalRate} className="h-2 bg-red-100" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="report" className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="report">完整报告</TabsTrigger>
@@ -220,7 +315,8 @@ const AnalyticsReports = () => {
                 <h3 className="text-lg font-bold mb-2">执行摘要</h3>
                 <p className="text-gray-700 leading-relaxed">
                   本报告基于2024年6月数据治理工作的全面分析，涵盖数据质量、处理效率、系统性能等多个维度。
-                  通过AI智能分析，当前数据治理综合得分达到92.1%，较上月提升2.3个百分点，整体治理水平持续向好。
+                  通过AI智能分析，当前数据治理综合得分达到{reportData.summary.qualityScore.toFixed(2)}%，较上月提升2.30个百分点，整体治理水平持续向好。
+                  异常数据量控制在{overallStats.abnormalRate.toFixed(2)}%，网格粒度覆盖率达到{overallStats.gridCoverageRate.toFixed(2)}%，数据完成率达到{overallStats.completionRate.toFixed(2)}%。
                 </p>
               </div>
 
@@ -232,21 +328,21 @@ const AnalyticsReports = () => {
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                     <div>
                       <div className="font-medium text-green-800">数据质量显著提升</div>
-                      <div className="text-sm text-green-700">6个质量维度均有改善，完整性达到96.5%，准确性达到94.2%</div>
+                      <div className="text-sm text-green-700">6个质量维度均有改善，完整性达到96.50%，准确性达到94.20%</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                     <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
                     <div>
                       <div className="font-medium text-blue-800">处理效率持续优化</div>
-                      <div className="text-sm text-blue-700">AI自动化处理率达到90.2%，平均处理时间缩短至1.2秒</div>
+                      <div className="text-sm text-blue-700">AI自动化处理率达到90.20%，平均处理时间缩短至1.2秒</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
                     <BarChart3 className="h-5 w-5 text-purple-600 mt-0.5" />
                     <div>
                       <div className="font-medium text-purple-800">系统性能稳定</div>
-                      <div className="text-sm text-purple-700">系统可用性达到99.9%，日处理量突破240万条</div>
+                      <div className="text-sm text-purple-700">系统可用性达到99.90%，日处理量突破240万条</div>
                     </div>
                   </div>
                 </div>
@@ -259,15 +355,15 @@ const AnalyticsReports = () => {
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">132万</div>
                     <div className="text-sm text-gray-600">本月处理数据量</div>
-                    <div className="text-xs text-blue-600 mt-1">↗ 环比增长 15.2%</div>
+                    <div className="text-xs text-blue-600 mt-1">↗ 环比增长 15.20%</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">4,267</div>
                     <div className="text-sm text-gray-600">问题修复数量</div>
-                    <div className="text-xs text-green-600 mt-1">↗ 自动修复率 90%</div>
+                    <div className="text-xs text-green-600 mt-1">↗ 自动修复率 90.00%</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">95.8%</div>
+                    <div className="text-2xl font-bold text-purple-600">{reportData.summary.efficiency.toFixed(2)}%</div>
                     <div className="text-sm text-gray-600">综合处理效率</div>
                     <div className="text-xs text-purple-600 mt-1">↗ 达到目标水平</div>
                   </div>
@@ -282,7 +378,7 @@ const AnalyticsReports = () => {
                     <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
                     <div>
                       <div className="font-medium text-yellow-800">有效性维度待提升</div>
-                      <div className="text-sm text-yellow-700">当前89.4%，建议加强业务规则验证和实时监控</div>
+                      <div className="text-sm text-yellow-700">当前89.40%，建议加强业务规则验证和实时监控</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
@@ -301,11 +397,11 @@ const AnalyticsReports = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>完善数据有效性检验规则，目标提升至93%</span>
+                    <span>完善数据有效性检验规则，目标提升至93.00%</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>优化AI模型算法，提升自动修复准确率至95%</span>
+                    <span>优化AI模型算法，提升自动修复准确率至95.00%</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
@@ -458,13 +554,13 @@ const AnalyticsReports = () => {
                   {(reportData.summary.totalDataVolume / 10000).toFixed(0)}万
                 </div>
                 <div className="text-sm text-gray-600 mt-1">数据总量</div>
-                <div className="text-xs text-blue-600 mt-1">↗ 今日新增 2.3%</div>
+                <div className="text-xs text-blue-600 mt-1">↗ 今日新增 2.30%</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <div className="text-3xl font-bold text-green-600">
-                  {reportData.summary.governanceRate}%
+                  {reportData.summary.governanceRate.toFixed(2)}%
                 </div>
                 <div className="text-sm text-gray-600 mt-1">治理覆盖率</div>
                 <div className="text-xs text-green-600 mt-1">↗ 实时提升中</div>
@@ -628,7 +724,7 @@ const AnalyticsReports = () => {
                 <div className="flex items-center justify-center mb-2">
                   <Zap className="h-6 w-6 text-yellow-500" />
                 </div>
-                <div className="text-2xl font-bold text-yellow-600">1.2ms</div>
+                <div className="text-2xl font-bold text-yellow-600">1.20ms</div>
                 <div className="text-sm text-gray-600">平均响应时间</div>
                 <Progress value={85} className="mt-2" />
               </CardContent>
@@ -638,7 +734,7 @@ const AnalyticsReports = () => {
                 <div className="flex items-center justify-center mb-2">
                   <Database className="h-6 w-6 text-blue-500" />
                 </div>
-                <div className="text-2xl font-bold text-blue-600">99.9%</div>
+                <div className="text-2xl font-bold text-blue-600">99.90%</div>
                 <div className="text-sm text-gray-600">系统可用性</div>
                 <Progress value={99.9} className="mt-2" />
               </CardContent>

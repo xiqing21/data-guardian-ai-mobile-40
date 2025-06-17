@@ -93,9 +93,9 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
     }
   ];
 
-  const overallScore = Math.round(
-    (dataQuality.completeness + dataQuality.accuracy + dataQuality.consistency + 
-     dataQuality.timeliness + dataQuality.compliance + dataQuality.uniqueness) / 6
+  const overallScore = Number(
+    ((dataQuality.completeness + dataQuality.accuracy + dataQuality.consistency + 
+     dataQuality.timeliness + dataQuality.compliance + dataQuality.uniqueness) / 6).toFixed(2)
   );
 
   if (!roleContent.showStatistics) {
@@ -143,7 +143,7 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
               />
               <Tooltip 
                 formatter={(value, name) => [
-                  `${value}%`, 
+                  `${Number(value).toFixed(2)}%`, 
                   name === 'current' ? '当前值' : '目标值'
                 ]}
               />
@@ -167,8 +167,8 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-blue-600">{item.current}%</div>
-                  <div className="text-xs text-gray-500">目标: {item.target}%</div>
+                  <div className="text-lg font-bold text-blue-600">{item.current.toFixed(2)}%</div>
+                  <div className="text-xs text-gray-500">目标: {item.target.toFixed(2)}%</div>
                 </div>
               </div>
             ))}
@@ -198,7 +198,7 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">整体提升:</span>
-              <span className="font-medium text-green-600">+2.3%</span>
+              <span className="font-medium text-green-600">+2.30%</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">问题解决:</span>
@@ -206,7 +206,7 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">自动修复率:</span>
-              <span className="font-medium text-purple-600">86.5%</span>
+              <span className="font-medium text-purple-600">86.50%</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">预计达标:</span>
