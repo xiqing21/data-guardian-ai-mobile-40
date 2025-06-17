@@ -148,28 +148,30 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
         </CardContent>
       </Card>
 
-      {/* AI智能体功能展示 */}
+      {/* AI智能体功能展示 - 优化移动端布局 */}
       <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
-        <CardContent className="p-5 relative z-10">
+        <CardContent className="p-4 sm:p-5 relative z-10">
           <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
           
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
                 <Brain className="h-6 w-6" />
               </div>
-              <div>
-                <h2 className="text-xl font-bold">AI数据治理智能体</h2>
-                <div className="flex items-center gap-2 text-indigo-100 text-sm">
-                  <MapPin className="h-3 w-3" />
-                  <span>{currentRole.name}</span>
-                  <Badge className="bg-white/20 text-xs px-2 py-0">省级管理</Badge>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl font-bold break-words">AI数据治理智能体</h2>
+                <div className="flex flex-wrap items-center gap-2 text-indigo-100 text-sm">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{currentRole.name}</span>
+                  </div>
+                  <Badge className="bg-white/20 text-xs px-2 py-0 whitespace-nowrap">省级管理</Badge>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             <div 
               className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
               onClick={() => handleAIFeatureClick('analysis')}
@@ -581,22 +583,24 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
           </CardContent>
         </Card>
 
-        {/* AI智能体功能展示 */}
+        {/* AI智能体功能展示 - 优化移动端布局 */}
         <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white overflow-hidden relative">
-          <CardContent className="p-5 relative z-10">
+          <CardContent className="p-4 sm:p-5 relative z-10">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
             
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
                   <Brain className="h-6 w-6" />
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold">AI数据治理智能体</h2>
-                  <div className="flex items-center gap-2 text-indigo-100 text-sm">
-                    <MapPin className="h-3 w-3" />
-                    <span>{currentRole.name}</span>
-                    <Badge className="bg-white/20 text-xs px-2 py-0">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-lg sm:text-xl font-bold break-words">AI数据治理智能体</h2>
+                  <div className="flex flex-wrap items-center gap-2 text-indigo-100 text-sm">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{currentRole.name}</span>
+                    </div>
+                    <Badge className="bg-white/20 text-xs px-2 py-0 whitespace-nowrap">
                       {currentRole.level === 'city' ? '地市管理' : '区县管理'}
                     </Badge>
                   </div>
@@ -604,7 +608,7 @@ const LevelHomepage: React.FC<LevelHomepageProps> = ({
               </div>
             </div>
             
-            <div className="grid grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
               <div 
                 className="text-center bg-white/15 backdrop-blur-sm rounded-lg p-3 cursor-pointer hover:bg-white/25 transition-colors"
                 onClick={() => handleAIFeatureClick('analysis')}

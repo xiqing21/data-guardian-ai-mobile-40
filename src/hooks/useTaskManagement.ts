@@ -227,14 +227,18 @@ export const useTaskManagement = (employeeTasks?: {
     tasks.reduce((sum, task) => sum + task.progress, 0) / tasks.length
   );
 
+  // 确保任务数据一致性
   const completedTasks = currentTasks.completedToday;
   const inProgressTasks = currentTasks.inProgressTasks;
   const pendingTasks = currentTasks.pendingTasks;
+  const totalTasks = completedTasks + inProgressTasks + pendingTasks;
   const autoProcessableTasks = tasks.filter(task => task.autoProcessable && task.status === 'pending').length;
 
   const taskStats = {
-    totalTasks: tasks.length,
+    totalTasks,
     pendingTasks,
+    completedTasks,
+    inProgressTasks,
     autoProcessableTasks
   };
 
@@ -288,6 +292,7 @@ export const useTaskManagement = (employeeTasks?: {
     completedTasks,
     inProgressTasks,
     pendingTasks,
+    totalTasks,
     taskStats,
     addTask,
     updateTask,
