@@ -55,20 +55,15 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
     }
   };
 
-  const handleRoleSelect = (roleId: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleRoleSelect = (roleId: string) => {
     console.log('角色选择:', roleId);
     onRoleChange(roleId);
     setIsOpen(false);
   };
 
-  const toggleDropdown = (event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const newState = !isOpen;
-    setIsOpen(newState);
-    console.log('切换下拉菜单:', newState);
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+    console.log('切换下拉菜单:', !isOpen);
   };
 
   // 点击外部关闭下拉菜单
@@ -81,21 +76,18 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
 
   return (
-    <div className="relative role-selector-container z-[999]">
+    <div className="relative role-selector-container">
       <Button
         variant="outline"
         onClick={toggleDropdown}
-        className="flex items-center gap-2 min-w-48 justify-between hover:bg-gray-50 relative z-[999]"
+        className="flex items-center gap-2 min-w-48 justify-between hover:bg-gray-50"
         type="button"
       >
         <div className="flex items-center gap-2">
@@ -114,43 +106,35 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       </Button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[9999]" onClick={() => setIsOpen(false)}>
-          <div 
-            className="absolute bg-white border rounded-lg shadow-2xl max-h-64 overflow-y-auto min-w-48"
-            style={{
-              top: '100%',
-              left: '0',
-              marginTop: '4px',
-              zIndex: 10000
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {availableRoles.map((role) => (
-              <button
-                key={role.id}
-                type="button"
-                className={`w-full p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors text-left ${
-                  role.id === currentRole.id ? 'bg-blue-50' : ''
-                }`}
-                onClick={(event) => handleRoleSelect(role.id, event)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {getRoleIcon(role.level)}
-                    <div>
-                      <div className="font-medium text-sm">{role.name}</div>
-                      {role.parentUnit && (
-                        <div className="text-xs text-gray-500">{role.parentUnit}</div>
-                      )}
-                    </div>
+        <div 
+          className="absolute top-full left-0 mt-1 bg-white border rounded-lg shadow-xl max-h-64 overflow-y-auto min-w-48 z-[99999]"
+          style={{ zIndex: 99999 }}
+        >
+          {availableRoles.map((role) => (
+            <button
+              key={role.id}
+              type="button"
+              className={`w-full p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors text-left ${
+                role.id === currentRole.id ? 'bg-blue-50' : ''
+              }`}
+              onClick={() => handleRoleSelect(role.id)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {getRoleIcon(role.level)}
+                  <div>
+                    <div className="font-medium text-sm">{role.name}</div>
+                    {role.parentUnit && (
+                      <div className="text-xs text-gray-500">{role.parentUnit}</div>
+                    )}
                   </div>
-                  <Badge className={`text-xs px-2 py-0 ${getRoleLevelColor(role.level)}`}>
-                    {getRoleLevelText(role.level)}
-                  </Badge>
                 </div>
-              </button>
-            ))}
-          </div>
+                <Badge className={`text-xs px-2 py-0 ${getRoleLevelColor(role.level)}`}>
+                  {getRoleLevelText(role.level)}
+                </Badge>
+              </div>
+            </button>
+          ))}
         </div>
       )}
     </div>

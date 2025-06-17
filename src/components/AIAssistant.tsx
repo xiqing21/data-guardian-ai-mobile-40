@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Phone, Settings, User, Brain, Zap, TrendingUp } from 'lucide-react';
+import EnhancedMessageInput from './ai-assistant/EnhancedMessageInput';
 
 interface Message {
   id: number;
@@ -26,9 +26,7 @@ const AIAssistant = () => {
       processingTime: '0.3s'
     }
   ]);
-  const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [aiCapabilities, setAiCapabilities] = useState({
     dataProcessed: 1247892,
     accuracy: 96.8,
@@ -79,7 +77,6 @@ const AIAssistant = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
     setIsTyping(true);
 
     // 模拟AI响应处理时间
@@ -148,15 +145,6 @@ const AIAssistant = () => {
       confidence: 89.3,
       suggestions: ['数据质量分析', '异常检测', '自动化处理', '效果评估']
     };
-  };
-
-  const startVoiceInput = () => {
-    setIsListening(true);
-    // 模拟语音识别
-    setTimeout(() => {
-      setIsListening(false);
-      setInputValue('请帮我进行全面的数据质量深度分析');
-    }, 3000);
   };
 
   return (
@@ -305,40 +293,9 @@ const AIAssistant = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 输入区域 */}
+      {/* 输入区域 - 使用新的增强版输入组件 */}
       <div className="bg-white border-t p-4">
-        <div className="flex items-center gap-2">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="向AI助手描述您的数据治理需求..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(inputValue)}
-            className="flex-1"
-          />
-          <Button
-            onClick={startVoiceInput}
-            variant={isListening ? "default" : "outline"}
-            size="sm"
-            className={isListening ? "bg-red-500 hover:bg-red-600" : ""}
-          >
-            {isListening ? "🎤 录音中..." : "🎤"}
-          </Button>
-          <Button
-            onClick={() => handleSendMessage(inputValue)}
-            size="sm"
-            disabled={!inputValue.trim()}
-            className="bg-purple-500 hover:bg-purple-600"
-          >
-            发送
-          </Button>
-        </div>
-        {isListening && (
-          <div className="mt-2 text-center">
-            <Badge variant="secondary" className="animate-pulse bg-red-100 text-red-600">
-              🎤 正在监听语音输入... 支持普通话/方言识别
-            </Badge>
-          </div>
-        )}
+        <EnhancedMessageInput onSendMessage={handleSendMessage} />
       </div>
     </div>
   );
