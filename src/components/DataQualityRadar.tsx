@@ -185,7 +185,7 @@ const DataQualityRadar: React.FC<DataQualityRadarProps> = ({
             <div className="text-xs text-gray-500">完整性、时效性</div>
           </div>
           <div className="text-center p-2 bg-orange-50 rounded">
-            <div className="text-sm font-medium text-orange-700">待改进 (<90%)</div>
+            <div className="text-sm font-medium text-orange-700">待改进 (&lt;90%)</div>
             <div className="text-xs text-gray-500">一致性</div>
           </div>
         </div>
